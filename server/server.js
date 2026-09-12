@@ -17,6 +17,7 @@ app.use(express.json());
 app.get('/api', (req, res) => {
   res.json({ name: 'سوق - واجهة برمجية للمتجر', version: '1.0.0' });
 });
+app.get('/api/health', (req, res) => res.json({ ok: true, vercel: !!process.env.VERCEL }));
 
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
