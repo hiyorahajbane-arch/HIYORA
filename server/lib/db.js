@@ -3,7 +3,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = process.env.VERCEL ? join('/tmp', 'db.json') : join(__dirname, '..', 'data', 'db.json');
+const isVercel = !!process.env.VERCEL;
+const DATA_FILE = isVercel ? join('/tmp', 'db.json') : join(__dirname, '..', 'data', 'db.json');
 
 const DEFAULT_DB = {
   products: [],
@@ -21,7 +22,20 @@ const SEED_PRODUCTS = [
   { name: 'نظارة شمسية كلاسيك', price: 119, category: 'إكسسوارات', description: 'نظارة شمسية بحماية UV400 وإطار متين.', image: 'https://picsum.photos/seed/sunglasses/600/600', stock: 50 }
 ];
 
+let memoryDb = null;
+if (isVercel) {
+  const g = globalThis;
+  if (!g.__soukDb) {
+    g.__soukDb = {
+      products: SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p })),
+      orders: []
+    };
+  }
+  memoryDb = g.__soukDb;
+}
+
 function load() {
+  if (isVercel) return memoryDb;
   if (!existsSync(DATA_FILE)) {
     mkdirSync(dirname(DATA_FILE), { recursive: true });
     const seed = { products: SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p })), orders: [] };
@@ -43,6 +57,11 @@ function load() {
 }
 
 function save(db) {
+  if (isVercel) {
+    memoryDb.products = db.products;
+    memoryDb.orders = db.orders;
+    return;
+  }
   mkdirSync(dirname(DATA_FILE), { recursive: true });
   writeFileSync(DATA_FILE, JSON.stringify(db, null, 2), 'utf8');
 }
@@ -59,6 +78,11 @@ export function updateDb(mutator) {
 }
 
 export function resetDb() {
+  if (isVercel) {
+    memoryDb.products = SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p }));
+    memoryDb.orders = [];
+    return memoryDb;
+  }
   save(structuredClone(DEFAULT_DB));
   return structuredClone(DEFAULT_DB);
 }
