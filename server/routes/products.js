@@ -5,23 +5,23 @@ import { requireAdmin } from './auth.js';
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const q = (req.query.q || '').toString().trim().toLowerCase();
   const category = (req.query.category || '').toString().trim();
-  const db = getDb();
+  const db = await getDb();
   let products = db.products;
   if (category) products = products.filter((p) => p.category === category);
   if (q) products = products.filter((p) => p.name.toLowerCase().includes(q) || p.description.includes(q));
   res.json(products);
 });
 
-router.get('/categories', (req, res) => {
-  const db = getDb();
+router.get('/categories', async (req, res) => {
+  const db = await getDb();
   const categories = [...new Set(db.products.map((p) => p.category).filter(Boolean))];
   res.json(categories);
 });
 
-router.post('/', requireAdmin, (req, res) => {
+router.post('/', requireAdmin, async (req, res) => {
   const { name, price, category, description, image, stock } = req.body || {};
   if (!name || typeof price !== 'number' || price < 0) {
     return res.status(400).json({ error: 'الاسم والسعر مطلوبان' });
@@ -36,16 +36,16 @@ router.post('/', requireAdmin, (req, res) => {
     stock: Number.isFinite(stock) ? stock : 0,
     createdAt: new Date().toISOString()
   };
-  const saved = updateDb((db) => {
+  const saved = await updateDb((db) => {
     db.products.unshift(product);
     return product;
   });
   res.status(201).json(saved);
 });
 
-router.put('/:id', requireAdmin, (req, res) => {
+router.put('/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
-  const result = updateDb((db) => {
+  const result = await updateDb((db) => {
     const idx = db.products.findIndex((p) => p.id === id);
     if (idx === -1) return null;
     db.products[idx] = { ...db.products[idx], ...req.body, id };
@@ -55,9 +55,9 @@ router.put('/:id', requireAdmin, (req, res) => {
   res.json(result);
 });
 
-router.delete('/:id', requireAdmin, (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
-  const result = updateDb((db) => {
+  const result = await updateDb((db) => {
     const before = db.products.length;
     db.products = db.products.filter((p) => p.id !== id);
     return db.products.length !== before;

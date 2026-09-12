@@ -5,7 +5,7 @@ import { requireAdmin } from './auth.js';
 
 const router = Router();
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { customer, items } = req.body || {};
   if (!customer || !customer.name || !customer.phone) {
     return res.status(400).json({ error: 'اسم العميل ورقم الهاتف مطلوبان' });
@@ -14,7 +14,7 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'السلة فارغة' });
   }
 
-  const db = getDb();
+  const db = await getDb();
   const orderItems = [];
   for (const item of items) {
     const product = db.products.find((p) => p.id === item.id);
@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
     createdAt: new Date().toISOString()
   };
 
-  updateDb((d) => {
+  await updateDb((d) => {
     d.orders.unshift(order);
     for (const item of orderItems) {
       const p = d.products.find((x) => x.id === item.productId);
@@ -55,21 +55,21 @@ router.post('/', (req, res) => {
   res.status(201).json(order);
 });
 
-router.get('/', requireAdmin, (req, res) => {
-  const db = getDb();
+router.get('/', requireAdmin, async (req, res) => {
+  const db = await getDb();
   const status = (req.query.status || '').toString();
   const orders = status ? db.orders.filter((o) => o.status === status) : db.orders;
   res.json(orders);
 });
 
-router.patch('/:id/status', requireAdmin, (req, res) => {
+router.patch('/:id/status', requireAdmin, async (req, res) => {
   const { id } = req.params;
   const { status } = req.body || {};
   const allowed = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
   if (!allowed.includes(status)) {
     return res.status(400).json({ error: 'حالة غير صالحة' });
   }
-  const result = updateDb((db) => {
+  const result = await updateDb((db) => {
     const order = db.orders.find((o) => o.id === id);
     if (!order) return null;
     order.status = status;

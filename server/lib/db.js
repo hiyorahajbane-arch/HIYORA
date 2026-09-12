@@ -6,11 +6,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const isVercel = !!process.env.VERCEL;
 const DATA_FILE = isVercel ? join('/tmp', 'db.json') : join(__dirname, '..', 'data', 'db.json');
 
-const DEFAULT_DB = {
-  products: [],
-  orders: []
-};
-
 const SEED_PRODUCTS = [
   { name: 'هاتف ذكي نوفا X', price: 1299, category: 'إلكترونيات', description: 'هاتف ذكي بشاشة 6.7 بوصة وكاميرا 108MP وبطارية 5000mAh.', image: 'https://picsum.photos/seed/phone/600/600', stock: 25 },
   { name: 'لابتوب برو 15', price: 3499, category: 'إلكترونيات', description: 'لابتوب بشاشة 15.6 بوصة ومعالج حديث وبطارية تدوم 12 ساعة.', image: 'https://picsum.photos/seed/laptop/600/600', stock: 8 },
@@ -22,41 +17,58 @@ const SEED_PRODUCTS = [
   { name: 'نظارة شمسية كلاسيك', price: 119, category: 'إكسسوارات', description: 'نظارة شمسية بحماية UV400 وإطار متين.', image: 'https://picsum.photos/seed/sunglasses/600/600', stock: 50 }
 ];
 
+function makeSeed() {
+  return {
+    products: SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p })),
+    orders: []
+  };
+}
+
+// Mongo support
+let mongoClient = null;
+let mongoDb = null;
+async function getMongoDb() {
+  if (!process.env.MONGODB_URI) return null;
+  if (mongoDb) return mongoDb;
+  const { MongoClient } = await import('mongodb');
+  mongoClient = new MongoClient(process.env.MONGODB_URI);
+  await mongoClient.connect();
+  mongoDb = mongoClient.db('souk');
+  return mongoDb;
+}
+
 let memoryDb = null;
-if (isVercel) {
+if (isVercel && !process.env.MONGODB_URI) {
   const g = globalThis;
-  if (!g.__soukDb) {
-    g.__soukDb = {
-      products: SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p })),
-      orders: []
-    };
-  }
+  if (!g.__soukDb) g.__soukDb = makeSeed();
   memoryDb = g.__soukDb;
 }
 
-function load() {
+function loadSync() {
+  if (process.env.MONGODB_URI) throw new Error('Use async getDb for Mongo');
   if (isVercel) return memoryDb;
   if (!existsSync(DATA_FILE)) {
     mkdirSync(dirname(DATA_FILE), { recursive: true });
-    const seed = { products: SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p })), orders: [] };
-    save(seed);
+    const seed = makeSeed();
+    saveSync(seed);
     return seed;
   }
   try {
     const data = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
     if (!data.products || data.products.length === 0) {
-      data.products = SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p }));
-      save(data);
+      data.products = makeSeed().products;
+      saveSync(data);
     }
     return data;
   } catch {
-    const seed = { products: SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p })), orders: [] };
-    try { save(seed); } catch {}
+    const seed = makeSeed();
+    try { saveSync(seed); } catch {}
     return seed;
   }
 }
 
-function save(db) {
+function saveSync(db) {
+  if (process.env.MONGODB_URI) throw new Error('Use async for Mongo');
   if (isVercel) {
     memoryDb.products = db.products;
     memoryDb.orders = db.orders;
@@ -66,23 +78,53 @@ function save(db) {
   writeFileSync(DATA_FILE, JSON.stringify(db, null, 2), 'utf8');
 }
 
-export function getDb() {
-  return load();
+export async function getDb() {
+  if (process.env.MONGODB_URI) {
+    const mdb = await getMongoDb();
+    const doc = await mdb.collection('store').findOne({ _id: 'main' });
+    if (!doc) {
+      const seed = makeSeed();
+      await mdb.collection('store').insertOne({ _id: 'main', ...seed });
+      return seed;
+    }
+    return { products: doc.products || [], orders: doc.orders || [] };
+  }
+  return loadSync();
 }
 
-export function updateDb(mutator) {
-  const db = load();
-  const result = mutator(db);
-  save(db);
+export async function updateDb(mutator) {
+  if (process.env.MONGODB_URI) {
+    const mdb = await getMongoDb();
+    const doc = await mdb.collection('store').findOne({ _id: 'main' });
+    const db = doc ? { products: doc.products || [], orders: doc.orders || [] } : makeSeed();
+    if (!doc) await mdb.collection('store').insertOne({ _id: 'main', ...db });
+    const result = await mutator(db);
+    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders } }, { upsert: true });
+    return result === undefined ? db : result;
+  }
+  const db = loadSync();
+  const result = await mutator(db);
+  saveSync(db);
   return result === undefined ? db : result;
 }
 
-export function resetDb() {
+export async function resetDb() {
+  if (process.env.MONGODB_URI) {
+    const mdb = await getMongoDb();
+    const seed = makeSeed();
+    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: seed }, { upsert: true });
+    return seed;
+  }
   if (isVercel) {
-    memoryDb.products = SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p }));
-    memoryDb.orders = [];
+    const seed = makeSeed();
+    memoryDb.products = seed.products;
+    memoryDb.orders = seed.orders;
     return memoryDb;
   }
-  save(structuredClone(DEFAULT_DB));
-  return structuredClone(DEFAULT_DB);
+  const { products, orders } = { products: [], orders: [] };
+  saveSync({ products, orders });
+  return { products, orders };
 }
+
+// Sync wrappers for backward compatibility where not awaited (local dev)
+export function getDbSync() { return loadSync(); }

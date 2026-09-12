@@ -34,8 +34,8 @@ router.get('/me', requireAdmin, (req, res) => {
   res.json({ username: req.admin.username });
 });
 
-router.get('/stats', (req, res) => {
-  const db = getDb();
+router.get('/stats', async (req, res) => {
+  const db = await getDb();
   const revenue = db.orders
     .filter((o) => o.status === 'delivered')
     .reduce((sum, o) => sum + o.total, 0);

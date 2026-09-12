@@ -30,10 +30,10 @@ app.get('*', (req, res) => {
 });
 
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    const count = getDb().products.length;
+  app.listen(PORT, async () => {
+    const db = await getDb();
     console.log(`[سوق] الخادم يعمل على http://localhost:${PORT}`);
-    console.log(`[سوق] عدد المنتجات المبدئية: ${count}`);
+    console.log(`[سوق] عدد المنتجات المبدئية: ${db.products.length}`);
   });
 }
 

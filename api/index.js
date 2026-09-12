@@ -22,16 +22,59 @@ const SEED = [
   { name: 'نظارة شمسية كلاسيك', price: 119, category: 'إكسسوارات', description: 'نظارة شمسية بحماية UV400 وإطار متين.', image: 'https://picsum.photos/seed/sunglasses/600/600', stock: 50 }
 ];
 
-const g = globalThis;
-if (!g.__soukDb) {
-  g.__soukDb = {
+function makeSeed() {
+  return {
     products: SEED.map(p => ({ id: randomUUID(), createdAt: new Date().toISOString(), ...p })),
     orders: []
   };
 }
-const db = g.__soukDb;
-const getDb = () => db;
-const updateDb = (fn) => { const r = fn(db); return r === undefined ? db : r; };
+
+// Mongo support for persistence (Vercel + local)
+let mongoClient = null;
+let mongoDb = null;
+async function getMongoDb() {
+  if (!process.env.MONGODB_URI) return null;
+  if (mongoDb) return mongoDb;
+  const { MongoClient } = await import('mongodb');
+  mongoClient = new MongoClient(process.env.MONGODB_URI);
+  await mongoClient.connect();
+  mongoDb = mongoClient.db('souk');
+  return mongoDb;
+}
+
+const g = globalThis;
+if (!g.__soukDb && !process.env.MONGODB_URI) {
+  g.__soukDb = makeSeed();
+}
+const memoryDb = g.__soukDb;
+
+async function getDb() {
+  if (process.env.MONGODB_URI) {
+    const mdb = await getMongoDb();
+    const doc = await mdb.collection('store').findOne({ _id: 'main' });
+    if (!doc) {
+      const seed = makeSeed();
+      await mdb.collection('store').insertOne({ _id: 'main', ...seed });
+      return seed;
+    }
+    return { products: doc.products || [], orders: doc.orders || [] };
+  }
+  return memoryDb;
+}
+
+async function updateDb(fn) {
+  if (process.env.MONGODB_URI) {
+    const mdb = await getMongoDb();
+    const doc = await mdb.collection('store').findOne({ _id: 'main' });
+    const db = doc ? { products: doc.products || [], orders: doc.orders || [] } : makeSeed();
+    if (!doc) await mdb.collection('store').insertOne({ _id: 'main', ...db });
+    const result = await fn(db);
+    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders } }, { upsert: true });
+    return result === undefined ? db : result;
+  }
+  const r = await fn(memoryDb);
+  return r === undefined ? memoryDb : r;
+}
 
 function requireAdmin(req, res, next) {
   const h = req.headers.authorization || '';
@@ -51,33 +94,33 @@ app.post('/api/auth/login', (req, res) => {
   return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' });
 });
 app.get('/api/auth/me', requireAdmin, (req, res) => res.json({ username: req.admin.username }));
-app.get('/api/auth/stats', (req, res) => {
-  const d = getDb();
+app.get('/api/auth/stats', async (req, res) => {
+  const d = await getDb();
   const revenue = d.orders.filter(o => o.status === 'delivered').reduce((s, o) => s + o.total, 0);
   res.json({ productCount: d.products.length, orderCount: d.orders.length, pendingCount: d.orders.filter(o => o.status === 'pending').length, revenue });
 });
-app.get('/api/products', (req, res) => {
+app.get('/api/products', async (req, res) => {
   const q = (req.query.q || '').toString().trim().toLowerCase();
   const category = (req.query.category || '').toString().trim();
-  let products = getDb().products;
+  let products = (await getDb()).products;
   if (category) products = products.filter(p => p.category === category);
   if (q) products = products.filter(p => p.name.toLowerCase().includes(q) || p.description.includes(q));
   res.json(products);
 });
-app.get('/api/products/categories', (req, res) => {
-  const cats = [...new Set(getDb().products.map(p => p.category).filter(Boolean))];
+app.get('/api/products/categories', async (req, res) => {
+  const cats = [...new Set((await getDb()).products.map(p => p.category).filter(Boolean))];
   res.json(cats);
 });
-app.post('/api/products', requireAdmin, (req, res) => {
+app.post('/api/products', requireAdmin, async (req, res) => {
   const { name, price, category, description, image, stock } = req.body || {};
   if (!name || typeof price !== 'number' || price < 0) return res.status(400).json({ error: 'الاسم والسعر مطلوبان' });
   const product = { id: randomUUID(), name: String(name), price, category: category || '', description: description || '', image: image || '', stock: Number.isFinite(stock) ? stock : 0, createdAt: new Date().toISOString() };
-  updateDb(d => { d.products.unshift(product); return product; });
+  await updateDb(d => { d.products.unshift(product); return product; });
   res.status(201).json(product);
 });
-app.put('/api/products/:id', requireAdmin, (req, res) => {
+app.put('/api/products/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
-  const r = updateDb(d => {
+  const r = await updateDb(d => {
     const i = d.products.findIndex(p => p.id === id);
     if (i === -1) return null;
     d.products[i] = { ...d.products[i], ...req.body, id };
@@ -86,9 +129,9 @@ app.put('/api/products/:id', requireAdmin, (req, res) => {
   if (!r) return res.status(404).json({ error: 'المنتج غير موجود' });
   res.json(r);
 });
-app.delete('/api/products/:id', requireAdmin, (req, res) => {
+app.delete('/api/products/:id', requireAdmin, async (req, res) => {
   const { id } = req.params;
-  const r = updateDb(d => {
+  const r = await updateDb(d => {
     const b = d.products.length;
     d.products = d.products.filter(p => p.id !== id);
     return d.products.length !== b;
@@ -96,11 +139,11 @@ app.delete('/api/products/:id', requireAdmin, (req, res) => {
   if (!r) return res.status(404).json({ error: 'المنتج غير موجود' });
   res.json({ ok: true });
 });
-app.post('/api/orders', (req, res) => {
+app.post('/api/orders', async (req, res) => {
   const { customer, items } = req.body || {};
   if (!customer || !customer.name || !customer.phone) return res.status(400).json({ error: 'اسم العميل ورقم الهاتف مطلوبان' });
   if (!Array.isArray(items) || items.length === 0) return res.status(400).json({ error: 'السلة فارغة' });
-  const d = getDb();
+  const d = await getDb();
   const orderItems = [];
   for (const item of items) {
     const p = d.products.find(x => x.id === item.id);
@@ -110,23 +153,23 @@ app.post('/api/orders', (req, res) => {
   }
   const total = orderItems.reduce((s, i) => s + i.price * i.qty, 0);
   const order = { id: randomUUID().slice(0, 8).toUpperCase(), customer: { name: String(customer.name), phone: String(customer.phone), address: customer.address || '', city: customer.city || '', notes: customer.notes || '' }, items: orderItems, total, status: 'pending', createdAt: new Date().toISOString() };
-  updateDb(db2 => {
+  await updateDb(db2 => {
     db2.orders.unshift(order);
     for (const it of orderItems) { const p = db2.products.find(x => x.id === it.productId); if (p && p.stock > 0) p.stock = Math.max(0, p.stock - it.qty); }
   });
   res.status(201).json(order);
 });
-app.get('/api/orders', requireAdmin, (req, res) => {
-  const d = getDb();
+app.get('/api/orders', requireAdmin, async (req, res) => {
+  const d = await getDb();
   const s = (req.query.status || '').toString();
   res.json(s ? d.orders.filter(o => o.status === s) : d.orders);
 });
-app.patch('/api/orders/:id/status', requireAdmin, (req, res) => {
+app.patch('/api/orders/:id/status', requireAdmin, async (req, res) => {
   const { id } = req.params;
   const { status } = req.body || {};
   const allowed = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
   if (!allowed.includes(status)) return res.status(400).json({ error: 'حالة غير صالحة' });
-  const r = updateDb(d => {
+  const r = await updateDb(d => {
     const o = d.orders.find(x => x.id === id);
     if (!o) return null;
     o.status = status;
