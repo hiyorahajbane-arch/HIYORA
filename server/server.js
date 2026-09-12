@@ -28,8 +28,12 @@ app.get('*', (req, res) => {
   res.sendFile(join(CLIENT_DIST, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  const count = getDb().products.length;
-  console.log(`[سوق] الخادم يعمل على http://localhost:${PORT}`);
-  console.log(`[سوق] عدد المنتجات المبدئية: ${count}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    const count = getDb().products.length;
+    console.log(`[سوق] الخادم يعمل على http://localhost:${PORT}`);
+    console.log(`[سوق] عدد المنتجات المبدئية: ${count}`);
+  });
+}
+
+export default app;

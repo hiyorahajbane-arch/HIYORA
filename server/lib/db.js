@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = join(__dirname, '..', 'data', 'db.json');
+const DATA_FILE = process.env.VERCEL ? join('/tmp', 'db.json') : join(__dirname, '..', 'data', 'db.json');
 
 const DEFAULT_DB = {
   products: [],
