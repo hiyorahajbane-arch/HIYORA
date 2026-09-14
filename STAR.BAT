@@ -26,6 +26,15 @@ if not exist "server\data\db.json" (
 if not exist "client\dist\index.html" (
   echo [STAR] Building client...
   call npm.cmd --prefix client run build
+) else (
+  REM إعادة البناء أوطوماتيك إلا كان كاين تعديل جديد في الواجهة
+  powershell -NoProfile -Command "$s=Get-ChildItem -Path 'client\src' -Recurse -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1; $d=Get-Item 'client\dist\index.html' -ErrorAction SilentlyContinue; if ($s.LastWriteTime -gt $d.LastWriteTime) { exit 1 } else { exit 0 }"
+  if errorlevel 1 (
+    echo [STAR] New changes detected, rebuilding client...
+    call npm.cmd --prefix client run build
+  ) else (
+    echo [STAR] Client is up to date, skipping build.
+  )
 )
 echo.
 echo [STAR] Starting store...
