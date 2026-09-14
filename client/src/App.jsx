@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 import Store from './pages/Store.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
 import Cart from './pages/Cart.jsx';
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="orders" element={<AdminOrders />} />
         </Route>
       </Routes>
+      <Footer />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api, formatPrice } from '../../api.js';
 
-const empty = { name: '', price: '', category: '', description: '', image: '', stock: '' };
+const empty = { name: '', price: '', oldPrice: '', category: '', description: '', image: '', stock: '' };
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -33,6 +33,7 @@ export default function AdminProducts() {
     setForm({
       name: product.name,
       price: product.price,
+      oldPrice: product.oldPrice || '',
       category: product.category || '',
       description: product.description || '',
       image: product.image || '',
@@ -49,6 +50,7 @@ export default function AdminProducts() {
       const data = {
         ...form,
         price: Number(form.price) || 0,
+        oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
         stock: Number(form.stock) || 0
       };
       if (editingId) await api.products.update(editingId, data);
@@ -85,6 +87,10 @@ export default function AdminProducts() {
           <div>
             <label>السعر (ر.س) *</label>
             <input type="number" min="0" value={form.price} onChange={set('price')} required />
+          </div>
+          <div>
+            <label>السعر قبل التخفيض (اختياري)</label>
+            <input type="number" min="0" value={form.oldPrice} onChange={set('oldPrice')} placeholder="مثال: 199" />
           </div>
           <div>
             <label>التصنيف</label>
