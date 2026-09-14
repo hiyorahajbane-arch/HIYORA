@@ -1,5 +1,17 @@
-import 'dotenv/config.js';
+import { readFileSync, existsSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+for (const f of [join(ROOT, 'server', '.env'), join(ROOT, '.env')]) {
+  if (existsSync(f)) {
+    for (const line of readFileSync(f, 'utf8').split('\n')) {
+      const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2];
+    }
+  }
+}
 
 const PRODUCTS = [
   // ملابس نساء
