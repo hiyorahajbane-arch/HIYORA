@@ -43,6 +43,9 @@ export default function Navbar() {
           </form>
           <nav className="nav-links">
             <NavLink to="/" end>الرئيسية</NavLink>
+            <NavLink to="/women">نساء</NavLink>
+            <NavLink to="/men">رجال</NavLink>
+            <NavLink to="/kids">أطفال</NavLink>
             <NavLink to="/cart" className="cart-link" title="السلة">
               🛒 {count > 0 && <span className="badge">{count}</span>}
             </NavLink>

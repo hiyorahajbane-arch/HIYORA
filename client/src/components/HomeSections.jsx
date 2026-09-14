@@ -72,6 +72,31 @@ export function Perks() {
   );
 }
 
+const GENDERS = [
+  { to: '/women', label: 'نساء', seed: 'hiyora-women', cls: '' },
+  { to: '/men', label: 'رجال', seed: 'hiyora-men', cls: 'cat-men' },
+  { to: '/kids', label: 'أطفال', seed: 'hiyora-kids', cls: 'cat-kids' }
+];
+
+export function GenderShowcase() {
+  return (
+    <section className="section">
+      <div className="section-head">
+        <span className="section-eyebrow">تسوّق حسب الفئة</span>
+        <h2 className="section-title">لمن تتسوّق اليوم؟</h2>
+      </div>
+      <div className="cat-grid">
+        {GENDERS.map((g) => (
+          <Link key={g.to} to={g.to} className={`cat-card ${g.cls}`}>
+            <img src={`https://picsum.photos/seed/${g.seed}/600/800`} alt={g.label} loading="lazy" />
+            <span>{g.label}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function Newsletter() {
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);

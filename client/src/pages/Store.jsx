@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api.js';
 import ProductCard from '../components/ProductCard.jsx';
-import { Hero, PromoBanner, CategoryShowcase, Perks, Newsletter } from '../components/HomeSections.jsx';
+import { Hero, PromoBanner, GenderShowcase, Perks, Newsletter } from '../components/HomeSections.jsx';
 
 export default function Store() {
   const [params, setParams] = useSearchParams();
@@ -10,13 +10,11 @@ export default function Store() {
   const category = params.get('category') || '';
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     api.products.categories().then(setCategories).catch(() => {});
-    api.products.list().then(setAllProducts).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -96,7 +94,7 @@ export default function Store() {
         </section>
 
         <PromoBanner />
-        <CategoryShowcase categories={categories} products={allProducts} />
+        <GenderShowcase />
         <Perks />
         <Newsletter />
       </main>

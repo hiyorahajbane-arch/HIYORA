@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Store from './pages/Store.jsx';
+import GenderPage from './pages/GenderPage.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
 import Cart from './pages/Cart.jsx';
 import Checkout from './pages/Checkout.jsx';
@@ -18,6 +19,45 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Store />} />
+        <Route
+          path="/women"
+          element={
+            <GenderPage
+              gender="women"
+              eyebrow="WOMEN COLLECTION"
+              title="تشكيلة النساء"
+              subtitle="أناقة تليق بك — قطع عصرية مختارة بعناية"
+              heroSeed="hiyora-women"
+              theme=""
+            />
+          }
+        />
+        <Route
+          path="/men"
+          element={
+            <GenderPage
+              gender="men"
+              eyebrow="MEN COLLECTION"
+              title="تشكيلة الرجال"
+              subtitle="أناقة الرجل العصري — جودة وحضور"
+              heroSeed="hiyora-men"
+              theme="theme-men"
+            />
+          }
+        />
+        <Route
+          path="/kids"
+          element={
+            <GenderPage
+              gender="kids"
+              eyebrow="KIDS COLLECTION"
+              title="تشكيلة الأطفال"
+              subtitle="مرح وألوان لصغارك — راحة وبهجة"
+              heroSeed="hiyora-kids"
+              theme="theme-kids"
+            />
+          }
+        />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
