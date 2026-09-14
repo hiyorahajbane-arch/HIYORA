@@ -1293,6 +1293,23 @@ h1 {
   border-color: #ffb400;
 }
 
+.alert-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.form-title {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
+
+.admin-form.editing {
+  border: 2px solid var(--gold);
+  box-shadow: var(--shadow-lg);
+}
+
 /* Sub-category tabs */
 .sub-tabs {
   display: flex;

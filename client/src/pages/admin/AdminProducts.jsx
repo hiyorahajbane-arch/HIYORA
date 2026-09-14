@@ -20,7 +20,9 @@ export default function AdminProducts() {
   const [form, setForm] = useState(empty);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const formRef = useRef(null);
 
   const load = useCallback(async () => {
     try {
@@ -37,6 +39,8 @@ export default function AdminProducts() {
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   function openEditor(product) {
+    setError('');
+    setSuccess('');
     if (!product) {
       setForm(empty);
       setEditingId(null);
@@ -53,11 +57,15 @@ export default function AdminProducts() {
       stock: product.stock
     });
     setEditingId(product.id);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   async function save(e) {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
       const data = {
@@ -66,11 +74,17 @@ export default function AdminProducts() {
         oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
         stock: Number(form.stock) || 0
       };
-      if (editingId) await api.products.update(editingId, data);
-      else await api.products.create(data);
+      if (editingId) {
+        await api.products.update(editingId, data);
+        setSuccess(`تم حفظ تعديلات "${form.name}" بنجاح ✅`);
+      } else {
+        await api.products.create(data);
+        setSuccess(`تمت إضافة "${form.name}" بنجاح ✅`);
+      }
       setForm(empty);
       setEditingId(null);
       await load();
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -91,7 +105,8 @@ export default function AdminProducts() {
   return (
     <div>
       <h1>إدارة المنتجات</h1>
-      <form className="form admin-form" onSubmit={save}>
+      <form ref={formRef} className={`form admin-form ${editingId ? 'editing' : ''}`} onSubmit={save}>
+        <h2 className="form-title">{editingId ? `تعديل المنتج: ${form.name}` : 'إضافة منتج جديد'}</h2>
         <div className="grid-2">
           <div>
             <label>اسم المنتج *</label>
@@ -127,6 +142,7 @@ export default function AdminProducts() {
         <label>رابط الصورة</label>
         <input value={form.image} onChange={set('image')} placeholder="https://..." />
         {error && <div className="alert alert-error">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
         <div className="row">
           <button className="btn btn-primary" disabled={loading}>
             {editingId ? 'حفظ التعديلات' : 'إضافة المنتج'}
