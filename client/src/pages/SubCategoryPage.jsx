@@ -6,7 +6,7 @@ import { Perks, Newsletter } from '../components/HomeSections.jsx';
 
 const norm = (s) => (s || '').toString().toLowerCase();
 
-export default function SubCategoryPage({ gender, keywords, title, subtitle, eyebrow, heroSeed, tabs }) {
+export default function SubCategoryPage({ gender, keywords, title, subtitle, eyebrow, heroSeed, tabs, theme }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -41,7 +41,7 @@ export default function SubCategoryPage({ gender, keywords, title, subtitle, eye
   }, [gender, keywords.join('|')]);
 
   return (
-    <div>
+    <div className={theme || ''}>
       <section
         className="hero hero-gender"
         style={{ backgroundImage: `url("https://picsum.photos/seed/${heroSeed}/1600/800")` }}

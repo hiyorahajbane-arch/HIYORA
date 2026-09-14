@@ -11,6 +11,24 @@ const WOMEN_TABS = [
   { to: '/women/shoes-bags', label: 'أحذية وحقائب' },
   { to: '/women/accessories', label: 'إكسسوارات' }
 ];
+
+const MEN_TABS = [
+  { to: '/men', label: 'الكل' },
+  { to: '/men/clothes', label: 'ملابس' },
+  { to: '/men/shoes-bags', label: 'أحذية وحقائب' },
+  { to: '/men/accessories', label: 'إكسسوارات' }
+];
+
+const KIDS_TABS = [
+  { to: '/kids', label: 'الكل' },
+  { to: '/kids/clothes', label: 'ملابس' },
+  { to: '/kids/shoes-bags', label: 'أحذية وحقائب' },
+  { to: '/kids/accessories', label: 'إكسسوارات' }
+];
+
+const CLOTHES_KEYS = ['ملابس', 'لباس', 'فستان', 'فساتين', 'قميص', 'بنطلون', 'سروال', 'تنورة', 'عباية', 'قفطان', 'طقم', 'clothes', 'vetement', 'robe', 'dress'];
+const SHOES_BAGS_KEYS = ['حذاء', 'أحذية', 'صندل', 'حقائب', 'حقيبة', 'chaussure', 'sac', 'shoe', 'bag', 'sneaker'];
+const ACCESSORIES_KEYS = ['إكسسوار', 'اكسسوار', 'مجوهرات', 'ساعة', 'نظارة', 'وشاح', 'حزام', 'قبعة', 'accessoire', 'accessory', 'bijou', 'montre', 'lunette'];
 import ProductDetail from './pages/ProductDetail.jsx';
 import Cart from './pages/Cart.jsx';
 import Checkout from './pages/Checkout.jsx';
