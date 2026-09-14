@@ -38,6 +38,42 @@ export default function AdminProducts() {
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
+  function handleImageFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      setError('الصيغة غير مدعومة — استعمل JPG أو PNG فقط.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('حجم الصورة كبير (الحد الأقصى 5MB).');
+      return;
+    }
+    setError('');
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 800;
+        let width = img.width;
+        let height = img.height;
+        if (width > MAX || height > MAX) {
+          const ratio = Math.min(MAX / width, MAX / height);
+          width = Math.round(width * ratio);
+          height = Math.round(height * ratio);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        setForm((f) => ({ ...f, image: canvas.toDataURL('image/jpeg', 0.82) }));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   function openEditor(product) {
     setError('');
     setSuccess('');
@@ -139,8 +175,22 @@ export default function AdminProducts() {
         </div>
         <label>الوصف</label>
         <textarea value={form.description} onChange={set('description')} rows={2} />
-        <label>رابط الصورة</label>
-        <input value={form.image} onChange={set('image')} placeholder="https://..." />
+        <label>صورة المنتج (JPG / PNG)</label>
+        <div className="upload-box">
+          {form.image ? (
+            <div className="upload-preview">
+              <img src={form.image} alt="معاينة الصورة" />
+              <button type="button" className="btn btn-outline btn-sm" onClick={() => setForm({ ...form, image: '' })}>
+                إزالة الصورة
+              </button>
+            </div>
+          ) : (
+            <label className="btn btn-outline upload-btn">
+              📤 اختر صورة من جهازك
+              <input type="file" accept=".jpg,.jpeg,.png" onChange={handleImageFile} hidden />
+            </label>
+          )}
+        </div>
         {error && <div className="alert alert-error">{error}</div>}
         {success && <div className="alert alert-success">{success}</div>}
         <div className="row">

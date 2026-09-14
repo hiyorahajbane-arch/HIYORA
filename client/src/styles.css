@@ -1310,6 +1310,26 @@ h1 {
   box-shadow: var(--shadow-lg);
 }
 
+.upload-box {
+  margin-top: 4px;
+}
+
+.upload-btn {
+  cursor: pointer;
+}
+
+.upload-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.upload-preview img {
+  max-height: 120px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
 /* Sub-category tabs */
 .sub-tabs {
   display: flex;
