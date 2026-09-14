@@ -3,6 +3,14 @@ import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import Store from './pages/Store.jsx';
 import GenderPage from './pages/GenderPage.jsx';
+import SubCategoryPage from './pages/SubCategoryPage.jsx';
+
+const WOMEN_TABS = [
+  { to: '/women', label: 'الكل' },
+  { to: '/women/clothes', label: 'ملابس' },
+  { to: '/women/shoes-bags', label: 'أحذية وحقائب' },
+  { to: '/women/accessories', label: 'إكسسوارات' }
+];
 import ProductDetail from './pages/ProductDetail.jsx';
 import Cart from './pages/Cart.jsx';
 import Checkout from './pages/Checkout.jsx';
@@ -29,6 +37,49 @@ export default function App() {
               subtitle="أناقة تليق بك — قطع عصرية مختارة بعناية"
               heroSeed="hiyora-women"
               theme=""
+              tabs={WOMEN_TABS}
+            />
+          }
+        />
+        <Route
+          path="/women/clothes"
+          element={
+            <SubCategoryPage
+              gender="women"
+              keywords={['ملابس', 'لباس', 'فستان', 'فساتين', 'قميص', 'بنطلون', 'سروال', 'تنورة', 'عباية', 'قفطان', 'clothes', 'vetement', 'robe', 'dress']}
+              title="ملابس النساء"
+              subtitle="فساتين وأطقم عصرية لكل مناسبة"
+              eyebrow="WOMEN FASHION"
+              heroSeed="hiyora-women-clothes"
+              tabs={WOMEN_TABS}
+            />
+          }
+        />
+        <Route
+          path="/women/shoes-bags"
+          element={
+            <SubCategoryPage
+              gender="women"
+              keywords={['حذاء', 'أحذية', 'صندل', 'حقائب', 'حقيبة', 'chaussure', 'sac', 'shoe', 'bag', 'sneaker']}
+              title="الأحذية والحقائب"
+              subtitle="أحذية مريحة وحقائب أنيقة تكمّل إطلالتك"
+              eyebrow="SHOES & BAGS"
+              heroSeed="hiyora-women-shoes"
+              tabs={WOMEN_TABS}
+            />
+          }
+        />
+        <Route
+          path="/women/accessories"
+          element={
+            <SubCategoryPage
+              gender="women"
+              keywords={['إكسسوار', 'اكسسوار', 'مجوهرات', 'ساعة', 'نظارة', 'وشاح', 'حزام', 'accessoire', 'accessory', 'bijou', 'montre', 'lunette']}
+              title="إكسسوارات النساء"
+              subtitle="لمسات أخيرة تصنع الفرق"
+              eyebrow="ACCESSORIES"
+              heroSeed="hiyora-women-accessories"
+              tabs={WOMEN_TABS}
             />
           }
         />
