@@ -46,7 +46,6 @@ export default function Navbar() {
             <NavLink to="/cart" className="cart-link" title="السلة">
               🛒 {count > 0 && <span className="badge">{count}</span>}
             </NavLink>
-            <NavLink to="/admin">الإدارة</NavLink>
           </nav>
         </div>
       </header>

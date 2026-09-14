@@ -16,7 +16,7 @@ export default function Footer() {
           <ul>
             <li><Link to="/">الرئيسية</Link></li>
             <li><Link to="/cart">سلة المشتريات</Link></li>
-            <li><Link to="/admin">لوحة الإدارة</Link></li>
+            <li><Link to="/checkout">إتمام الطلب</Link></li>
           </ul>
         </div>
         <div>
