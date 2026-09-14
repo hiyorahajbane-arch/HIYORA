@@ -22,7 +22,7 @@ export default function Footer() {
         <div>
           <h4>تواصلي معنا</h4>
           <ul>
-            <li>📞 <span dir="ltr">+212 600 000 000</span></li>
+            <li>📞 <span dir="ltr">+212 675 993 497</span></li>
             <li>✉️ contact@hiyora.store</li>
             <li>📍 التوصيل لجميع المدن</li>
           </ul>
