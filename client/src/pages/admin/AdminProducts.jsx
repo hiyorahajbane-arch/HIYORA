@@ -1,7 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api, formatPrice } from '../../api.js';
 
-const empty = { name: '', price: '', oldPrice: '', category: '', description: '', image: '', stock: '' };
+const empty = { name: '', price: '', oldPrice: '', category: '', gender: '', description: '', image: '', stock: '' };
+
+const GENDERS = [
+  { value: '', label: 'للجميع' },
+  { value: 'women', label: 'نساء' },
+  { value: 'men', label: 'رجال' },
+  { value: 'kids', label: 'أطفال' }
+];
+
+export function genderLabel(g) {
+  const found = GENDERS.find((x) => x.value === g);
+  return found ? found.label : 'للجميع';
+}
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -35,6 +47,7 @@ export default function AdminProducts() {
       price: product.price,
       oldPrice: product.oldPrice || '',
       category: product.category || '',
+      gender: product.gender || '',
       description: product.description || '',
       image: product.image || '',
       stock: product.stock
@@ -94,7 +107,15 @@ export default function AdminProducts() {
           </div>
           <div>
             <label>التصنيف</label>
-            <input value={form.category} onChange={set('category')} placeholder="مثال: إلكترونيات" />
+            <input value={form.category} onChange={set('category')} placeholder="مثال: ملابس" />
+          </div>
+          <div>
+            <label>الفئة</label>
+            <select value={form.gender} onChange={set('gender')}>
+              {GENDERS.map((g) => (
+                <option key={g.value} value={g.value}>{g.label}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label>المخزون</label>
@@ -125,6 +146,7 @@ export default function AdminProducts() {
             <th>الصورة</th>
             <th>الاسم</th>
             <th>التصنيف</th>
+            <th>الفئة</th>
             <th>السعر</th>
             <th>المخزون</th>
             <th>إجراءات</th>
@@ -147,6 +169,7 @@ export default function AdminProducts() {
               </td>
               <td>{p.name}</td>
               <td>{p.category || '—'}</td>
+              <td>{genderLabel(p.gender)}</td>
               <td>{formatPrice(p.price)}</td>
               <td>{p.stock}</td>
               <td className="row gap">

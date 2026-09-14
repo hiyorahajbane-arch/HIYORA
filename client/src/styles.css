@@ -1230,3 +1230,65 @@ h1 {
     padding: 48px 20px;
   }
 }
+
+/* ===== Gender themes ===== */
+.theme-men {
+  --primary: #1e3a5f;
+  --primary-dark: #12263f;
+  --gold: #d29a3c;
+  --gold-light: #f0e3c8;
+  --text: #1c2733;
+  --muted: #6b7a8c;
+  --border: #dbe2ea;
+  --bg: #f2f4f7;
+  --dark: #101c2c;
+}
+
+.theme-kids {
+  --primary: #0e9aa7;
+  --primary-dark: #0b7b86;
+  --gold: #ffb400;
+  --gold-light: #fff3d1;
+  --text: #33302a;
+  --muted: #9a8f7a;
+  --border: #f0e4c8;
+  --bg: #fffdf6;
+  --dark: #20404a;
+}
+
+.hero-gender {
+  background-color: var(--dark);
+}
+
+.theme-men .announcement {
+  background: #0b1524;
+}
+
+.theme-kids .announcement {
+  background: linear-gradient(90deg, #0e9aa7, #ffb400, #ff6b6b);
+  color: #fff;
+  font-weight: 600;
+}
+
+.theme-kids .hero-title {
+  letter-spacing: 2px;
+}
+
+.theme-kids .product-card,
+.theme-kids .perk {
+  border-radius: 22px;
+}
+
+.theme-kids .section-title::after {
+  width: 100px;
+  border-radius: 999px;
+}
+
+/* Gender cards on home */
+.cat-men span {
+  border-color: #d29a3c;
+}
+
+.cat-kids span {
+  border-color: #ffb400;
+}
