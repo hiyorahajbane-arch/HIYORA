@@ -8,7 +8,7 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <Link to="/" className="brand">🛍️ سوق</Link>
+      <Link to="/" className="brand">HIYORA</Link>
       <nav className="nav-links">
         <NavLink to="/" end>المتجر</NavLink>
         <NavLink to="/cart">السلة {count > 0 && <span className="badge">{count}</span>}</NavLink>

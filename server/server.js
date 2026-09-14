@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/api', (req, res) => {
-  res.json({ name: 'سوق - واجهة برمجية للمتجر', version: '1.0.0' });
+  res.json({ name: 'HIYORA - واجهة برمجية للمتجر', version: '1.0.0' });
 });
 app.get('/api/health', (req, res) => res.json({ ok: true, vercel: !!process.env.VERCEL }));
 
@@ -33,8 +33,8 @@ app.get('*', (req, res) => {
 if (!process.env.VERCEL) {
   app.listen(PORT, async () => {
     const db = await getDb();
-    console.log(`[سوق] الخادم يعمل على http://localhost:${PORT}`);
-    console.log(`[سوق] عدد المنتجات المبدئية: ${db.products.length}`);
+    console.log(`[HIYORA] الخادم يعمل على http://localhost:${PORT}`);
+    console.log(`[HIYORA] عدد المنتجات المبدئية: ${db.products.length}`);
   });
 }
 

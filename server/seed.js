@@ -75,8 +75,8 @@ updateDb((db) => {
       createdAt: new Date().toISOString(),
       ...p
     }));
-    console.log(`[سوق] تمت إضافة ${db.products.length} منتج تجريبي`);
+    console.log(`[HIYORA] تمت إضافة ${db.products.length} منتج تجريبي`);
   } else {
-    console.log('[سوق] توجد منتجات سابقة، لا حاجة للتهيئة');
+    console.log('[HIYORA] توجد منتجات سابقة، لا حاجة للتهيئة');
   }
 });

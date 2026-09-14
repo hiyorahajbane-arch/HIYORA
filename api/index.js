@@ -83,7 +83,7 @@ function requireAdmin(req, res, next) {
   try { req.admin = jwt.verify(t, JWT_SECRET); next(); } catch { return res.status(401).json({ error: 'الجلسة انتهت، سجل الدخول مجدداً' }); }
 }
 
-app.get('/api', (req, res) => res.json({ name: 'سوق - واجهة برمجية للمتجر', version: '1.0.0' }));
+app.get('/api', (req, res) => res.json({ name: 'HIYORA - واجهة برمجية للمتجر', version: '1.0.0' }));
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body || {};
