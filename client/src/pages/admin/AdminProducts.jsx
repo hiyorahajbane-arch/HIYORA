@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, formatPrice } from '../../api.js';
 
 const empty = { name: '', price: '', oldPrice: '', category: '', gender: '', description: '', image: '', stock: '' };
