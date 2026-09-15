@@ -16,7 +16,7 @@ export default function AdminDashboard() {
     { label: 'المنتجات', value: stats.productCount },
     { label: 'إجمالي الطلبات', value: stats.orderCount },
     { label: 'طلبات قيد الانتظار', value: stats.pendingCount },
-    { label: 'إيرادات المبيعات', value: stats.revenue.toLocaleString('ar-EG') + ' ر.س' }
+    { label: 'إيرادات المبيعات', value: new Intl.NumberFormat('fr-MA').format(stats.revenue) + ' DH' }
   ];
 
   return (

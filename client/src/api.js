@@ -41,5 +41,5 @@ export const api = {
 };
 
 export function formatPrice(n) {
-  return new Intl.NumberFormat('ar-EG').format(n) + ' ر.س';
+  return new Intl.NumberFormat('fr-MA').format(n) + ' DH';
 }

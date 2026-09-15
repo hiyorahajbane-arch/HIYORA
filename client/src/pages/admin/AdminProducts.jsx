@@ -149,7 +149,7 @@ export default function AdminProducts() {
             <input value={form.name} onChange={set('name')} required />
           </div>
           <div>
-            <label>السعر (ر.س) *</label>
+            <label>السعر (DH) *</label>
             <input type="number" min="0" value={form.price} onChange={set('price')} required />
           </div>
           <div>

@@ -72,7 +72,7 @@ export default function Checkout() {
             </div>
           ))}
           <div className="summary-row total"><span>الإجمالي</span><span>{formatPrice(total)}</span></div>
-          <p className="muted small">الدفع عند الاستلام</p>
+          <p className="muted small">الدفع عند الاستلام — الدّيهم المغربي (DH)</p>
         </aside>
       </div>
     </main>
