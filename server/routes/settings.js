@@ -10,8 +10,8 @@ router.get('/whatsapp', requireAdmin, async (req, res) => {
 });
 
 router.post('/whatsapp', requireAdmin, async (req, res) => {
-  const { phone, apikey, webhook } = req.body || {};
-  await updateDb(db => { db.whatsapp = { phone: phone || '', apikey: apikey || '', webhook: webhook || '' }; });
+  const { phone, apikey, webhook, tgToken, tgChat } = req.body || {};
+  await updateDb(db => { db.whatsapp = { phone: phone || '', apikey: apikey || '', webhook: webhook || '', tgToken: tgToken || '', tgChat: tgChat || '' }; });
   res.json({ ok: true });
 });
 

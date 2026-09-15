@@ -97,8 +97,8 @@ app.get('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
   res.json(db.whatsapp || {});
 });
 app.post('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
-  const { phone, apikey, webhook } = req.body || {};
-  await updateDb(db=>{ db.whatsapp = { phone: phone||'', apikey: apikey||'', webhook: webhook||'' }; });
+  const { phone, apikey, webhook, tgToken, tgChat } = req.body || {};
+  await updateDb(db=>{ db.whatsapp = { phone: phone||'', apikey: apikey||'', webhook: webhook||'', tgToken: tgToken||'', tgChat: tgChat||'' }; });
   res.json({ ok:true });
 });
 app.post('/api/notify/test-custom', requireAdmin, async (req,res)=>{
@@ -164,18 +164,26 @@ async function notifyOrder(order) {
   let phone = (process.env.ADMIN_PHONE || process.env.WHATSAPP_NUMBER || '').replace(/\D/g,'');
   let apikey = (process.env.CALLMEBOT_APIKEY || process.env.WHATSAPP_APIKEY || '').trim();
   let webhook = (process.env.WHATSAPP_WEBHOOK || '').trim();
+  let tgToken = (process.env.TELEGRAM_BOT_TOKEN || '').trim();
+  let tgChat = (process.env.TELEGRAM_CHAT_ID || '').trim();
   try {
     const db = await getDb();
     if (db.whatsapp) {
       if (!phone && db.whatsapp.phone) phone = String(db.whatsapp.phone).replace(/\D/g,'');
       if (!apikey && db.whatsapp.apikey) apikey = String(db.whatsapp.apikey).trim();
       if (!webhook && db.whatsapp.webhook) webhook = String(db.whatsapp.webhook).trim();
+      if (!tgToken && db.whatsapp.tgToken) tgToken = String(db.whatsapp.tgToken).trim();
+      if (!tgChat && db.whatsapp.tgChat) tgChat = String(db.whatsapp.tgChat).trim();
     }
   } catch {}
   if (!phone) phone = '212675993497';
   const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
   // ntfy push (يعمل بدون إعداد - حمّل ntfy و اشترك في hiyora-0675993497)
   try { const ntfyTopic = `hiyora-${phone.slice(-9)}`; await fetch(`https://ntfy.sh/${ntfyTopic}`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent', ntfyTopic); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
+  // Telegram (أسرع وأضمن من واتساب)
+  if (tgToken && tgChat) {
+    try { const url=`https://api.telegram.org/bot${tgToken}/sendMessage`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({chat_id:tgChat, text})}); console.log('[NOTIFY] Telegram',r.status); if(r.ok) return; } catch(e){ console.error('[NOTIFY] Telegram failed',e.message); }
+  }
   if (apikey && apikey !== 'YOUR_API_KEY_HERE' && apikey !== 'YOUR_KEY') {
     try { const url=`https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apikey}`; console.log('[NOTIFY] CallMeBot',phone); const r=await fetch(url); console.log('[NOTIFY] status',r.status, (await r.text()).slice(0,200)); if(r.ok) return; } catch(e){ console.error('[NOTIFY] CallMeBot failed',e.message); }
   }
