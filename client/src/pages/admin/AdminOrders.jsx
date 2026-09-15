@@ -25,7 +25,24 @@ export default function AdminOrders() {
   const [expanded, setExpanded] = useState(null);
 
   useEffect(() => {
-    api.orders.list().then(setOrders).catch((e) => setError(e.message));
+    let seen = 0;
+    let first = true;
+    const load = () => api.orders.list().then((list) => {
+      setOrders(list);
+      if (!first && list.length > seen) {
+        const n = list.length - seen;
+        try { new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==').play().catch(()=>{}); } catch {}
+        if ('Notification' in window) {
+          if (Notification.permission === 'granted') new Notification(`🛒 ${n} طلب جديد!`, { body: `${list[0].customer.name} - ${list[0].total} DH` });
+          else if (Notification.permission !== 'denied') Notification.requestPermission();
+        }
+      }
+      seen = list.length;
+      first = false;
+    }).catch((e) => setError(e.message));
+    load();
+    const id = setInterval(load, 10000);
+    return () => clearInterval(id);
   }, []);
 
   async function changeStatus(order, status) {
