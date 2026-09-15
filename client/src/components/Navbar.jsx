@@ -4,9 +4,9 @@ import { useCart } from '../context/CartContext.jsx';
 import { useTranslation } from '../context/TranslationContext.jsx';
 
 const LANGS = [
-  { code: 'ar', label: '🇲🇦 العربية' },
-  { code: 'fr', label: '🇫🇷 Français' },
-  { code: 'en', label: '🇬🇧 English' }
+  { code: 'ar', flag: '🇲🇦', label: 'العربية' },
+  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+  { code: 'en', flag: '🇬🇧', label: 'English' }
 ];
 
 export default function Navbar() {
@@ -37,8 +37,9 @@ export default function Navbar() {
                 key={l.code}
                 className={`lang-btn ${lang === l.code ? 'active' : ''}`}
                 onClick={() => setLang(l.code)}
+                title={l.label}
               >
-                {l.label}
+                <span className="flag">{l.flag}</span> {l.label}
               </button>
             ))}
           </div>

@@ -110,6 +110,17 @@ a {
   border-color: var(--primary);
 }
 
+.lang-btn .flag {
+  font-size: 1.3em;
+  line-height: 1;
+}
+
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 /* ===== RTL support ===== */
 [dir="rtl"] .lang-switch {
   margin-inline-start: 0;
