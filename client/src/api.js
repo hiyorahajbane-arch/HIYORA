@@ -37,7 +37,8 @@ export const api = {
   auth: {
     login: (credentials) => request('/auth/login', { method: 'POST', body: JSON.stringify(credentials) }),
     stats: () => request('/auth/stats')
-  }
+  },
+  _raw: (path) => request(path)
 };
 
 export function formatPrice(n) {

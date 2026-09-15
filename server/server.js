@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 
 app.get('/api', (req, res) => {
-  res.json({ name: 'HIYORA - واجهة برمجية للمتجر', version: '1.0.0' });
+  res.json({ name: 'HIYORA - واجهة برمجية للمتجر', version: '1.0.0', whatsapp: process.env.WHATSAPP_NUMBER || '' });
 });
 app.get('/api/health', (req, res) => res.json({ ok: true, vercel: !!process.env.VERCEL }));
 
