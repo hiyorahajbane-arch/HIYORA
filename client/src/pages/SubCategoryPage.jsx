@@ -5,6 +5,12 @@ import { useTranslation } from '../context/TranslationContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { Perks, Newsletter } from '../components/HomeSections.jsx';
 
+const HERO_IMAGES = {
+  women: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1600&q=80',
+  men: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=1600&q=80',
+  kids: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=1600&q=80'
+};
+
 const norm = (s) => (s || '').toString().toLowerCase();
 
 export default function SubCategoryPage({ gender, keywords, title, subtitle, eyebrow, heroSeed, tabs, theme }) {
@@ -46,7 +52,7 @@ export default function SubCategoryPage({ gender, keywords, title, subtitle, eye
     <div className={theme || ''}>
       <section
         className="hero hero-gender"
-        style={{ backgroundImage: `url("https://picsum.photos/seed/${heroSeed}/1600/800")` }}
+        style={{ backgroundImage: `url("${HERO_IMAGES[gender] || `https://picsum.photos/seed/${heroSeed}/1600/800`}")` }}
       >
         <div className="hero-content">
           <span className="hero-eyebrow">{eyebrow}</span>
