@@ -106,8 +106,8 @@ app.get('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
   res.json(db.whatsapp || {});
 });
 app.post('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
-  const { phone, apikey, webhook, tgToken, tgChat } = req.body || {};
-  await updateDb(db=>{ db.whatsapp = { phone: phone||'', apikey: apikey||'', webhook: webhook||'', tgToken: tgToken||'', tgChat: tgChat||'' }; });
+  const { phone, apikey, webhook, tgToken, tgChat, ultraInstance, ultraToken } = req.body || {};
+  await updateDb(db=>{ db.whatsapp = { phone: phone||'', apikey: apikey||'', webhook: webhook||'', tgToken: tgToken||'', tgChat: tgChat||'', ultraInstance, ultraToken }; });
   res.json({ ok:true });
 });
 app.post('/api/notify/test-custom', requireAdmin, async (req,res)=>{
@@ -196,6 +196,8 @@ async function notifyOrder(order) {
   let webhook = (process.env.WHATSAPP_WEBHOOK || '').trim();
   let tgToken = (process.env.TELEGRAM_BOT_TOKEN || '').trim();
   let tgChat = (process.env.TELEGRAM_CHAT_ID || '').trim();
+  let ultraInstance = (process.env.ULTRAMSG_INSTANCE || '').trim();
+  let ultraToken = (process.env.ULTRAMSG_TOKEN || '').trim();
   try {
     const db = await getDb();
     if (db.whatsapp) {
@@ -204,15 +206,20 @@ async function notifyOrder(order) {
       if (!webhook && db.whatsapp.webhook) webhook = String(db.whatsapp.webhook).trim();
       if (!tgToken && db.whatsapp.tgToken) tgToken = String(db.whatsapp.tgToken).trim();
       if (!tgChat && db.whatsapp.tgChat) tgChat = String(db.whatsapp.tgChat).trim();
+      if (!ultraInstance && db.whatsapp.ultraInstance) ultraInstance = String(db.whatsapp.ultraInstance).trim();
+      if (!ultraToken && db.whatsapp.ultraToken) ultraToken = String(db.whatsapp.ultraToken).trim();
     }
   } catch {}
   if (!phone) phone = '212675993497';
   const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
-  // Web Push (يعمل بنقرة واحدة - بدون واتساب)
+  // UltraMsg WhatsApp (أسهل - امسح QR فقط)
+  if (ultraInstance && ultraToken) {
+    try { const url=`https://api.ultramsg.com/${ultraInstance}/messages/chat`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token:ultraToken, to:phone, body:text})}); console.log('[NOTIFY] UltraMsg',r.status, (await r.text()).slice(0,200)); if(r.ok) return; } catch(e){ console.error('[NOTIFY] UltraMsg failed',e.message); }
+  }
+  // Web Push
   try { const wp = await getWebPush(); if (wp) { const db2=await getDb(); const subs=db2.pushSubs||[]; const payload=JSON.stringify({title:`طلب جديد #${order.id}`, body:`${order.customer.name} - ${order.total} DH`}); await Promise.all(subs.map(s=> wp.sendNotification(s, payload).catch(()=>{}))); console.log('[NOTIFY] webpush', subs.length); } } catch(e){ console.error('[NOTIFY] webpush failed',e.message); }
-  // ntfy push (يعمل بدون إعداد - حمّل ntfy و اشترك في hiyora-0675993497)
+  // ntfy
   try { const ntfyTopic = `hiyora-${phone.slice(-9)}`; await fetch(`https://ntfy.sh/${ntfyTopic}`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent', ntfyTopic); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
-  // Telegram (أسرع وأضمن من واتساب)
   if (tgToken && tgChat) {
     try { const url=`https://api.telegram.org/bot${tgToken}/sendMessage`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({chat_id:tgChat, text})}); console.log('[NOTIFY] Telegram',r.status); if(r.ok) return; } catch(e){ console.error('[NOTIFY] Telegram failed',e.message); }
   }
