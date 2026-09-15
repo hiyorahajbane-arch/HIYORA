@@ -85,6 +85,11 @@ function requireAdmin(req, res, next) {
 
 app.get('/api', (req, res) => res.json({ name: 'HIYORA - واجهة برمجية للمتجر', version: '1.0.0' }));
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+app.get('/api/notify/test', async (req, res) => {
+  const fake={id:'TEST123', customer:{name:'زبون تجريبي', phone:'0600000000', city:'Casa', address:'-'}, total:299, items:[{name:'منتج تجريبي', qty:1, price:299}]};
+  await notifyOrder(fake);
+  res.json({ env:{ hasApiKey:!!(process.env.CALLMEBOT_APIKEY||process.env.WHATSAPP_APIKEY), hasWebhook:!!process.env.WHATSAPP_WEBHOOK, phone:process.env.ADMIN_PHONE||'not-set'} });
+});
 app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body || {};
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
@@ -139,6 +144,18 @@ app.delete('/api/products/:id', requireAdmin, async (req, res) => {
   if (!r) return res.status(404).json({ error: 'المنتج غير موجود' });
   res.json({ ok: true });
 });
+async function notifyOrder(order) {
+  const phone = (process.env.ADMIN_PHONE || process.env.WHATSAPP_NUMBER || '212675993497').replace(/\D/g,'');
+  const apikey = (process.env.CALLMEBOT_APIKEY || process.env.WHATSAPP_APIKEY || '').trim();
+  const webhook = (process.env.WHATSAPP_WEBHOOK || '').trim();
+  const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
+  if (apikey && apikey !== 'YOUR_API_KEY_HERE' && apikey !== 'YOUR_KEY') {
+    try { const url=`https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apikey}`; console.log('[NOTIFY] CallMeBot',phone); const r=await fetch(url); console.log('[NOTIFY] status',r.status, (await r.text()).slice(0,200)); return; } catch(e){ console.error('[NOTIFY] CallMeBot failed',e.message); }
+  }
+  if (webhook && !webhook.includes('YOUR_API_KEY')) {
+    try { const sep=webhook.includes('?')?'&':'?'; const url=`${webhook}${sep}text=${encodeURIComponent(text)}&phone=${phone}`; const r=await fetch(url); console.log('[NOTIFY] webhook',r.status); } catch(e){ console.error('[NOTIFY] webhook failed',e.message); }
+  } else console.log('[NOTIFY] no WhatsApp config - set CALLMEBOT_APIKEY on Vercel. Order',order.id);
+}
 app.post('/api/orders', async (req, res) => {
   const { customer, items } = req.body || {};
   if (!customer || !customer.name || !customer.phone) return res.status(400).json({ error: 'اسم العميل ورقم الهاتف مطلوبان' });
@@ -157,6 +174,7 @@ app.post('/api/orders', async (req, res) => {
     db2.orders.unshift(order);
     for (const it of orderItems) { const p = db2.products.find(x => x.id === it.productId); if (p && p.stock > 0) p.stock = Math.max(0, p.stock - it.qty); }
   });
+  notifyOrder(order).catch(()=>{});
   res.status(201).json(order);
 });
 app.get('/api/orders', requireAdmin, async (req, res) => {
