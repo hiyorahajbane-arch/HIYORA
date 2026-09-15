@@ -6,7 +6,9 @@ async function request(path, options = {}) {
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch(BASE + path, { ...options, headers });
   if (!res.ok) {
-    let message = 'حدث خطأ غير متوقع';
+    const lang = (() => { try { return localStorage.getItem('souk_lang') || 'ar'; } catch { return 'ar'; } })();
+    let fallback = lang === 'fr' ? 'Une erreur inattendue' : lang === 'en' ? 'Unexpected error' : 'حدث خطأ غير متوقع';
+    let message = fallback;
     try {
       const body = await res.json();
       message = body.error || message;

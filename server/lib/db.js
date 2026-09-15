@@ -44,6 +44,7 @@ if (isVercel && !process.env.MONGODB_URI) {
   if (!g.__soukDb) g.__soukDb = makeSeed();
   memoryDb = g.__soukDb;
 }
+if (memoryDb && !memoryDb.whatsapp) memoryDb.whatsapp = {};
 
 function loadSync() {
   if (process.env.MONGODB_URI) throw new Error('Use async getDb for Mongo');

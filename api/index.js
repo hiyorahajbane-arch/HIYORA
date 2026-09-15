@@ -75,7 +75,7 @@ async function updateDb(fn) {
   const r = await fn(memoryDb);
   return r === undefined ? memoryDb : r;
 }
-if (!memoryDb.whatsapp) memoryDb.whatsapp = {};
+if (memoryDb && !memoryDb.whatsapp) memoryDb.whatsapp = {};
 
 function requireAdmin(req, res, next) {
   const h = req.headers.authorization || '';
