@@ -54,10 +54,10 @@ async function getDb() {
     const doc = await mdb.collection('store').findOne({ _id: 'main' });
     if (!doc) {
       const seed = makeSeed();
-      await mdb.collection('store').insertOne({ _id: 'main', ...seed });
-      return seed;
+      await mdb.collection('store').insertOne({ _id: 'main', ...seed, whatsapp: {} });
+      return { ...seed, whatsapp: {} };
     }
-    return { products: doc.products || [], orders: doc.orders || [] };
+    return { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {} };
   }
   return memoryDb;
 }
@@ -66,15 +66,16 @@ async function updateDb(fn) {
   if (process.env.MONGODB_URI) {
     const mdb = await getMongoDb();
     const doc = await mdb.collection('store').findOne({ _id: 'main' });
-    const db = doc ? { products: doc.products || [], orders: doc.orders || [] } : makeSeed();
+    const db = doc ? { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {} } : { ...makeSeed(), whatsapp: {} };
     if (!doc) await mdb.collection('store').insertOne({ _id: 'main', ...db });
     const result = await fn(db);
-    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders } }, { upsert: true });
+    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders, whatsapp: db.whatsapp || {} } }, { upsert: true });
     return result === undefined ? db : result;
   }
   const r = await fn(memoryDb);
   return r === undefined ? memoryDb : r;
 }
+if (!memoryDb.whatsapp) memoryDb.whatsapp = {};
 
 function requireAdmin(req, res, next) {
   const h = req.headers.authorization || '';
@@ -88,7 +89,22 @@ app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.get('/api/notify/test', async (req, res) => {
   const fake={id:'TEST123', customer:{name:'زبون تجريبي', phone:'0600000000', city:'Casa', address:'-'}, total:299, items:[{name:'منتج تجريبي', qty:1, price:299}]};
   await notifyOrder(fake);
-  res.json({ env:{ hasApiKey:!!(process.env.CALLMEBOT_APIKEY||process.env.WHATSAPP_APIKEY), hasWebhook:!!process.env.WHATSAPP_WEBHOOK, phone:process.env.ADMIN_PHONE||'not-set'} });
+  const db=await getDb();
+  res.json({ db: db.whatsapp || {}, env:{ hasApiKey:!!(process.env.CALLMEBOT_APIKEY||process.env.WHATSAPP_APIKEY), hasWebhook:!!process.env.WHATSAPP_WEBHOOK, phone:process.env.ADMIN_PHONE||'not-set'} });
+});
+app.get('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
+  const db=await getDb();
+  res.json(db.whatsapp || {});
+});
+app.post('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
+  const { phone, apikey, webhook } = req.body || {};
+  await updateDb(db=>{ db.whatsapp = { phone: phone||'', apikey: apikey||'', webhook: webhook||'' }; });
+  res.json({ ok:true });
+});
+app.post('/api/notify/test-custom', requireAdmin, async (req,res)=>{
+  const fake={id:'TEST123', customer:{name:'زبون تجريبي', phone:'0600000000', city:'Casa', address:'-'}, total:299, items:[{name:'منتج تجريبي', qty:1, price:299}]};
+  await notifyOrder(fake);
+  res.json({ ok:true });
 });
 app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body || {};
@@ -145,16 +161,26 @@ app.delete('/api/products/:id', requireAdmin, async (req, res) => {
   res.json({ ok: true });
 });
 async function notifyOrder(order) {
-  const phone = (process.env.ADMIN_PHONE || process.env.WHATSAPP_NUMBER || '212675993497').replace(/\D/g,'');
-  const apikey = (process.env.CALLMEBOT_APIKEY || process.env.WHATSAPP_APIKEY || '').trim();
-  const webhook = (process.env.WHATSAPP_WEBHOOK || '').trim();
+  let phone = (process.env.ADMIN_PHONE || process.env.WHATSAPP_NUMBER || '').replace(/\D/g,'');
+  let apikey = (process.env.CALLMEBOT_APIKEY || process.env.WHATSAPP_APIKEY || '').trim();
+  let webhook = (process.env.WHATSAPP_WEBHOOK || '').trim();
+  try {
+    const db = await getDb();
+    if (db.whatsapp) {
+      if (!phone && db.whatsapp.phone) phone = String(db.whatsapp.phone).replace(/\D/g,'');
+      if (!apikey && db.whatsapp.apikey) apikey = String(db.whatsapp.apikey).trim();
+      if (!webhook && db.whatsapp.webhook) webhook = String(db.whatsapp.webhook).trim();
+    }
+  } catch {}
+  if (!phone) phone = '212675993497';
   const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
   if (apikey && apikey !== 'YOUR_API_KEY_HERE' && apikey !== 'YOUR_KEY') {
-    try { const url=`https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apikey}`; console.log('[NOTIFY] CallMeBot',phone); const r=await fetch(url); console.log('[NOTIFY] status',r.status, (await r.text()).slice(0,200)); return; } catch(e){ console.error('[NOTIFY] CallMeBot failed',e.message); }
+    try { const url=`https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apikey}`; console.log('[NOTIFY] CallMeBot',phone); const r=await fetch(url); console.log('[NOTIFY] status',r.status, (await r.text()).slice(0,200)); if(r.ok) return; } catch(e){ console.error('[NOTIFY] CallMeBot failed',e.message); }
   }
   if (webhook && !webhook.includes('YOUR_API_KEY')) {
-    try { const sep=webhook.includes('?')?'&':'?'; const url=`${webhook}${sep}text=${encodeURIComponent(text)}&phone=${phone}`; const r=await fetch(url); console.log('[NOTIFY] webhook',r.status); } catch(e){ console.error('[NOTIFY] webhook failed',e.message); }
-  } else console.log('[NOTIFY] no WhatsApp config - set CALLMEBOT_APIKEY on Vercel. Order',order.id);
+    try { const sep=webhook.includes('?')?'&':'?'; const url=`${webhook}${sep}text=${encodeURIComponent(text)}&phone=${phone}`; const r=await fetch(url); console.log('[NOTIFY] webhook',r.status); if(r.ok) return; } catch(e){ console.error('[NOTIFY] webhook failed',e.message); }
+  }
+  console.log('[NOTIFY] no WhatsApp config - اضبطه من /admin/settings . Order',order.id);
 }
 app.post('/api/orders', async (req, res) => {
   const { customer, items } = req.body || {};
