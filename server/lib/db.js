@@ -20,7 +20,8 @@ const SEED_PRODUCTS = [
 function makeSeed() {
   return {
     products: SEED_PRODUCTS.map(p => ({ id: `${Date.now()}-${Math.random().toString(36).slice(2,7)}`, createdAt: new Date().toISOString(), ...p })),
-    orders: []
+    orders: [],
+    whatsapp: {}
   };
 }
 
@@ -87,22 +88,25 @@ export async function getDb() {
       await mdb.collection('store').insertOne({ _id: 'main', ...seed });
       return seed;
     }
-    return { products: doc.products || [], orders: doc.orders || [] };
+    return { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {} };
   }
-  return loadSync();
+  const d = loadSync();
+  if (!d.whatsapp) d.whatsapp = {};
+  return d;
 }
 
 export async function updateDb(mutator) {
   if (process.env.MONGODB_URI) {
     const mdb = await getMongoDb();
     const doc = await mdb.collection('store').findOne({ _id: 'main' });
-    const db = doc ? { products: doc.products || [], orders: doc.orders || [] } : makeSeed();
+    const db = doc ? { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {} } : makeSeed();
     if (!doc) await mdb.collection('store').insertOne({ _id: 'main', ...db });
     const result = await mutator(db);
-    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders } }, { upsert: true });
+    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders, whatsapp: db.whatsapp || {} } }, { upsert: true });
     return result === undefined ? db : result;
   }
   const db = loadSync();
+  if (!db.whatsapp) db.whatsapp = {};
   const result = await mutator(db);
   saveSync(db);
   return result === undefined ? db : result;

@@ -1,8 +1,18 @@
 export async function notifyOrder(order) {
-  const phoneRaw = process.env.ADMIN_PHONE || process.env.WHATSAPP_NUMBER || '212675993497';
+  let phoneRaw = process.env.ADMIN_PHONE || process.env.WHATSAPP_NUMBER || '';
+  let apikey = (process.env.CALLMEBOT_APIKEY || process.env.WHATSAPP_APIKEY || '').trim();
+  let webhook = (process.env.WHATSAPP_WEBHOOK || '').trim();
+  try {
+    const { getDb } = await import('./db.js');
+    const db = await getDb();
+    if (db.whatsapp) {
+      if (!phoneRaw && db.whatsapp.phone) phoneRaw = String(db.whatsapp.phone);
+      if (!apikey && db.whatsapp.apikey) apikey = String(db.whatsapp.apikey).trim();
+      if (!webhook && db.whatsapp.webhook) webhook = String(db.whatsapp.webhook).trim();
+    }
+  } catch {}
+  if (!phoneRaw) phoneRaw = '212675993497';
   const phone = phoneRaw.replace(/\D/g, '');
-  const apikey = (process.env.CALLMEBOT_APIKEY || process.env.WHATSAPP_APIKEY || '').trim();
-  const webhook = (process.env.WHATSAPP_WEBHOOK || '').trim();
 
   const text = `🛒 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف العميل: ${order.customer.phone}\nالمدينة: ${order.customer.city || '-'} \nالعنوان: ${order.customer.address || '-'} \nالإجمالي: ${order.total} DH\n\nالمنتجات:\n${order.items.map((i) => `• ${i.name} × ${i.qty} = ${i.price * i.qty} DH`).join('\n')}`;
 
@@ -43,6 +53,6 @@ export async function notifyOrder(order) {
     }
   }
 
-  console.log('[NOTIFY] No WhatsApp config - set CALLMEBOT_APIKEY or WHATSAPP_WEBHOOK on Vercel. Order:', order.id);
+  console.log('[NOTIFY] No WhatsApp config - اضبطه من /admin/settings . Order:', order.id);
   return { ok: false, reason: 'no-config' };
 }
