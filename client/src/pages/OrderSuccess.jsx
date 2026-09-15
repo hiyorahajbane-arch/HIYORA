@@ -1,15 +1,17 @@
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
 export default function OrderSuccess() {
   const { id } = useParams();
+  const { t } = useTranslation();
   return (
     <main className="container success">
       <div className="success-icon">✓</div>
-      <h1>تم استلام طلبك بنجاح!</h1>
+      <h1>{t('orderSuccess')}</h1>
       <p className="muted">
-        رقم طلبك هو <strong className="order-id">{id}</strong>. سنتواصل معك قريباً لتأكيد الطلب.
+        {t('orderId')} <strong className="order-id">{id}</strong>.
       </p>
-      <Link to="/" className="btn btn-primary">متابعة التسوق</Link>
+      <Link to="/" className="btn btn-primary">{t('continueShop')}</Link>
     </main>
   );
 }

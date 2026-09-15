@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { api } from '../api.js';
+import { useTranslation } from '../context/TranslationContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { Perks, Newsletter } from '../components/HomeSections.jsx';
 
 const norm = (s) => (s || '').toString().toLowerCase();
 
 export default function SubCategoryPage({ gender, keywords, title, subtitle, eyebrow, heroSeed, tabs, theme }) {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -50,14 +52,14 @@ export default function SubCategoryPage({ gender, keywords, title, subtitle, eye
           <span className="hero-eyebrow">{eyebrow}</span>
           <h1 className="hero-title">{title}</h1>
           <p className="hero-subtitle">{subtitle}</p>
-          <a href="#products" className="hero-cta">تسوّقي الآن</a>
+          <a href="#products" className="hero-cta">{t('shopNow')}</a>
         </div>
       </section>
 
       <main className="container" id="products">
         <section className="section">
           <div className="section-head">
-            <span className="section-eyebrow">تشكيلة النساء</span>
+            <span className="section-eyebrow">{t('hiyoraCollection')}</span>
             <h2 className="section-title">{title}</h2>
           </div>
 
@@ -76,11 +78,10 @@ export default function SubCategoryPage({ gender, keywords, title, subtitle, eye
           )}
 
           {error && <div className="alert alert-error">{error}</div>}
-          {loading && <div className="muted">جارِ التحميل...</div>}
+          {loading && <div className="muted">{t('loading')}</div>}
           {!loading && !error && products.length === 0 && (
             <div className="muted">
-              لا توجد منتجات بعد في هذه الفئة. حددي تصنيف المنتج من الإدارة
-              (ملابس / أحذية / حقائب / إكسسوارات).
+              {t('noProductsFound')}
             </div>
           )}
 

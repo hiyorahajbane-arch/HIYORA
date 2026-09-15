@@ -1,35 +1,37 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
 export default function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="footer">
       <div className="footer-grid">
         <div>
-          <div className="footer-brand">HIYORA</div>
+          <div className="footer-brand">{t('footerBrand')}</div>
           <p>
-            في HIYORA نقدّم لك تشكيلة مختارة بعناية لتواكبي أحدث صيحات الموضة.
+            {t('footerBrand')} {t('info').toLowerCase()} — نقدّم لك تشكيلة مختارة بعناية لتواكبي أحدث صيحات الموضة.
             اكتشفي قطعاً عصرية وأنيقة بأسعار في المتناول.
           </p>
         </div>
         <div>
-          <h4>معلومات</h4>
+          <h4>{t('info')}</h4>
           <ul>
-            <li><Link to="/">الرئيسية</Link></li>
-            <li><Link to="/cart">سلة المشتريات</Link></li>
-            <li><Link to="/checkout">إتمام الطلب</Link></li>
+            <li><Link to="/">{t('home')}</Link></li>
+            <li><Link to="/cart">{t('cart')}</Link></li>
+            <li><Link to="/checkout">{t('confirmOrder')}</Link></li>
           </ul>
         </div>
         <div>
-          <h4>تواصلي معنا</h4>
+          <h4>{t('contactUs')}</h4>
           <ul>
-            <li>📞 <span dir="ltr">+212 675 993 497</span></li>
-            <li>✉️ contact@hiyora.store</li>
-            <li>📍 التوصيل لجميع المدن</li>
+            <li>📞 <span dir="ltr">{t('footerPhone')}</span></li>
+            <li>✉️ {t('footerEmail')}</li>
+            <li>📍 {t('footerAddress')}</li>
           </ul>
         </div>
       </div>
       <div className="footer-bottom">
-        © 2026 HIYORA — جميع الحقوق محفوظة
+        {t('rights')}
       </div>
     </footer>
   );

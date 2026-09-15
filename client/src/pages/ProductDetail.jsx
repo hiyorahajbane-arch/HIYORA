@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api, formatPrice } from '../api.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const { dispatch } = useCart();
+  const { t } = useTranslation();
 
   useEffect(() => {
     api.products.list().then((list) => {
@@ -18,9 +20,9 @@ export default function ProductDetail() {
   }, [id]);
 
   if (notFound) {
-    return <div className="container muted">المنتج غير موجود.</div>;
+    return <div className="container muted">{t('noProducts')}</div>;
   }
-  if (!product) return <div className="container muted">جارِ التحميل...</div>;
+  if (!product) return <div className="container muted">{t('loading')}</div>;
 
   return (
     <main className="container detail">
@@ -28,7 +30,7 @@ export default function ProductDetail() {
         {product.image ? (
           <img src={product.image} alt={product.name} />
         ) : (
-          <div className="no-image">لا توجد صورة</div>
+          <div className="no-image">{t('noDescription')}</div>
         )}
       </div>
       <div className="detail-info">
@@ -37,16 +39,16 @@ export default function ProductDetail() {
         <p className="detail-description">{product.description}</p>
         <p className="product-price big">{formatPrice(product.price)}</p>
         <p className={product.stock > 0 ? 'in-stock' : 'out-of-stock'}>
-          {product.stock > 0 ? `متوفر (${product.stock} قطعة)` : 'نفد المخزون'}
+          {product.stock > 0 ? `${t('inStock')} (${product.stock} ${t('all')})` : t('outOfStock')}
         </p>
         <button
           className="btn btn-primary"
           disabled={product.stock <= 0}
           onClick={() => dispatch({ type: 'add', product })}
         >
-          أضف إلى السلة
+          {t('addToCart')}
         </button>
-        <Link to="/cart" className="btn btn-outline">الذهاب إلى السلة</Link>
+        <Link to="/cart" className="btn btn-outline">{t('goToCart')}</Link>
       </div>
     </main>
   );

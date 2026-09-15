@@ -1,55 +1,47 @@
-import { useEffect, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
-const MESSAGES = [
-  'التوصيل مجاني لجميع الطلبات',
-  'تخفيضات حصرية على التشكيلة الجديدة',
-  'الدفع عند الاستلام'
+const LANGS = [
+  { code: 'ar', label: 'عربي' },
+  { code: 'fr', label: 'Français' },
+  { code: 'en', label: 'English' }
 ];
 
 export default function Navbar() {
   const { count } = useCart();
+  const { lang, setLang, t } = useTranslation();
   const [q, setQ] = useState('');
-  const [msg, setMsg] = useState(0);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const t = setInterval(() => setMsg((m) => (m + 1) % MESSAGES.length), 4000);
-    return () => clearInterval(t);
-  }, []);
-
-  function search(e) {
-    e.preventDefault();
-    navigate(q.trim() ? `/?q=${encodeURIComponent(q.trim())}` : '/');
-  }
 
   return (
     <>
-      <div className="announcement">{MESSAGES[msg]}</div>
+      <div className="announcement">{t('freeShipping')} — {t('cashOnDelivery')}</div>
       <header className="navbar">
         <div className="navbar-inner">
           <Link to="/" className="brand">
-            HIYORA<small>FASHION STORE</small>
+            {t('brand')}<small>{t('brandSub')}</small>
           </Link>
-          <form className="nav-search" onSubmit={search}>
-            <input
-              type="search"
-              placeholder="ابحث عن منتج..."
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-            />
-            <button type="submit" title="بحث">🔍</button>
-          </form>
-          <nav className="nav-links">
-            <NavLink to="/" end>الرئيسية</NavLink>
-            <NavLink to="/women">نساء</NavLink>
-            <NavLink to="/men">رجال</NavLink>
-            <NavLink to="/kids">أطفال</NavLink>
+          <div className="nav-links">
+            <NavLink to="/" end>{t('home')}</NavLink>
+            <NavLink to="/women">{t('women')}</NavLink>
+            <NavLink to="/men">{t('men')}</NavLink>
+            <NavLink to="/kids">{t('kids')}</NavLink>
             <NavLink to="/cart" className="cart-link" title="السلة">
               🛒 {count > 0 && <span className="badge">{count}</span>}
             </NavLink>
-          </nav>
+          </div>
+          <div className="lang-switch">
+            {LANGS.map((l) => (
+              <button
+                key={l.code}
+                className={`lang-btn ${lang === l.code ? 'active' : ''}`}
+                onClick={() => setLang(l.code)}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
     </>

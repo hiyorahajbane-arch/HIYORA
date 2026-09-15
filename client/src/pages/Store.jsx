@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api.js';
+import { useTranslation } from '../context/TranslationContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { Hero, PromoBanner, GenderShowcase, Perks, Newsletter } from '../components/HomeSections.jsx';
 
 export default function Store() {
+  const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
   const q = params.get('q') || '';
   const category = params.get('category') || '';
@@ -50,8 +52,8 @@ export default function Store() {
       <main className="container" id="latest">
         <section className="section">
           <div className="section-head">
-            <span className="section-eyebrow">وصل حديثاً</span>
-            <h2 className="section-title">أحدث التشكيلات</h2>
+            <span className="section-eyebrow">{t('latest')}</span>
+            <h2 className="section-title">{t('latestTitle')}</h2>
           </div>
 
           <div className="store-toolbar">
@@ -60,7 +62,7 @@ export default function Store() {
                 className={`chip-btn ${category === '' ? 'active' : ''}`}
                 onClick={() => set('category', '')}
               >
-                الكل
+                {t('all')}
               </button>
               {categories.map((c) => (
                 <button
@@ -74,16 +76,16 @@ export default function Store() {
             </div>
             {q && (
               <p className="muted">
-                نتائج البحث عن: <strong>{q}</strong>{' '}
+                {t('searchResults')} <strong>{q}</strong>{' '}
                 <button className="icon-btn" onClick={() => set('q', '')} title="مسح البحث">✕</button>
               </p>
             )}
           </div>
 
           {error && <div className="alert alert-error">{error}</div>}
-          {loading && <div className="muted">جارِ التحميل...</div>}
+          {loading && <div className="muted">{t('loading')}</div>}
           {!loading && !error && products.length === 0 && (
-            <div className="muted">لا توجد منتجات مطابقة.</div>
+            <div className="muted">{t('noProducts')}</div>
           )}
 
           <div className="grid">
@@ -94,7 +96,7 @@ export default function Store() {
         </section>
 
         <PromoBanner />
-        <GenderShowcase />
+        <GenderShowcase categories={categories} products={products} />
         <Perks />
         <Newsletter />
       </main>

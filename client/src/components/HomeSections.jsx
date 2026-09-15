@@ -1,27 +1,30 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
 export function Hero() {
+  const { t } = useTranslation();
   return (
     <section className="hero">
       <div className="hero-content">
-        <span className="hero-eyebrow">HIYORA COLLECTION</span>
-        <h1 className="hero-title">HIYORA</h1>
-        <p className="hero-subtitle">اكتشفي عالمك الخاص بالموضة — أنيق، بسيط، لا يُقاوم</p>
-        <a href="#latest" className="hero-cta">تسوّقي عروضنا</a>
+        <span className="hero-eyebrow">{t('hiyoraCollection')}</span>
+        <h1 className="hero-title">{t('hiyoraTitle')}</h1>
+        <p className="hero-subtitle">{t('hiyoraSubtitle')}</p>
+        <a href="#latest" className="hero-cta">{t('shopNow')}</a>
       </div>
     </section>
   );
 }
 
 export function PromoBanner() {
+  const { t } = useTranslation();
   return (
     <section className="promo-banner">
       <div className="promo-text">
-        <span className="hero-eyebrow">تشكيلة الموسم</span>
-        <h2>لا تفوّتي آخر الصيحات!</h2>
-        <p>قطع عصرية تضاف باستمرار لتكمّلي إطلالتك المثالية.</p>
-        <a href="#latest" className="btn btn-gold">اكتشفي التشكيلة</a>
+        <span className="hero-eyebrow">{t('seasonCollection')}</span>
+        <h2>{t('promoTitle')}</h2>
+        <p>{t('promoDesc')}</p>
+        <a href="#latest" className="btn btn-gold">{t('discoverCollection')}</a>
       </div>
       <div className="promo-image" />
     </section>
@@ -29,6 +32,7 @@ export function PromoBanner() {
 }
 
 export function CategoryShowcase({ categories, products }) {
+  const { t } = useTranslation();
   if (!categories || categories.length === 0) return null;
   const imageFor = (cat) => {
     const found = products.find((p) => p.category === cat && p.image);
@@ -37,8 +41,8 @@ export function CategoryShowcase({ categories, products }) {
   return (
     <section className="section">
       <div className="section-head">
-        <span className="section-eyebrow">تسوّقي حسب الفئة</span>
-        <h2 className="section-title">تصنيفاتنا</h2>
+        <span className="section-eyebrow">{t('categories')}</span>
+        <h2 className="section-title">{t('categoriesTitle')}</h2>
       </div>
       <div className="cat-grid">
         {categories.map((cat) => (
@@ -53,51 +57,28 @@ export function CategoryShowcase({ categories, products }) {
 }
 
 const PERKS = [
-  { icon: '🚚', title: 'توصيل مجاني', text: 'التوصيل مجاني لجميع طلباتك.' },
-  { icon: '💵', title: 'الدفع عند الاستلام', text: 'ادفعي بكل ثقة عند وصول طلبك.' },
-  { icon: '✨', title: 'رضاك التزامنا', text: 'رضاك هو التزامنا اليومي.' }
+  { icon: '🚚', titleKey: 'freeShipping', textKey: 'freeShippingText' },
+  { icon: '💵', titleKey: 'cashOnDelivery', textKey: 'cashOnDeliveryText' },
+  { icon: '✨', titleKey: 'satisfaction', textKey: 'satisfactionText' }
 ];
 
 export function Perks() {
+  const { t } = useTranslation();
   return (
     <section className="perks">
       {PERKS.map((p) => (
-        <div key={p.title} className="perk">
+        <div key={p.titleKey} className="perk">
           <span className="perk-icon">{p.icon}</span>
-          <h4>{p.title}</h4>
-          <p>{p.text}</p>
+          <h4>{t(p.titleKey)}</h4>
+          <p>{t(p.textKey)}</p>
         </div>
       ))}
     </section>
   );
 }
 
-const GENDERS = [
-  { to: '/women', label: 'نساء', seed: 'hiyora-women', cls: '' },
-  { to: '/men', label: 'رجال', seed: 'hiyora-men', cls: 'cat-men' },
-  { to: '/kids', label: 'أطفال', seed: 'hiyora-kids', cls: 'cat-kids' }
-];
-
-export function GenderShowcase() {
-  return (
-    <section className="section">
-      <div className="section-head">
-        <span className="section-eyebrow">تسوّق حسب الفئة</span>
-        <h2 className="section-title">لمن تتسوّق اليوم؟</h2>
-      </div>
-      <div className="cat-grid">
-        {GENDERS.map((g) => (
-          <Link key={g.to} to={g.to} className={`cat-card ${g.cls}`}>
-            <img src={`https://picsum.photos/seed/${g.seed}/600/800`} alt={g.label} loading="lazy" />
-            <span>{g.label}</span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export function Newsletter() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
 
@@ -109,22 +90,48 @@ export function Newsletter() {
 
   return (
     <section className="newsletter">
-      <h2>اشتركي ليصلك جديد عروضنا</h2>
-      <p>كوني أول من يعرف عن التشكيلات الجديدة والتخفيضات الحصرية.</p>
+      <h2>{t('newsletterTitle')}</h2>
+      <p>{t('newsletterDesc')}</p>
       {done ? (
-        <p className="newsletter-success">شكراً لاشتراكك! أهلاً بك في عائلة HIYORA ✨</p>
+        <p className="newsletter-success">{t('newsletterSuccess')}</p>
       ) : (
         <form className="newsletter-form" onSubmit={submit}>
           <input
             type="email"
-            placeholder="بريدك الإلكتروني"
+            placeholder={t('newsletterEmail')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <button type="submit" className="btn btn-gold">اشتراك</button>
+          <button type="submit" className="btn btn-gold">{t('newsletterSubscribe')}</button>
         </form>
       )}
+    </section>
+  );
+}
+
+const GENDERS = [
+  { to: '/women', label: 'نساء', seed: 'hiyora-women' },
+  { to: '/men', label: 'رجال', seed: 'hiyora-men' },
+  { to: '/kids', label: 'أطفال', seed: 'hiyora-kids' }
+];
+
+export function GenderShowcase() {
+  const { t } = useTranslation();
+  return (
+    <section className="section">
+      <div className="section-head">
+        <span className="section-eyebrow">{t('categories')}</span>
+        <h2 className="section-title">{t('categoriesTitle')}</h2>
+      </div>
+      <div className="cat-grid">
+        {GENDERS.map((g) => (
+          <Link key={g.to} to={g.to} className="cat-card">
+            <img src={`https://picsum.photos/seed/${g.seed}/600/800`} alt={g.label} loading="lazy" />
+            <span>{g.label}</span>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 }

@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api, formatPrice } from '../api.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
 export default function Checkout() {
   const { items, total, dispatch } = useCart();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [form, setForm] = useState({ name: '', phone: '', city: '', address: '', notes: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -13,9 +15,9 @@ export default function Checkout() {
   if (items.length === 0) {
     return (
       <main className="container">
-        <h1>إتمام الطلب</h1>
-        <p className="muted">سلتك فارغة.</p>
-        <Link to="/" className="btn btn-outline">تصفح المنتجات</Link>
+        <h1>{t('checkoutTitle')}</h1>
+        <p className="muted">{t('emptyCart')}</p>
+        <Link to="/" className="btn btn-outline">{t('continueShopping')}</Link>
       </main>
     );
   }
@@ -25,10 +27,6 @@ export default function Checkout() {
   async function submit(e) {
     e.preventDefault();
     setError('');
-    if (!form.name.trim() || !form.phone.trim()) {
-      setError('الاسم ورقم الهاتف مطلوبان.');
-      return;
-    }
     setSubmitting(true);
     try {
       const order = await api.orders.create({
@@ -45,34 +43,34 @@ export default function Checkout() {
 
   return (
     <main className="container checkout">
-      <h1>إتمام الطلب</h1>
+      <h1>{t('checkoutTitle')}</h1>
       <div className="cart-layout">
         <form className="form" onSubmit={submit}>
-          <label>الاسم الكامل *</label>
+          <label>{t('fullName')} *</label>
           <input value={form.name} onChange={set('name')} placeholder="مثال: أحمد محمد" />
-          <label>رقم الهاتف *</label>
+          <label>{t('phone')} *</label>
           <input value={form.phone} onChange={set('phone')} placeholder="05xxxxxxxx" />
-          <label>المدينة</label>
+          <label>{t('city')}</label>
           <input value={form.city} onChange={set('city')} />
-          <label>العنوان</label>
+          <label>{t('address')}</label>
           <input value={form.address} onChange={set('address')} />
-          <label>ملاحظات</label>
+          <label>{t('notes')}</label>
           <textarea value={form.notes} onChange={set('notes')} rows={3} />
           {error && <div className="alert alert-error">{error}</div>}
           <button className="btn btn-primary btn-block" disabled={submitting}>
-            {submitting ? 'جارِ إرسال الطلب...' : 'تأكيد الطلب'}
+            {submitting ? t('submitting') : t('confirmOrder')}
           </button>
         </form>
         <aside className="summary">
-          <h3>ملخص الطلب</h3>
+          <h3>{t('orderSummary')}</h3>
           {items.map((i) => (
             <div key={i.id} className="summary-row">
               <span>{i.name} × {i.qty}</span>
               <span>{formatPrice(i.price * i.qty)}</span>
             </div>
           ))}
-          <div className="summary-row total"><span>الإجمالي</span><span>{formatPrice(total)}</span></div>
-          <p className="muted small">الدفع عند الاستلام — الدّيهم المغربي (DH)</p>
+          <div className="summary-row total"><span>{t('total')}</span><span>{formatPrice(total)}</span></div>
+          <p className="muted small">{t('cod')}</p>
         </aside>
       </div>
     </main>

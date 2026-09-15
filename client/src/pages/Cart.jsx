@@ -1,23 +1,25 @@
 import { Link } from 'react-router-dom';
 import { formatPrice } from '../api.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
 export default function Cart() {
   const { items, total, dispatch } = useCart();
+  const { t } = useTranslation();
 
   if (items.length === 0) {
     return (
       <main className="container">
-        <h1>سلة المشتريات</h1>
-        <p className="muted">سلتك فارغة.</p>
-        <Link to="/" className="btn btn-outline">تصفح المنتجات</Link>
+        <h1>{t('cartTitle')}</h1>
+        <p className="muted">{t('emptyCart')}</p>
+        <Link to="/" className="btn btn-outline">{t('continueShopping')}</Link>
       </main>
     );
   }
 
   return (
     <main className="container">
-      <h1>سلة المشتريات</h1>
+      <h1>{t('cartTitle')}</h1>
       <div className="cart-layout">
         <ul className="cart-list">
           {items.map((item) => (
@@ -35,7 +37,7 @@ export default function Cart() {
               <span className="cart-item-total">{formatPrice(item.price * item.qty)}</span>
               <button
                 className="icon-btn"
-                title="إزالة"
+                title={t('delete')}
                 onClick={() => dispatch({ type: 'remove', id: item.id })}
               >
                 ✕
@@ -44,11 +46,11 @@ export default function Cart() {
           ))}
         </ul>
         <aside className="summary">
-          <h3>ملخص الطلب</h3>
-          <div className="summary-row"><span>العدد</span><span>{items.reduce((s, i) => s + i.qty, 0)}</span></div>
-          <div className="summary-row total"><span>الإجمالي</span><span>{formatPrice(total)}</span></div>
-          <Link to="/checkout" className="btn btn-primary btn-block">إتمام الطلب</Link>
-          <Link to="/" className="btn btn-outline btn-block">متابعة التسوق</Link>
+          <h3>{t('orderSummary')}</h3>
+          <div className="summary-row"><span>{t('total')}</span><span>{items.reduce((s, i) => s + i.qty, 0)}</span></div>
+          <div className="summary-row total"><span>{t('total')}</span><span>{formatPrice(total)}</span></div>
+          <Link to="/checkout" className="btn btn-primary btn-block">{t('confirmOrder')}</Link>
+          <Link to="/" className="btn btn-outline btn-block">{t('continueShopping')}</Link>
         </aside>
       </div>
     </main>
