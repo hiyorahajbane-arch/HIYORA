@@ -174,13 +174,14 @@ async function notifyOrder(order) {
   } catch {}
   if (!phone) phone = '212675993497';
   const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
+  // ntfy push (يعمل بدون إعداد - حمّل ntfy و اشترك في hiyora-0675993497)
+  try { const ntfyTopic = `hiyora-${phone.slice(-9)}`; await fetch(`https://ntfy.sh/${ntfyTopic}`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent', ntfyTopic); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   if (apikey && apikey !== 'YOUR_API_KEY_HERE' && apikey !== 'YOUR_KEY') {
     try { const url=`https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apikey}`; console.log('[NOTIFY] CallMeBot',phone); const r=await fetch(url); console.log('[NOTIFY] status',r.status, (await r.text()).slice(0,200)); if(r.ok) return; } catch(e){ console.error('[NOTIFY] CallMeBot failed',e.message); }
   }
   if (webhook && !webhook.includes('YOUR_API_KEY')) {
     try { const sep=webhook.includes('?')?'&':'?'; const url=`${webhook}${sep}text=${encodeURIComponent(text)}&phone=${phone}`; const r=await fetch(url); console.log('[NOTIFY] webhook',r.status); if(r.ok) return; } catch(e){ console.error('[NOTIFY] webhook failed',e.message); }
   }
-  console.log('[NOTIFY] no WhatsApp config - اضبطه من /admin/settings . Order',order.id);
 }
 app.post('/api/orders', async (req, res) => {
   const { customer, items } = req.body || {};

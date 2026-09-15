@@ -41,12 +41,16 @@ export default function AdminSettings() {
 
   return (
     <div>
-      <h1>⚙️ إعدادات واتساب</h1>
+      <h1>⚙️ إعدادات الإشعارات</h1>
+      <div style={{ background: '#e8f5e9', padding: 12, borderRadius: 8, margin: '12px 0' }}>
+        <strong>✅ إشعار فوري بدون واتساب (يعمل الآن):</strong><br/>
+        حمّل تطبيق <strong>ntfy</strong> من Play Store → اشترك في موضوع <code>hiyora-0675993497</code> → ستصلك الإشعارات فورا حتى لو لم تفتح الموقع.
+      </div>
       <p className="muted small" style={{ background: '#fff3cd', padding: 12, borderRadius: 8, margin: '12px 0' }}>
-        <strong>لتفعيل الإشعارات على 0675993497:</strong><br/>
-        1- احفظ رقم <strong>+34 644 10 85 84</strong> في هاتفك<br/>
-        2- أرسل له على واتساب: <code>I allow callmebot to send me messages</code><br/>
-        3- سيرد عليك بـ <code>apikey=XXXXXX</code> انسخه والصقه هنا
+        <strong>واتساب (اختياري):</strong> الرقم القديم توقف. الرقم الحالي <strong>+34 644 53 78 58</strong><br/>
+        1- احفظ <strong>+34 644 53 78 58</strong> في هاتفك<br/>
+        2- أرسل له: <code>I allow callmebot to send me messages</code><br/>
+        3- انسخ <code>apikey=XXXXXX</code> والصقه هنا — أو اتركه فارغا وسيعمل ntfy فقط
       </p>
       <form onSubmit={save} className="form" style={{ maxWidth: 500 }}>
         <label>رقم واتساب الإدارة</label>
