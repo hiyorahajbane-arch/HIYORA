@@ -4,20 +4,16 @@ import { useTranslation } from '../../context/TranslationContext.jsx';
 
 const empty = { name: '', price: '', oldPrice: '', category: '', gender: '', description: '', image: '', stock: '' };
 
-const GENDERS = [
-  { value: '', label: 'للجميع' },
-  { value: 'women', label: 'نساء' },
-  { value: 'men', label: 'رجال' },
-  { value: 'kids', label: 'أطفال' }
-];
+const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
 
-export function genderLabel(g) {
-  const found = GENDERS.find((x) => x.value === g);
-  return found ? found.label : 'للجميع';
+const genderKey = (g) => ({ '': 'allGenders', 'women': 'womenGender', 'men': 'menGender', 'kids': 'kidsGender' })[g] || 'allGenders';
+
+export function genderLabel(g, t) {
+  return t ? t(genderKey(g)) : g;
 }
 
 export default function AdminProducts() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState(empty);
   const [editingId, setEditingId] = useState(null);
@@ -45,11 +41,11 @@ export default function AdminProducts() {
     e.target.value = '';
     if (!file) return;
     if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-      setError('الصيغة غير مدعومة — استعمل JPG أو PNG فقط.');
+      setError(t('invalidImageFormat'));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setError('حجم الصورة كبير (الحد الأقصى 5MB).');
+      setError(t('imageTooLarge'));
       return;
     }
     setError('');
@@ -131,7 +127,8 @@ export default function AdminProducts() {
   }
 
   async function remove(product) {
-    if (!confirm(`حذف المنتج "${product.name}"؟`)) return;
+    const name = product[`name_${lang}`] || product.name;
+    if (!confirm(t('deleteConfirm').replace('{name}', name))) return;
     try {
       await api.products.remove(product.id);
       await load();
@@ -156,18 +153,19 @@ export default function AdminProducts() {
           </div>
           <div>
             <label>{t('oldPrice')}</label>
-            <input type="number" min="0" value={form.oldPrice} onChange={set('oldPrice')} placeholder="مثال: 199" />
+            <input type="number" min="0" value={form.oldPrice} onChange={set('oldPrice')} placeholder={t('examplePrice')} />
           </div>
           <div>
             <label>{t('category')}</label>
-            <input value={form.category} onChange={set('category')} placeholder="مثال: ملابس" />
+            <input value={form.category} onChange={set('category')} placeholder={t('exampleCategory')} />
           </div>
           <div>
             <label>{t('gender')}</label>
             <select value={form.gender} onChange={set('gender')}>
-              {GENDERS.map((g) => (
-                <option key={g.value} value={g.value}>{g.label}</option>
-              ))}
+              <option value="">{t('allGenders')}</option>
+              <option value="women">{t('womenGender')}</option>
+              <option value="men">{t('menGender')}</option>
+              <option value="kids">{t('kidsGender')}</option>
             </select>
           </div>
           <div>
@@ -211,23 +209,26 @@ export default function AdminProducts() {
       <table className="table">
         <thead>
           <tr>
-            <th>{t('image')}</th>
-            <th>{t('productName')}</th>
-            <th>{t('category')}</th>
-            <th>{t('gender')}</th>
-            <th>{t('price')}</th>
-            <th>{t('stock')}</th>
-            <th>{t('orderActions')}</th>
+            <th>{t('thImage')}</th>
+            <th>{t('thName')}</th>
+            <th>{t('thCategory')}</th>
+            <th>{t('thGender')}</th>
+            <th>{t('thPrice')}</th>
+            <th>{t('thStock')}</th>
+            <th>{t('thActions')}</th>
           </tr>
         </thead>
         <tbody>
-          {products.map((p) => (
+          {products.map((p) => {
+            const displayName = p[`name_${lang}`] || p.name;
+            const displayCat = catKey(p.category) ? t(catKey(p.category)) : (p[`category_${lang}`] || p.category || '—');
+            return (
             <tr key={p.id}>
               <td>
                 {p.image ? (
                   <img
                     src={p.image}
-                    alt={p.name}
+                    alt={displayName}
                     className="thumb"
                     onError={(e) => (e.currentTarget.style.visibility = 'hidden')}
                   />
@@ -235,9 +236,9 @@ export default function AdminProducts() {
                   <span className="muted">—</span>
                 )}
               </td>
-              <td>{p.name}</td>
-              <td>{p.category || '—'}</td>
-              <td>{genderLabel(p.gender)}</td>
+              <td>{displayName}</td>
+              <td>{displayCat}</td>
+              <td>{t(genderKey(p.gender))}</td>
               <td>{formatPrice(p.price)}</td>
               <td>{p.stock}</td>
               <td className="row gap">
@@ -245,7 +246,8 @@ export default function AdminProducts() {
                 <button className="btn btn-danger btn-sm" onClick={() => remove(p)}>{t('delete')}</button>
               </td>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

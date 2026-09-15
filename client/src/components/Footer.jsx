@@ -8,10 +8,7 @@ export default function Footer() {
       <div className="footer-grid">
         <div>
           <div className="footer-brand">{t('footerBrand')}</div>
-          <p>
-            {t('footerBrand')} {t('info').toLowerCase()} — نقدّم لك تشكيلة مختارة بعناية لتواكبي أحدث صيحات الموضة.
-            اكتشفي قطعاً عصرية وأنيقة بأسعار في المتناول.
-          </p>
+          <p>{t('footerDesc')}</p>
         </div>
         <div>
           <h4>{t('info')}</h4>
