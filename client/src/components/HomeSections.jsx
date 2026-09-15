@@ -31,6 +31,8 @@ export function PromoBanner() {
   );
 }
 
+const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+
 export function CategoryShowcase({ categories, products }) {
   const { t } = useTranslation();
   if (!categories || categories.length === 0) return null;
@@ -47,8 +49,8 @@ export function CategoryShowcase({ categories, products }) {
       <div className="cat-grid">
         {categories.map((cat) => (
           <Link key={cat} to={`/?category=${encodeURIComponent(cat)}`} className="cat-card">
-            <img src={imageFor(cat)} alt={cat} loading="lazy" />
-            <span>{cat}</span>
+            <img src={imageFor(cat)} alt={catKey(cat) ? t(catKey(cat)) : cat} loading="lazy" />
+            <span>{catKey(cat) ? t(catKey(cat)) : cat}</span>
           </Link>
         ))}
       </div>
@@ -110,14 +112,13 @@ export function Newsletter() {
   );
 }
 
-const GENDERS = [
-  { to: '/women', label: 'نساء', seed: 'hiyora-women' },
-  { to: '/men', label: 'رجال', seed: 'hiyora-men' },
-  { to: '/kids', label: 'أطفال', seed: 'hiyora-kids' }
-];
-
 export function GenderShowcase() {
   const { t } = useTranslation();
+  const GENDERS = [
+    { to: '/women', label: t('women'), seed: 'hiyora-women' },
+    { to: '/men', label: t('men'), seed: 'hiyora-men' },
+    { to: '/kids', label: t('kids'), seed: 'hiyora-kids' }
+  ];
   return (
     <section className="section">
       <div className="section-head">

@@ -5,6 +5,8 @@ import { useTranslation } from '../context/TranslationContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { Hero, PromoBanner, GenderShowcase, Perks, Newsletter } from '../components/HomeSections.jsx';
 
+const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+
 export default function Store() {
   const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
@@ -70,14 +72,14 @@ export default function Store() {
                   className={`chip-btn ${category === c ? 'active' : ''}`}
                   onClick={() => set('category', c)}
                 >
-                  {c}
+                  {catKey(c) ? t(catKey(c)) : c}
                 </button>
               ))}
             </div>
             {q && (
               <p className="muted">
                 {t('searchResults')} <strong>{q}</strong>{' '}
-                <button className="icon-btn" onClick={() => set('q', '')} title="مسح البحث">✕</button>
+                <button className="icon-btn" onClick={() => set('q', '')} title={t('close')}>✕</button>
               </p>
             )}
           </div>
