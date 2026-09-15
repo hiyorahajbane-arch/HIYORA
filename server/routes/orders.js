@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { updateDb, getDb } from '../lib/db.js';
 import { requireAdmin } from './auth.js';
+import { notifyOrder } from '../lib/notify.js';
 
 const router = Router();
 
@@ -51,6 +52,8 @@ router.post('/', async (req, res) => {
       if (p && p.stock > 0) p.stock = Math.max(0, p.stock - item.qty);
     }
   });
+
+  notifyOrder(order);
 
   res.status(201).json(order);
 });
