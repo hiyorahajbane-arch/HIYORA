@@ -110,15 +110,21 @@ a {
   border-color: var(--primary);
 }
 
-.lang-btn .flag {
-  font-size: 1.3em;
-  line-height: 1;
+.lang-btn .flag-img {
+  width: 22px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+  display: block;
 }
 
 .lang-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  padding: 6px 8px;
+  min-width: 36px;
 }
 
 /* ===== RTL support ===== */

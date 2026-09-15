@@ -4,9 +4,9 @@ import { useCart } from '../context/CartContext.jsx';
 import { useTranslation } from '../context/TranslationContext.jsx';
 
 const LANGS = [
-  { code: 'ar', flag: '🇲🇦', label: 'العربية' },
-  { code: 'fr', flag: '🇫🇷', label: 'Français' },
-  { code: 'en', flag: '🇬🇧', label: 'English' }
+  { code: 'ar', flag: '🇲🇦', img: 'https://flagcdn.com/w20/ma.png', label: 'العربية' },
+  { code: 'fr', flag: '🇫🇷', img: 'https://flagcdn.com/w20/fr.png', label: 'Français' },
+  { code: 'en', flag: '🇬🇧', img: 'https://flagcdn.com/w20/gb.png', label: 'English' }
 ];
 
 export default function Navbar() {
@@ -38,8 +38,9 @@ export default function Navbar() {
                 className={`lang-btn ${lang === l.code ? 'active' : ''}`}
                 onClick={() => setLang(l.code)}
                 title={l.label}
+                aria-label={l.label}
               >
-                <span className="flag">{l.flag}</span> {l.label}
+                <img src={l.img} alt={l.flag} className="flag-img" width="22" height="15" loading="lazy" />
               </button>
             ))}
           </div>
