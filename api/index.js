@@ -212,14 +212,14 @@ async function notifyOrder(order) {
   } catch {}
   if (!phone) phone = '212675993497';
   const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
+  // ntfy - موضوع ثابت (يُرسل دائما)
+  try { await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent'); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
+  // Web Push
+  try { const wp = await getWebPush(); if (wp) { const db2=await getDb(); const subs=db2.pushSubs||[]; const payload=JSON.stringify({title:`طلب جديد #${order.id}`, body:`${order.customer.name} - ${order.total} DH`}); await Promise.all(subs.map(s=> wp.sendNotification(s, payload).catch(()=>{}))); console.log('[NOTIFY] webpush', subs.length); } } catch(e){ console.error('[NOTIFY] webpush failed',e.message); }
   // UltraMsg WhatsApp (أسهل - امسح QR فقط)
   if (ultraInstance && ultraToken) {
     try { const url=`https://api.ultramsg.com/${ultraInstance}/messages/chat`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token:ultraToken, to:phone, body:text})}); console.log('[NOTIFY] UltraMsg',r.status, (await r.text()).slice(0,200)); if(r.ok) return; } catch(e){ console.error('[NOTIFY] UltraMsg failed',e.message); }
   }
-  // Web Push
-  try { const wp = await getWebPush(); if (wp) { const db2=await getDb(); const subs=db2.pushSubs||[]; const payload=JSON.stringify({title:`طلب جديد #${order.id}`, body:`${order.customer.name} - ${order.total} DH`}); await Promise.all(subs.map(s=> wp.sendNotification(s, payload).catch(()=>{}))); console.log('[NOTIFY] webpush', subs.length); } } catch(e){ console.error('[NOTIFY] webpush failed',e.message); }
-  // ntfy
-  try { const ntfyTopic = `hiyora-${phone.slice(-9)}`; await fetch(`https://ntfy.sh/${ntfyTopic}`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent', ntfyTopic); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   if (tgToken && tgChat) {
     try { const url=`https://api.telegram.org/bot${tgToken}/sendMessage`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({chat_id:tgChat, text})}); console.log('[NOTIFY] Telegram',r.status); if(r.ok) return; } catch(e){ console.error('[NOTIFY] Telegram failed',e.message); }
   }

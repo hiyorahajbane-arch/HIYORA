@@ -24,12 +24,12 @@ export async function notifyOrder(order) {
 
   const text = `🛒 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف العميل: ${order.customer.phone}\nالمدينة: ${order.customer.city || '-'} \nالعنوان: ${order.customer.address || '-'} \nالإجمالي: ${order.total} DH\n\nالمنتجات:\n${order.items.map((i) => `• ${i.name} × ${i.qty} = ${i.price * i.qty} DH`).join('\n')}`;
 
+  // ntfy - يُرسل دائما
+  try { await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent'); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   // UltraMsg WhatsApp (أسهل - امسح QR)
   if (ultraInstance && ultraToken) {
     try { const url=`https://api.ultramsg.com/${ultraInstance}/messages/chat`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token:ultraToken, to:phone, body:text})}); console.log('[NOTIFY] UltraMsg',r.status, (await r.text()).slice(0,200)); if(r.ok) return { ok:true, provider:'ultramsg' }; } catch(e){ console.error('[NOTIFY] UltraMsg failed',e.message); }
   }
-  // 0) ntfy push (يعمل فورا بدون إعداد)
-  try { const ntfyTopic = `hiyora-${phone.slice(-9)}`; await fetch(`https://ntfy.sh/${ntfyTopic}`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy', ntfyTopic); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   // 0b) Telegram (أسهل من واتساب)
   if (tgToken && tgChat) {
     try { const url=`https://api.telegram.org/bot${tgToken}/sendMessage`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({chat_id:tgChat, text})}); console.log('[NOTIFY] Telegram',r.status); if(r.ok) return { ok:true, provider:'telegram' }; } catch(e){ console.error('[NOTIFY] Telegram failed',e.message); }
