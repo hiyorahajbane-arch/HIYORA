@@ -97,9 +97,9 @@ app.get('/api', (req, res) => res.json({ name: 'HIYORA - واجهة برمجية
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.get('/api/notify/test', async (req, res) => {
   const fake={id:'TEST123', customer:{name:'زبون تجريبي', phone:'0600000000', city:'Casa', address:'-'}, total:299, items:[{name:'منتج تجريبي', qty:1, price:299}]};
-  await notifyOrder(fake);
+  const r = await notifyOrder(fake);
   const db=await getDb();
-  res.json({ db: db.whatsapp || {}, env:{ hasApiKey:!!(process.env.CALLMEBOT_APIKEY||process.env.WHATSAPP_APIKEY), hasWebhook:!!process.env.WHATSAPP_WEBHOOK, phone:process.env.ADMIN_PHONE||'not-set'} });
+  res.json({ notify: r, db: db.whatsapp || {}, env:{ hasApiKey:!!(process.env.CALLMEBOT_APIKEY||process.env.WHATSAPP_APIKEY), hasWebhook:!!process.env.WHATSAPP_WEBHOOK, phone:process.env.ADMIN_PHONE||'not-set'} });
 });
 app.get('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
   const db=await getDb();
@@ -213,7 +213,8 @@ async function notifyOrder(order) {
   if (!phone) phone = '212675993497';
   const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
   // ntfy - موضوع ثابت (يُرسل دائما)
-  try { await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent'); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
+  let ntfyOk=false;
+  try { const rr=await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); ntfyOk=rr.ok; console.log('[NOTIFY] ntfy',rr.status); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   // Web Push
   try { const wp = await getWebPush(); if (wp) { const db2=await getDb(); const subs=db2.pushSubs||[]; const payload=JSON.stringify({title:`طلب جديد #${order.id}`, body:`${order.customer.name} - ${order.total} DH`}); await Promise.all(subs.map(s=> wp.sendNotification(s, payload).catch(()=>{}))); console.log('[NOTIFY] webpush', subs.length); } } catch(e){ console.error('[NOTIFY] webpush failed',e.message); }
   // UltraMsg WhatsApp (أسهل - امسح QR فقط)
@@ -227,8 +228,9 @@ async function notifyOrder(order) {
     try { const url=`https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apikey}`; console.log('[NOTIFY] CallMeBot',phone); const r=await fetch(url); console.log('[NOTIFY] status',r.status, (await r.text()).slice(0,200)); if(r.ok) return; } catch(e){ console.error('[NOTIFY] CallMeBot failed',e.message); }
   }
   if (webhook && !webhook.includes('YOUR_API_KEY')) {
-    try { const sep=webhook.includes('?')?'&':'?'; const url=`${webhook}${sep}text=${encodeURIComponent(text)}&phone=${phone}`; const r=await fetch(url); console.log('[NOTIFY] webhook',r.status); if(r.ok) return; } catch(e){ console.error('[NOTIFY] webhook failed',e.message); }
+    try { const sep=webhook.includes('?')?'&':'?'; const url=`${webhook}${sep}text=${encodeURIComponent(text)}&phone=${phone}`; const r=await fetch(url); console.log('[NOTIFY] webhook',r.status); if(r.ok) return {ntfyOk, webhook:true}; } catch(e){ console.error('[NOTIFY] webhook failed',e.message); }
   }
+  return {ntfyOk};
 }
 app.post('/api/orders', async (req, res) => {
   const { customer, items } = req.body || {};
