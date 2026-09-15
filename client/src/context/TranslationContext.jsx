@@ -80,6 +80,11 @@ const translations = {
     'whatsapp': 'واتساب',
     'sendOrderViaWhatsapp': 'أرسل طلبك عبر واتساب',
     'whatsappHint': 'اضغط على زر واتساب أدناه لإرسال تأكيد طلبك',
+    // Categories
+    'catClothes': 'ملابس',
+    'catShoes': 'أحذية',
+    'catBags': 'حقائب',
+    'catAccessories': 'إكسسوارات',
     // Order success
     'orderSuccess': 'تم استلام طلبك بنجاح!',
     'orderId': 'رقم طلبك هو',
@@ -237,6 +242,11 @@ const translations = {
     'whatsapp': 'WhatsApp',
     'sendOrderViaWhatsapp': 'Envoyez votre commande via WhatsApp',
     'whatsappHint': 'Appuyez sur le bouton WhatsApp ci-dessous pour confirmer votre commande',
+    // Categories
+    'catClothes': 'Vêtements',
+    'catShoes': 'Chaussures',
+    'catBags': 'Sacs',
+    'catAccessories': 'Accessoires',
     // Order success
     'orderSuccess': 'Commande reçue avec succès !',
     'orderId': 'Votre numéro de commande est',
@@ -387,6 +397,11 @@ const translations = {
     'whatsapp': 'WhatsApp',
     'sendOrderViaWhatsapp': 'Send your order via WhatsApp',
     'whatsappHint': 'Tap the WhatsApp button below to confirm your order',
+    // Categories
+    'catClothes': 'Clothing',
+    'catShoes': 'Shoes',
+    'catBags': 'Bags',
+    'catAccessories': 'Accessories',
     // Order success
     'orderSuccess': 'Order received successfully!',
     'orderId': 'Your order number is',

@@ -3,12 +3,15 @@ import { formatPrice } from '../api.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useTranslation } from '../context/TranslationContext.jsx';
 
+const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+
 export default function ProductCard({ product }) {
   const { dispatch } = useCart();
-  const { lang } = useTranslation();
+  const { lang, t } = useTranslation();
   const out = product.stock <= 0;
   const promo = product.oldPrice > product.price;
   const name = product[`name_${lang}`] || product.name;
+  const catLabel = catKey(product.category) ? t(catKey(product.category)) : (product[`category_${lang}`] || product.category);
 
   return (
     <div className="product-card">
@@ -21,7 +24,7 @@ export default function ProductCard({ product }) {
         )}
       </Link>
       <div className="product-body">
-        {product.category && <span className="chip">{product.category}</span>}
+        {product.category && <span className="chip">{catLabel}</span>}
         <h3 className="product-name">
           <Link to={`/product/${product.id}`}>{name}</Link>
         </h3>
