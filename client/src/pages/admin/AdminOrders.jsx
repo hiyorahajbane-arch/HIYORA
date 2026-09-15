@@ -50,7 +50,7 @@ export default function AdminOrders() {
             <li key={o.id} className={`order-card ${open ? 'open' : ''}`}>
               <div className="order-head" onClick={() => setExpanded(open ? null : o.id)}>
                 <div>
-                  <strong>{t('orderId')} #{o.id}</strong>
+                  <strong>{t('orderIdLabel')} #{o.id}</strong>
                   <span className="muted small"> — {new Date(o.createdAt).toLocaleString('ar')}</span>
                 </div>
                 <div className="row gap">

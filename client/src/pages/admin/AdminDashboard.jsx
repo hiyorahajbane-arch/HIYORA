@@ -15,7 +15,7 @@ export default function AdminDashboard() {
   if (!stats) return <div className="muted">{t('loading')}</div>;
 
   const cards = [
-    { label: t('products'), value: stats.productCount },
+    { label: t('statsProducts'), value: stats.productCount },
     { label: t('totalOrders'), value: stats.orderCount },
     { label: t('pendingOrders'), value: stats.pendingCount },
     { label: t('revenue'), value: new Intl.NumberFormat('fr-MA').format(stats.revenue) + ' DH' }
