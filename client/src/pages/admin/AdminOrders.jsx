@@ -19,10 +19,19 @@ const statusColor = {
 };
 
 export default function AdminOrders() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(null);
+  const [productsMap, setProductsMap] = useState({});
+
+  useEffect(() => {
+    api.products.list().then(list => {
+      const m = {};
+      list.forEach(p => m[p.id] = p);
+      setProductsMap(m);
+    }).catch(()=>{});
+  }, []);
 
   useEffect(() => {
     let seen = 0;
@@ -68,7 +77,7 @@ export default function AdminOrders() {
               <div className="order-head" onClick={() => setExpanded(open ? null : o.id)}>
                 <div>
                   <strong>{t('orderIdLabel')} #{o.id}</strong>
-                  <span className="muted small"> — {new Date(o.createdAt).toLocaleString('ar')}</span>
+                  <span className="muted small"> — {new Date(o.createdAt).toLocaleString(lang === 'ar' ? 'ar' : lang === 'fr' ? 'fr-FR' : 'en-GB')}</span>
                 </div>
                 <div className="row gap">
                   <span className={`chip status ${statusColor[o.status]}`}>{t(STATUSES[o.status])}</span>
@@ -87,13 +96,16 @@ export default function AdminOrders() {
                     {o.customer.notes && <p>💬 {o.customer.notes}</p>}
                   </div>
                   <div className="order-section">
-                    <h4>{t('products')}</h4>
-                    {o.items.map((i) => (
+                    <h4>{t('productsList')}</h4>
+                    {o.items.map((i) => {
+                      const p = productsMap[i.productId];
+                      const displayName = p ? (p[`name_${lang}`] || p.name) : i.name;
+                      return (
                       <div key={i.productId} className="summary-row">
-                        <span>{i.name} × {i.qty}</span>
+                        <span>{displayName} × {i.qty}</span>
                         <span>{formatPrice(i.price * i.qty)}</span>
                       </div>
-                    ))}
+                    )})}
                   </div>
                   <div className="order-actions">
                     {Object.entries(STATUSES).map(([key, labelKey]) => (
