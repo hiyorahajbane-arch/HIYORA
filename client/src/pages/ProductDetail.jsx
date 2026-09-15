@@ -9,7 +9,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const { dispatch } = useCart();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
 
   useEffect(() => {
     api.products.list().then((list) => {
@@ -24,18 +24,20 @@ export default function ProductDetail() {
   }
   if (!product) return <div className="container muted">{t('loading')}</div>;
 
+  const name = product[`name_${lang}`] || product.name;
+
   return (
     <main className="container detail">
       <div className="detail-image">
         {product.image ? (
-          <img src={product.image} alt={product.name} />
+          <img src={product.image} alt={name} />
         ) : (
           <div className="no-image">{t('noDescription')}</div>
         )}
       </div>
       <div className="detail-info">
         {product.category && <span className="chip">{product.category}</span>}
-        <h1>{product.name}</h1>
+        <h1>{name}</h1>
         <p className="detail-description">{product.description}</p>
         <p className="product-price big">{formatPrice(product.price)}</p>
         <p className={product.stock > 0 ? 'in-stock' : 'out-of-stock'}>

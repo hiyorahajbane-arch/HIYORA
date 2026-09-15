@@ -1,26 +1,29 @@
 import { Link } from 'react-router-dom';
 import { formatPrice } from '../api.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useTranslation } from '../context/TranslationContext.jsx';
 
 export default function ProductCard({ product }) {
   const { dispatch } = useCart();
+  const { lang } = useTranslation();
   const out = product.stock <= 0;
   const promo = product.oldPrice > product.price;
+  const name = product[`name_${lang}`] || product.name;
 
   return (
     <div className="product-card">
       <Link to={`/product/${product.id}`} className="product-image-link">
-        {promo && <span className="promo-badge">تخفيض!</span>}
+        {promo && <span className="promo-badge">{lang === 'ar' ? 'تخفيض!' : lang === 'fr' ? 'Promo !' : 'Sale!'}</span>}
         {product.image ? (
-          <img src={product.image} alt={product.name} loading="lazy" />
+          <img src={product.image} alt={name} loading="lazy" />
         ) : (
-          <div className="no-image">لا توجد صورة</div>
+          <div className="no-image">{lang === 'ar' ? 'لا توجد صورة' : lang === 'fr' ? 'Pas d\'image' : 'No image'}</div>
         )}
       </Link>
       <div className="product-body">
         {product.category && <span className="chip">{product.category}</span>}
         <h3 className="product-name">
-          <Link to={`/product/${product.id}`}>{product.name}</Link>
+          <Link to={`/product/${product.id}`}>{name}</Link>
         </h3>
         <div className="price-row">
           <span className="product-price">{formatPrice(product.price)}</span>
@@ -31,7 +34,7 @@ export default function ProductCard({ product }) {
           disabled={out}
           onClick={() => dispatch({ type: 'add', product })}
         >
-          {out ? 'نفد المخزون' : 'أضف إلى السلة'}
+          {out ? (lang === 'ar' ? 'نفد المخزون' : lang === 'fr' ? 'Rupture de stock' : 'Out of stock') : (lang === 'ar' ? 'أضف إلى السلة' : lang === 'fr' ? 'Ajouter au panier' : 'Add to cart')}
         </button>
       </div>
     </div>

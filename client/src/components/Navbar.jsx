@@ -4,9 +4,9 @@ import { useCart } from '../context/CartContext.jsx';
 import { useTranslation } from '../context/TranslationContext.jsx';
 
 const LANGS = [
-  { code: 'ar', label: 'عربي' },
-  { code: 'fr', label: 'Français' },
-  { code: 'en', label: 'English' }
+  { code: 'ar', label: '🇲🇦 العربية' },
+  { code: 'fr', label: '🇫🇷 Français' },
+  { code: 'en', label: '🇬🇧 English' }
 ];
 
 export default function Navbar() {

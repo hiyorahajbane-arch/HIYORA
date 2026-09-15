@@ -15,22 +15,22 @@ for (const f of [join(ROOT, 'server', '.env'), join(ROOT, '.env')]) {
 
 const PRODUCTS = [
   // ملابس نساء
-  { name: 'فستان صيفي مزهر', price: 249, oldPrice: 329, category: 'ملابس', gender: 'women', description: 'فستان صيفي خفيف بنقشة مزهرة، مثالي للإطلالات النهارية.', image: 'https://picsum.photos/seed/hiyora-dress/600/600', stock: 20 },
-  { name: 'قفطان مغربي أنيق', price: 599, category: 'ملابس', gender: 'women', description: 'قفطان تقليدي بتطريز راقٍ، للمناسبات والأفراح.', image: 'https://picsum.photos/seed/hiyora-caftan/600/600', stock: 10 },
-  { name: 'قميص نسائي قطني', price: 129, category: 'ملابس', gender: 'women', description: 'قميص قطني مريح بقصّة عصرية، متوفر بعدة ألوان.', image: 'https://picsum.photos/seed/hiyora-blouse/600/600', stock: 30 },
+  { name: 'فستان صيفي مزهر', name_fr: 'Robe d\'été fleurie', name_en: 'Floral Summer Dress', price: 249, oldPrice: 329, category: 'ملابس', gender: 'women', description: 'فستان صيفي خفيف بنقشة مزهرة، مثالي للإطلالات النهارية.', image: 'https://picsum.photos/seed/hiyora-dress/600/600', stock: 20 },
+  { name: 'قفطان مغربي أنيق', name_fr: 'Caftan marocain élégant', name_en: 'Elegant Moroccan Caftan', price: 599, category: 'ملابس', gender: 'women', description: 'قفطان تقليدي بتطريز راقٍ، للمناسبات والأفراح.', image: 'https://picsum.photos/seed/hiyora-caftan/600/600', stock: 10 },
+  { name: 'قميص نسائي قطني', name_fr: 'Chemisier en coton', name_en: 'Cotton Blouse', price: 129, category: 'ملابس', gender: 'women', description: 'قميص قطني مريح بقصّة عصرية، متوفر بعدة ألوان.', image: 'https://picsum.photos/seed/hiyora-blouse/600/600', stock: 30 },
   // أحذية وحقائب نساء
-  { name: 'حذاء كعب عالٍ', price: 299, oldPrice: 399, category: 'أحذية', gender: 'women', description: 'حذاء كعب أنيق ومريح للسهرات والمناسبات.', image: 'https://picsum.photos/seed/hiyora-heels/600/600', stock: 15 },
-  { name: 'صندل صيفي مريح', price: 149, category: 'أحذية', gender: 'women', description: 'صندل خفيف ومريح للمشاوير اليومية.', image: 'https://picsum.photos/seed/hiyora-sandals/600/600', stock: 25 },
-  { name: 'حقيبة يد جلدية', price: 349, category: 'حقائب', gender: 'women', description: 'حقيبة يد من الجلد الفاخر بتصميم عملي وأنيق.', image: 'https://picsum.photos/seed/hiyora-handbag/600/600', stock: 12 },
+  { name: 'حذاء كعب عالٍ', name_fr: 'Chaussure à talons hauts', name_en: 'High Heels', price: 299, oldPrice: 399, category: 'أحذية', gender: 'women', description: 'حذاء كعب أنيق ومريح للسهرات والمناسبات.', image: 'https://picsum.photos/seed/hiyora-heels/600/600', stock: 15 },
+  { name: 'صندل صيفي مريح', name_fr: 'Sandale d\'été confortable', name_en: 'Comfortable Summer Sandal', price: 149, category: 'أحذية', gender: 'women', description: 'صندل خفيف ومريح للمشاوير اليومية.', image: 'https://picsum.photos/seed/hiyora-sandals/600/600', stock: 25 },
+  { name: 'حقيبة يد جلدية', name_fr: 'Sac à main en cuir', name_en: 'Leather Handbag', price: 349, category: 'حقائب', gender: 'women', description: 'حقيبة يد من الجلد الفاخر بتصميم عملي وأنيق.', image: 'https://picsum.photos/seed/hiyora-handbag/600/600', stock: 12 },
   // إكسسوارات نساء
-  { name: 'نظارة شمسية نسائية', price: 119, category: 'إكسسوارات', gender: 'women', description: 'نظارة شمسية بحماية UV وإطار عصري.', image: 'https://picsum.photos/seed/hiyora-sunglasses/600/600', stock: 40 },
-  { name: 'ساعة يد نسائية', price: 259, oldPrice: 329, category: 'إكسسوارات', gender: 'women', description: 'ساعة يد أنيقة بسوار معدني ذهبي.', image: 'https://picsum.photos/seed/hiyora-watch/600/600', stock: 18 },
-  { name: 'وشاح حريري', price: 89, category: 'إكسسوارات', gender: 'women', description: 'وشاح من الحرير الناعم بألوان راقية.', image: 'https://picsum.photos/seed/hiyora-scarf/600/600', stock: 35 },
+  { name: 'نظارة شمسية نسائية', name_fr: 'Lunettes de soleil femme', name_en: "Women's Sunglasses", price: 119, category: 'إكسسوارات', gender: 'women', description: 'نظارة شمسية بحماية UV وإطار عصري.', image: 'https://picsum.photos/seed/hiyora-sunglasses/600/600', stock: 40 },
+  { name: 'ساعة يد نسائية', name_fr: 'Montre femme', name_en: "Women's Watch", price: 259, oldPrice: 329, category: 'إكسسوارات', gender: 'women', description: 'ساعة يد أنيقة بسوار معدني ذهبي.', image: 'https://picsum.photos/seed/hiyora-watch/600/600', stock: 18 },
+  { name: 'وشاح حريري', name_fr: 'Écharpe en soie', name_en: 'Silk Scarf', price: 89, category: 'إكسسوارات', gender: 'women', description: 'وشاح من الحرير الناعم بألوان راقية.', image: 'https://picsum.photos/seed/hiyora-scarf/600/600', stock: 35 },
   // رجال
-  { name: 'قميص رجالي كلاسيك', price: 159, category: 'ملابس', gender: 'men', description: 'قميص رجالي بقصّة كلاسيكية وخامة ممتازة.', image: 'https://picsum.photos/seed/hiyora-shirt/600/600', stock: 25 },
-  { name: 'حذاء رياضي رجالي', price: 279, category: 'أحذية', gender: 'men', description: 'حذاء رياضي مريح وخفيف للاستعمال اليومي.', image: 'https://picsum.photos/seed/hiyora-sneakers/600/600', stock: 20 },
+  { name: 'قميص رجالي كلاسيك', name_fr: 'Chemise classique homme', name_en: "Men's Classic Shirt", price: 159, category: 'ملابس', gender: 'men', description: 'قميص رجالي بقصّة كلاسيكية وخامة ممتازة.', image: 'https://picsum.photos/seed/hiyora-shirt/600/600', stock: 25 },
+  { name: 'حذاء رياضي رجالي', name_fr: 'Baskets homme', name_en: "Men's Sneakers", price: 279, category: 'أحذية', gender: 'men', description: 'حذاء رياضي مريح وخفيف للاستعمال اليومي.', image: 'https://picsum.photos/seed/hiyora-sneakers/600/600', stock: 20 },
   // أطفال
-  { name: 'طقم أطفال صيفي', price: 99, category: 'ملابس', gender: 'kids', description: 'طقم صيفي مريح ومرح لأطفالك.', image: 'https://picsum.photos/seed/hiyora-kids/600/600', stock: 30 }
+  { name: 'طقم أطفال صيفي', name_fr: 'Tenue d\'été enfants', name_en: "Kids' Summer Outfit", price: 99, category: 'ملابس', gender: 'kids', description: 'طقم صيفي مريح ومرح لأطفالك.', image: 'https://picsum.photos/seed/hiyora-kids/600/600', stock: 30 }
 ];
 
 const uri = process.env.MONGODB_URI;
