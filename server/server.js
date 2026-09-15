@@ -19,6 +19,12 @@ app.get('/api', (req, res) => {
   res.json({ name: 'HIYORA - واجهة برمجية للمتجر', version: '1.0.0', whatsapp: process.env.WHATSAPP_NUMBER || '+212675993497' });
 });
 app.get('/api/health', (req, res) => res.json({ ok: true, vercel: !!process.env.VERCEL }));
+app.get('/api/notify/test', async (req, res) => {
+  const { notifyOrder } = await import('./lib/notify.js');
+  const fake = { id: 'TEST123', customer: { name: 'زبون تجريبي', phone: '0600000000', city: 'الدار البيضاء', address: '-' }, total: 299, items: [{ name: 'منتج تجريبي', qty: 1, price: 299 }] };
+  const r = await notifyOrder(fake);
+  res.json({ ...r, env: { hasApiKey: !!(process.env.CALLMEBOT_APIKEY || process.env.WHATSAPP_APIKEY), hasWebhook: !!process.env.WHATSAPP_WEBHOOK, phone: process.env.ADMIN_PHONE || 'not-set' } });
+});
 
 app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);

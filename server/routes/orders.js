@@ -53,7 +53,8 @@ router.post('/', async (req, res) => {
     }
   });
 
-  notifyOrder(order);
+  // إشعار واتساب لا يوقف الرد للزبون
+  notifyOrder(order).catch(() => {});
 
   res.status(201).json(order);
 });
