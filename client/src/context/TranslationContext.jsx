@@ -6,7 +6,7 @@ const translations = {
   ar: {
     // Navbar
     'brand': 'HIYORA',
-    'brandSub': 'FASHION STORE',
+    'brandSub': 'متجر الموضة',
     'home': 'الرئيسية',
     'women': 'نساء',
     'men': 'رجال',

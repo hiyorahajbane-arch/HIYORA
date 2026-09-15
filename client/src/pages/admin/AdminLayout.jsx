@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { useTranslation } from '../../context/TranslationContext.jsx';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [authed, setAuthed] = useState(false);
 
@@ -20,7 +22,7 @@ export default function AdminLayout() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="container muted">جارِ التحقق...</div>;
+  if (loading) return <div className="container muted">{t('loading')}</div>;
   if (!authed) return <Navigate to="/admin/login" replace />;
 
   const logout = () => {
@@ -32,11 +34,11 @@ export default function AdminLayout() {
   return (
     <div className="admin">
       <aside className="admin-sidebar">
-        <h2>الإدارة</h2>
-        <NavLink to="/admin" end>الرئيسية</NavLink>
-        <NavLink to="/admin/products">المنتجات</NavLink>
-        <NavLink to="/admin/orders">الطلبات</NavLink>
-        <button onClick={logout} className="btn btn-outline btn-sm">خروج</button>
+        <h2>HIYORA</h2>
+        <NavLink to="/admin" end>{t('adminHome')}</NavLink>
+        <NavLink to="/admin/products">{t('adminProducts')}</NavLink>
+        <NavLink to="/admin/orders">{t('adminOrders')}</NavLink>
+        <button onClick={logout} className="btn btn-outline btn-sm">{t('logout')}</button>
       </aside>
       <main className="admin-content">
         <Outlet />

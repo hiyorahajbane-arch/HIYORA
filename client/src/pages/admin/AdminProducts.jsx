@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, formatPrice } from '../../api.js';
+import { useTranslation } from '../../context/TranslationContext.jsx';
 
 const empty = { name: '', price: '', oldPrice: '', category: '', gender: '', description: '', image: '', stock: '' };
 
@@ -16,6 +17,7 @@ export function genderLabel(g) {
 }
 
 export default function AdminProducts() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState(empty);
   const [editingId, setEditingId] = useState(null);
@@ -102,7 +104,7 @@ export default function AdminProducts() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    setLoading(true);
+    setLoading(false);
     try {
       const data = {
         ...form,
@@ -112,10 +114,10 @@ export default function AdminProducts() {
       };
       if (editingId) {
         await api.products.update(editingId, data);
-        setSuccess(`تم حفظ تعديلات "${form.name}" بنجاح ✅`);
+        setSuccess(t('saveSuccess'));
       } else {
         await api.products.create(data);
-        setSuccess(`تمت إضافة "${form.name}" بنجاح ✅`);
+        setSuccess(t('addSuccess'));
       }
       setForm(empty);
       setEditingId(null);
@@ -140,28 +142,28 @@ export default function AdminProducts() {
 
   return (
     <div>
-      <h1>إدارة المنتجات</h1>
+      <h1>{t('manageProducts')}</h1>
       <form ref={formRef} className={`form admin-form ${editingId ? 'editing' : ''}`} onSubmit={save}>
-        <h2 className="form-title">{editingId ? `تعديل المنتج: ${form.name}` : 'إضافة منتج جديد'}</h2>
+        <h2 className="form-title">{editingId ? `${t('edit')}: ${form.name}` : t('addProduct')}</h2>
         <div className="grid-2">
           <div>
-            <label>اسم المنتج *</label>
+            <label>{t('productName')}</label>
             <input value={form.name} onChange={set('name')} required />
           </div>
           <div>
-            <label>السعر (DH) *</label>
+            <label>{t('price')}</label>
             <input type="number" min="0" value={form.price} onChange={set('price')} required />
           </div>
           <div>
-            <label>السعر قبل التخفيض (اختياري)</label>
+            <label>{t('oldPrice')}</label>
             <input type="number" min="0" value={form.oldPrice} onChange={set('oldPrice')} placeholder="مثال: 199" />
           </div>
           <div>
-            <label>التصنيف</label>
+            <label>{t('category')}</label>
             <input value={form.category} onChange={set('category')} placeholder="مثال: ملابس" />
           </div>
           <div>
-            <label>الفئة</label>
+            <label>{t('gender')}</label>
             <select value={form.gender} onChange={set('gender')}>
               {GENDERS.map((g) => (
                 <option key={g.value} value={g.value}>{g.label}</option>
@@ -169,24 +171,24 @@ export default function AdminProducts() {
             </select>
           </div>
           <div>
-            <label>المخزون</label>
+            <label>{t('stock')}</label>
             <input type="number" min="0" value={form.stock} onChange={set('stock')} />
           </div>
         </div>
-        <label>الوصف</label>
+        <label>{t('description')}</label>
         <textarea value={form.description} onChange={set('description')} rows={2} />
-        <label>صورة المنتج (JPG / PNG)</label>
+        <label>{t('image')}</label>
         <div className="upload-box">
           {form.image ? (
             <div className="upload-preview">
               <img src={form.image} alt="معاينة الصورة" />
               <button type="button" className="btn btn-outline btn-sm" onClick={() => setForm({ ...form, image: '' })}>
-                إزالة الصورة
+                {t('removeImage')}
               </button>
             </div>
           ) : (
             <label className="btn btn-outline upload-btn">
-              📤 اختر صورة من جهازك
+              📤 {t('selectImage')}
               <input type="file" accept=".jpg,.jpeg,.png" onChange={handleImageFile} hidden />
             </label>
           )}
@@ -195,27 +197,27 @@ export default function AdminProducts() {
         {success && <div className="alert alert-success">{success}</div>}
         <div className="row">
           <button className="btn btn-primary" disabled={loading}>
-            {editingId ? 'حفظ التعديلات' : 'إضافة المنتج'}
+            {editingId ? t('saveChanges') : t('addProduct')}
           </button>
           {editingId && (
             <button type="button" className="btn btn-outline" onClick={() => openEditor(null)}>
-              إلغاء
+              {t('cancel')}
             </button>
           )}
         </div>
       </form>
 
-      <h2 className="mt">المنتجات الحالية ({products.length})</h2>
+      <h2 className="mt">{t('currentProducts')} ({products.length})</h2>
       <table className="table">
         <thead>
           <tr>
-            <th>الصورة</th>
-            <th>الاسم</th>
-            <th>التصنيف</th>
-            <th>الفئة</th>
-            <th>السعر</th>
-            <th>المخزون</th>
-            <th>إجراءات</th>
+            <th>{t('image')}</th>
+            <th>{t('productName')}</th>
+            <th>{t('category')}</th>
+            <th>{t('gender')}</th>
+            <th>{t('price')}</th>
+            <th>{t('stock')}</th>
+            <th>{t('orderActions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -239,8 +241,8 @@ export default function AdminProducts() {
               <td>{formatPrice(p.price)}</td>
               <td>{p.stock}</td>
               <td className="row gap">
-                <button className="btn btn-outline btn-sm" onClick={() => openEditor(p)}>تعديل</button>
-                <button className="btn btn-danger btn-sm" onClick={() => remove(p)}>حذف</button>
+                <button className="btn btn-outline btn-sm" onClick={() => openEditor(p)}>{t('edit')}</button>
+                <button className="btn btn-danger btn-sm" onClick={() => remove(p)}>{t('delete')}</button>
               </td>
             </tr>
           ))}

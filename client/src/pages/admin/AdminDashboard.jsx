@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../api.js';
+import { useTranslation } from '../../context/TranslationContext.jsx';
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState(null);
   const [error, setError] = useState('');
 
@@ -10,18 +12,18 @@ export default function AdminDashboard() {
   }, []);
 
   if (error) return <div className="alert alert-error">{error}</div>;
-  if (!stats) return <div className="muted">جارِ التحميل...</div>;
+  if (!stats) return <div className="muted">{t('loading')}</div>;
 
   const cards = [
-    { label: 'المنتجات', value: stats.productCount },
-    { label: 'إجمالي الطلبات', value: stats.orderCount },
-    { label: 'طلبات قيد الانتظار', value: stats.pendingCount },
-    { label: 'إيرادات المبيعات', value: new Intl.NumberFormat('fr-MA').format(stats.revenue) + ' DH' }
+    { label: t('products'), value: stats.productCount },
+    { label: t('totalOrders'), value: stats.orderCount },
+    { label: t('pendingOrders'), value: stats.pendingCount },
+    { label: t('revenue'), value: new Intl.NumberFormat('fr-MA').format(stats.revenue) + ' DH' }
   ];
 
   return (
     <div>
-      <h1>الرئيسية</h1>
+      <h1>{t('adminHome')}</h1>
       <div className="stats-grid">
         {cards.map((c) => (
           <div key={c.label} className="stat-card">

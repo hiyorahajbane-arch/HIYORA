@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api.js';
+import { useTranslation } from '../../context/TranslationContext.jsx';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -11,7 +13,7 @@ export default function AdminLogin() {
   async function submit(e) {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setLoading(false);
     try {
       const res = await api.auth.login(form);
       localStorage.setItem('souk_token', res.token);
@@ -27,11 +29,11 @@ export default function AdminLogin() {
   return (
     <main className="container login-wrap">
       <form className="form login-card" onSubmit={submit}>
-        <h1>لوحة الإدارة</h1>
-        <p className="muted small">تسجيل الدخول للمشرف</p>
-        <label>اسم المستخدم</label>
+        <h1>{t('adminLoginTitle')}</h1>
+        <p className="muted small">{t('adminLoginSub')}</p>
+        <label>{t('username')}</label>
         <input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
-        <label>كلمة المرور</label>
+        <label>{t('password')}</label>
         <input
           type="password"
           value={form.password}
@@ -39,9 +41,9 @@ export default function AdminLogin() {
         />
         {error && <div className="alert alert-error">{error}</div>}
         <button className="btn btn-primary btn-block" disabled={loading}>
-          {loading ? 'جارِ الدخول...' : 'دخول'}
+          {loading ? t('submitting') : t('login')}
         </button>
-        <p className="muted small center">الافتراضي: admin / admin123</p>
+        <p className="muted small center">{t('loginDefault')}</p>
       </form>
     </main>
   );
