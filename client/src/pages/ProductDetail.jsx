@@ -24,6 +24,9 @@ export default function ProductDetail() {
   }
   if (!product) return <div className="container muted">{t('loading')}</div>;
 
+  const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+  const catLabel = catKey(product.category) ? t(catKey(product.category)) : (product[`category_${lang}`] || product.category);
+
   const name = product[`name_${lang}`] || product.name;
 
   return (
@@ -36,7 +39,7 @@ export default function ProductDetail() {
         )}
       </div>
       <div className="detail-info">
-        {product.category && <span className="chip">{product.category}</span>}
+        {product.category && <span className="chip">{catLabel}</span>}
         <h1>{name}</h1>
         <p className="detail-description">{product.description}</p>
         <p className="product-price big">{formatPrice(product.price)}</p>
