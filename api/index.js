@@ -78,10 +78,14 @@ async function updateDb(fn) {
   return r === undefined ? memoryDb : r;
 }
 if (memoryDb && !memoryDb.whatsapp) memoryDb.whatsapp = {};
+if (memoryDb && !memoryDb.pushSubs) memoryDb.pushSubs = [];
 const VAPID_PUBLIC = process.env.VAPID_PUBLIC || 'BKRivjS_fteRxBebjGAWH7rY-DTIjURJdGcJnoUhRnPUZs6Q27iZjfovG2zUt3UQ20E9LTPopm0GqzDBz00IVmw';
 const VAPID_PRIVATE = process.env.VAPID_PRIVATE || 'tIkQZppZkv-5n1M6W_YlLI7tGRXgs722x4dsmlH_Cow';
 let webpush = null;
-try { const m = await import('web-push'); webpush = m.default; webpush.setVapidDetails('mailto:admin@hiyora.store', VAPID_PUBLIC, VAPID_PRIVATE); } catch {}
+async function getWebPush() {
+  if (webpush) return webpush;
+  try { const m = await import('web-push'); webpush = m.default; webpush.setVapidDetails('mailto:admin@hiyora.store', VAPID_PUBLIC, VAPID_PRIVATE); return webpush; } catch { return null; }
+}
 function requireAdmin(req, res, next) {
   const h = req.headers.authorization || '';
   const t = h.startsWith('Bearer ') ? h.slice(7) : null;
@@ -123,12 +127,13 @@ app.post('/api/push/test', requireAdmin, async (req,res)=>{
   res.json({ok:true});
 });
 async function sendPush(payload){
-  if (!webpush) return;
+  const wp = await getWebPush();
+  if (!wp) return;
   try{
     const db=await getDb();
     const subs=db.pushSubs||[];
     const data=JSON.stringify(payload);
-    await Promise.all(subs.map(s=> webpush.sendNotification(s, data).catch(e=>{ if(e.statusCode===410) {/* expired */}})));
+    await Promise.all(subs.map(s=> wp.sendNotification(s, data).catch(e=>{ if(e.statusCode===410) {/* expired */}})));
   }catch(e){ console.error('[PUSH]',e.message); }
 }
 app.post('/api/auth/login', (req, res) => {
@@ -204,9 +209,7 @@ async function notifyOrder(order) {
   if (!phone) phone = '212675993497';
   const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
   // Web Push (يعمل بنقرة واحدة - بدون واتساب)
-  if (webpush) {
-    try { const db2=await getDb(); const subs=db2.pushSubs||[]; const payload=JSON.stringify({title:`طلب جديد #${order.id}`, body:`${order.customer.name} - ${order.total} DH`}); await Promise.all(subs.map(s=> webpush.sendNotification(s, payload).catch(()=>{}))); console.log('[NOTIFY] webpush', subs.length); } catch(e){ console.error('[NOTIFY] webpush failed',e.message); }
-  }
+  try { const wp = await getWebPush(); if (wp) { const db2=await getDb(); const subs=db2.pushSubs||[]; const payload=JSON.stringify({title:`طلب جديد #${order.id}`, body:`${order.customer.name} - ${order.total} DH`}); await Promise.all(subs.map(s=> wp.sendNotification(s, payload).catch(()=>{}))); console.log('[NOTIFY] webpush', subs.length); } } catch(e){ console.error('[NOTIFY] webpush failed',e.message); }
   // ntfy push (يعمل بدون إعداد - حمّل ntfy و اشترك في hiyora-0675993497)
   try { const ntfyTopic = `hiyora-${phone.slice(-9)}`; await fetch(`https://ntfy.sh/${ntfyTopic}`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent', ntfyTopic); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   // Telegram (أسرع وأضمن من واتساب)
