@@ -38,7 +38,7 @@ export function CategoryShowcase({ categories, products }) {
   if (!categories || categories.length === 0) return null;
   const imageFor = (cat) => {
     const found = products.find((p) => p.category === cat && p.image);
-    return found ? found.image : `https://picsum.photos/seed/${encodeURIComponent(cat)}/600/800`;
+    return found ? found.image : 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80';
   };
   return (
     <section className="section">
@@ -115,9 +115,9 @@ export function Newsletter() {
 export function GenderShowcase() {
   const { t } = useTranslation();
   const GENDERS = [
-    { to: '/women', label: t('women'), seed: 'hiyora-women' },
-    { to: '/men', label: t('men'), seed: 'hiyora-men' },
-    { to: '/kids', label: t('kids'), seed: 'hiyora-kids' }
+    { to: '/women', label: t('women'), img: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80' },
+    { to: '/men', label: t('men'), img: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&q=80' },
+    { to: '/kids', label: t('kids'), img: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=600&q=80' }
   ];
   return (
     <section className="section">
@@ -128,7 +128,7 @@ export function GenderShowcase() {
       <div className="cat-grid">
         {GENDERS.map((g) => (
           <Link key={g.to} to={g.to} className="cat-card">
-            <img src={`https://picsum.photos/seed/${g.seed}/600/800`} alt={g.label} loading="lazy" />
+            <img src={g.img} alt={g.label} loading="lazy" />
             <span>{g.label}</span>
           </Link>
         ))}
