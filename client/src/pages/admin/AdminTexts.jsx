@@ -3,12 +3,12 @@ import { useTranslation } from '../../context/TranslationContext.jsx';
 import { SITE_TEXT_KEYS } from '../../siteImages.js';
 
 const FIELDS = [
-  { key: 'perk1Title', labelKey: 'perkTitle1' },
-  { key: 'perk1Text', labelKey: 'perkText1' },
-  { key: 'perk2Title', labelKey: 'perkTitle2' },
-  { key: 'perk2Text', labelKey: 'perkText2' },
-  { key: 'perk3Title', labelKey: 'perkTitle3' },
-  { key: 'perk3Text', labelKey: 'perkText3' }
+  { key: 'perk1Title', labelKey: 'perkTitle1', icon: '🚚', defKey: 'freeShipping' },
+  { key: 'perk1Text', labelKey: 'perkText1', icon: '🚚', defKey: 'freeShippingText' },
+  { key: 'perk2Title', labelKey: 'perkTitle2', icon: '💵', defKey: 'cashOnDelivery' },
+  { key: 'perk2Text', labelKey: 'perkText2', icon: '💵', defKey: 'cashOnDeliveryText' },
+  { key: 'perk3Title', labelKey: 'perkTitle3', icon: '✨', defKey: 'satisfaction' },
+  { key: 'perk3Text', labelKey: 'perkText3', icon: '✨', defKey: 'satisfactionText' }
 ];
 
 const emptyTexts = () => ({ perk1Title: '', perk1Text: '', perk2Title: '', perk2Text: '', perk3Title: '', perk3Text: '' });
@@ -66,11 +66,13 @@ export default function AdminTexts() {
         <div className="grid-2">
           {FIELDS.map((f) => (
             <div key={f.key}>
-              <label>{t(f.labelKey)}</label>
+              <label>{f.icon} {t(f.labelKey)}</label>
               <input
                 value={form[f.key]}
                 onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
+                placeholder={t(f.defKey)}
               />
+              <p className="muted small" style={{ marginTop: 4 }}>{t('defaultLabel')}: {t(f.defKey)}</p>
             </div>
           ))}
         </div>

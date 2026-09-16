@@ -125,6 +125,7 @@ const translations = {
     'imageUrl': 'رابط الصورة',
     'uploadImage': '📤 رفع صورة',
     'reset': 'استعادة الافتراضي',
+    'defaultLabel': 'الافتراضي',
     'logout': 'خروج',
     // Admin Products
     'manageProducts': 'إدارة المنتجات',
@@ -328,6 +329,7 @@ const translations = {
     'imageUrl': 'URL de l’image',
     'uploadImage': '📤Uploader une image',
     'reset': 'Réinitialiser',
+    'defaultLabel': 'Par défaut',
     'logout': 'Déconnexion',
     'manageProducts': 'Gestion des produits',
     'addProduct': 'Ajouter un produit',
@@ -526,6 +528,7 @@ const translations = {
     'imageUrl': 'Image URL',
     'uploadImage': '📤 Upload image',
     'reset': 'Reset',
+    'defaultLabel': 'Default',
     'logout': 'Logout',
     'manageProducts': 'Manage Products',
     'addProduct': 'Add Product',
