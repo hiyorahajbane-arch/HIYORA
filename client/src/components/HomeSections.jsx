@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../context/TranslationContext.jsx';
+import { useSiteImages } from '../siteImages.js';
 
 export function Hero() {
   const { t } = useTranslation();
+  const images = useSiteImages();
   return (
-    <section className="hero">
+    <section className="hero" style={{ backgroundImage: `url("${images.heroHome}")` }}>
       <div className="hero-content">
         <span className="hero-eyebrow">{t('hiyoraCollection')}</span>
         <h1 className="hero-title">{t('hiyoraTitle')}</h1>
@@ -18,6 +20,7 @@ export function Hero() {
 
 export function PromoBanner() {
   const { t } = useTranslation();
+  const images = useSiteImages();
   return (
     <section className="promo-banner">
       <div className="promo-text">
@@ -26,7 +29,7 @@ export function PromoBanner() {
         <p>{t('promoDesc')}</p>
         <a href="#latest" className="btn btn-gold">{t('discoverCollection')}</a>
       </div>
-      <div className="promo-image" />
+      <div className="promo-image" style={{ backgroundImage: `url("${images.promo}")` }} />
     </section>
   );
 }
@@ -114,10 +117,11 @@ export function Newsletter() {
 
 export function GenderShowcase() {
   const { t } = useTranslation();
+  const images = useSiteImages();
   const GENDERS = [
-    { to: '/women', label: t('women'), img: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80' },
-    { to: '/men', label: t('men'), img: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=600&q=80' },
-    { to: '/kids', label: t('kids'), img: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=600&q=80' }
+    { to: '/women', label: t('women'), img: images.catWomen },
+    { to: '/men', label: t('men'), img: images.catMen },
+    { to: '/kids', label: t('kids'), img: images.catKids }
   ];
   return (
     <section className="section">

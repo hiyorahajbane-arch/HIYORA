@@ -25,7 +25,8 @@ const SEED = [
 function makeSeed() {
   return {
     products: SEED.map(p => ({ id: randomUUID(), createdAt: new Date().toISOString(), ...p })),
-    orders: []
+    orders: [],
+    site: {}
   };
 }
 
@@ -57,9 +58,10 @@ async function getDb() {
       await mdb.collection('store').insertOne({ _id: 'main', ...seed, whatsapp: {} });
       return { ...seed, whatsapp: {} };
     }
-    return { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {}, pushSubs: doc.pushSubs || [] };
+    return { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {}, site: doc.site || {}, pushSubs: doc.pushSubs || [] };
   }
   if (!memoryDb.pushSubs) memoryDb.pushSubs = [];
+  if (!memoryDb.site) memoryDb.site = {};
   return memoryDb;
 }
 
@@ -67,18 +69,20 @@ async function updateDb(fn) {
   if (process.env.MONGODB_URI) {
     const mdb = await getMongoDb();
     const doc = await mdb.collection('store').findOne({ _id: 'main' });
-    const db = doc ? { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {}, pushSubs: doc.pushSubs || [] } : { ...makeSeed(), whatsapp: {}, pushSubs: [] };
+    const db = doc ? { products: doc.products || [], orders: doc.orders || [], whatsapp: doc.whatsapp || {}, site: doc.site || {}, pushSubs: doc.pushSubs || [] } : { ...makeSeed(), whatsapp: {}, site: {}, pushSubs: [] };
     if (!doc) await mdb.collection('store').insertOne({ _id: 'main', ...db });
     const result = await fn(db);
-    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders, whatsapp: db.whatsapp || {}, pushSubs: db.pushSubs || [] } }, { upsert: true });
+    await mdb.collection('store').updateOne({ _id: 'main' }, { $set: { products: db.products, orders: db.orders, whatsapp: db.whatsapp || {}, site: db.site || {}, pushSubs: db.pushSubs || [] } }, { upsert: true });
     return result === undefined ? db : result;
   }
   if (!memoryDb.pushSubs) memoryDb.pushSubs = [];
+  if (!memoryDb.site) memoryDb.site = {};
   const r = await fn(memoryDb);
   return r === undefined ? memoryDb : r;
 }
 if (memoryDb && !memoryDb.whatsapp) memoryDb.whatsapp = {};
 if (memoryDb && !memoryDb.pushSubs) memoryDb.pushSubs = [];
+if (memoryDb && !memoryDb.site) memoryDb.site = {};
 const VAPID_PUBLIC = process.env.VAPID_PUBLIC || 'BKRivjS_fteRxBebjGAWH7rY-DTIjURJdGcJnoUhRnPUZs6Q27iZjfovG2zUt3UQ20E9LTPopm0GqzDBz00IVmw';
 const VAPID_PRIVATE = process.env.VAPID_PRIVATE || 'tIkQZppZkv-5n1M6W_YlLI7tGRXgs722x4dsmlH_Cow';
 let webpush = null;
@@ -108,6 +112,19 @@ app.get('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
 app.post('/api/settings/whatsapp', requireAdmin, async (req,res)=>{
   const { phone, apikey, webhook, tgToken, tgChat, ultraInstance, ultraToken } = req.body || {};
   await updateDb(db=>{ db.whatsapp = { phone: phone||'', apikey: apikey||'', webhook: webhook||'', tgToken: tgToken||'', tgChat: tgChat||'', ultraInstance, ultraToken }; });
+  res.json({ ok:true });
+});
+app.get('/api/settings/site', async (req,res)=>{
+  const db=await getDb();
+  res.json(db.site || {});
+});
+app.post('/api/settings/site', requireAdmin, async (req,res)=>{
+  const allowed = ['heroHome','heroWomen','heroMen','heroKids','promo','catWomen','catMen','catKids'];
+  const body = req.body || {};
+  await updateDb(db=>{
+    if(!db.site) db.site = {};
+    for (const k of allowed) db.site[k] = typeof body[k] === 'string' ? body[k].slice(0, 2000000) : '';
+  });
   res.json({ ok:true });
 });
 app.post('/api/notify/test-custom', requireAdmin, async (req,res)=>{

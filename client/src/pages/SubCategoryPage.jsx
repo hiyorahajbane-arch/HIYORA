@@ -2,19 +2,15 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { api } from '../api.js';
 import { useTranslation } from '../context/TranslationContext.jsx';
+import { useSiteImages } from '../siteImages.js';
 import ProductCard from '../components/ProductCard.jsx';
 import { Perks, Newsletter } from '../components/HomeSections.jsx';
-
-const HERO_IMAGES = {
-  women: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1600&q=80',
-  men: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=1600&q=80',
-  kids: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=1600&q=80'
-};
 
 const norm = (s) => (s || '').toString().toLowerCase();
 
 export default function SubCategoryPage({ gender, keywords, title, subtitle, eyebrow, heroSeed, tabs, theme }) {
   const { t } = useTranslation();
+  const images = useSiteImages();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -52,7 +48,7 @@ export default function SubCategoryPage({ gender, keywords, title, subtitle, eye
     <div className={theme || ''}>
       <section
         className="hero hero-gender"
-        style={{ backgroundImage: `url("${HERO_IMAGES[gender] || `https://picsum.photos/seed/${heroSeed}/1600/800`}")` }}
+        style={{ backgroundImage: `url("${({ women: images.heroWomen, men: images.heroMen, kids: images.heroKids })[gender] || images.heroHome}")` }}
       >
         <div className="hero-content">
           <span className="hero-eyebrow">{eyebrow}</span>

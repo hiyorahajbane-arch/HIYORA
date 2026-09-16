@@ -38,6 +38,7 @@ export default function AdminLayout() {
         <NavLink to="/admin" end>{t('adminHome')}</NavLink>
         <NavLink to="/admin/products">{t('adminProducts')}</NavLink>
         <NavLink to="/admin/orders">{t('adminOrders')}</NavLink>
+        <NavLink to="/admin/images">🖼️ {t('adminImages')}</NavLink>
         <NavLink to="/admin/settings">⚙️ واتساب</NavLink>
         <button onClick={logout} className="btn btn-outline btn-sm">{t('logout')}</button>
       </aside>
