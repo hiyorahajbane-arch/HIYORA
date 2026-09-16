@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from '../context/TranslationContext.jsx';
-import { useSiteImages } from '../siteImages.js';
+import { useSiteImages, useSiteTexts } from '../siteImages.js';
 
 export function Hero() {
   const { t } = useTranslation();
@@ -62,20 +62,21 @@ export function CategoryShowcase({ categories, products }) {
 }
 
 const PERKS = [
-  { icon: '🚚', titleKey: 'freeShipping', textKey: 'freeShippingText' },
-  { icon: '💵', titleKey: 'cashOnDelivery', textKey: 'cashOnDeliveryText' },
-  { icon: '✨', titleKey: 'satisfaction', textKey: 'satisfactionText' }
+  { icon: '🚚', titleKey: 'freeShipping', textKey: 'freeShippingText', customTitle: 'perk1Title', customText: 'perk1Text' },
+  { icon: '💵', titleKey: 'cashOnDelivery', textKey: 'cashOnDeliveryText', customTitle: 'perk2Title', customText: 'perk2Text' },
+  { icon: '✨', titleKey: 'satisfaction', textKey: 'satisfactionText', customTitle: 'perk3Title', customText: 'perk3Text' }
 ];
 
 export function Perks() {
   const { t } = useTranslation();
+  const texts = useSiteTexts();
   return (
     <section className="perks">
       {PERKS.map((p) => (
         <div key={p.titleKey} className="perk">
           <span className="perk-icon">{p.icon}</span>
-          <h4>{t(p.titleKey)}</h4>
-          <p>{t(p.textKey)}</p>
+          <h4>{texts[p.customTitle] || t(p.titleKey)}</h4>
+          <p>{texts[p.customText] || t(p.textKey)}</p>
         </div>
       ))}
     </section>

@@ -119,7 +119,7 @@ app.get('/api/settings/site', async (req,res)=>{
   res.json(db.site || {});
 });
 app.post('/api/settings/site', requireAdmin, async (req,res)=>{
-  const allowed = ['heroHome','heroWomen','heroMen','heroKids','promo','catWomen','catMen','catKids'];
+  const allowed = ['heroHome','heroWomen','heroMen','heroKids','promo','catWomen','catMen','catKids','perk1Title','perk1Text','perk2Title','perk2Text','perk3Title','perk3Text'];
   const body = req.body || {};
   await updateDb(db=>{
     if(!db.site) db.site = {};

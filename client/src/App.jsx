@@ -16,6 +16,7 @@ import AdminProducts from './pages/admin/AdminProducts.jsx';
 import AdminOrders from './pages/admin/AdminOrders.jsx';
 import AdminSettings from './pages/admin/AdminSettings.jsx';
 import AdminImages from './pages/admin/AdminImages.jsx';
+import AdminTexts from './pages/admin/AdminTexts.jsx';
 
 export default function App() {
   const { t, lang } = useTranslation();
@@ -232,6 +233,7 @@ export default function App() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="images" element={<AdminImages />} />
+          <Route path="texts" element={<AdminTexts />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Routes>
