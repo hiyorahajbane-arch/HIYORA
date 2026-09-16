@@ -47,7 +47,7 @@ export function useSiteImages() {
   return images;
 }
 
-export const SITE_TEXT_KEYS = ['perk1Title', 'perk1Text', 'perk2Title', 'perk2Text', 'perk3Title', 'perk3Text'];
+export const SITE_TEXT_KEYS = ['announcement', 'perk1Title', 'perk1Text', 'perk2Title', 'perk2Text', 'perk3Title', 'perk3Text'];
 
 export function useSiteTexts() {
   const [texts, setTexts] = useState(() => {

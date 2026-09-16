@@ -18,7 +18,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="announcement">{texts.perk1Title || t('freeShipping')} — {texts.perk2Title || t('cashOnDelivery')}</div>
+      <div className="announcement">{texts.announcement || `${texts.perk1Title || t('freeShipping')} — ${texts.perk2Title || t('cashOnDelivery')}`}</div>
       <header className="navbar">
         <div className="navbar-inner">
           <Link to="/" className="brand">

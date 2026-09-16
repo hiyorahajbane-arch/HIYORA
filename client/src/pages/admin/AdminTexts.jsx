@@ -3,6 +3,7 @@ import { useTranslation } from '../../context/TranslationContext.jsx';
 import { SITE_TEXT_KEYS } from '../../siteImages.js';
 
 const FIELDS = [
+  { key: 'announcement', labelKey: 'announcementText', icon: '📢', defKey: 'announcementDefault' },
   { key: 'perk1Title', labelKey: 'perkTitle1', icon: '🚚', defKey: 'freeShipping' },
   { key: 'perk1Text', labelKey: 'perkText1', icon: '🚚', defKey: 'freeShippingText' },
   { key: 'perk2Title', labelKey: 'perkTitle2', icon: '💵', defKey: 'cashOnDelivery' },
@@ -11,7 +12,7 @@ const FIELDS = [
   { key: 'perk3Text', labelKey: 'perkText3', icon: '✨', defKey: 'satisfactionText' }
 ];
 
-const emptyTexts = () => ({ perk1Title: '', perk1Text: '', perk2Title: '', perk2Text: '', perk3Title: '', perk3Text: '' });
+const emptyTexts = () => ({ announcement: '', perk1Title: '', perk1Text: '', perk2Title: '', perk2Text: '', perk3Title: '', perk3Text: '' });
 
 export default function AdminTexts() {
   const { t } = useTranslation();
