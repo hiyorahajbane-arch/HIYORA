@@ -97,12 +97,12 @@ export default function AdminOrders() {
                   </div>
                   <div className="order-section">
                     <h4>{t('productsList')}</h4>
-                    {o.items.map((i) => {
+                    {o.items.map((i, idx) => {
                       const p = productsMap[i.productId];
                       const displayName = p ? (p[`name_${lang}`] || p.name) : i.name;
                       return (
-                      <div key={i.productId} className="summary-row">
-                        <span>{displayName} × {i.qty}</span>
+                      <div key={`${i.productId}__${i.size || ''}__${idx}`} className="summary-row">
+                        <span>{displayName}{i.size ? ` (${t('size')}: ${i.size})` : ''} × {i.qty}</span>
                         <span>{formatPrice(i.price * i.qty)}</span>
                       </div>
                     )})}

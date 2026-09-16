@@ -31,7 +31,7 @@ export default function Checkout() {
     try {
       const order = await api.orders.create({
         customer: form,
-        items: items.map((i) => ({ id: i.id, name: i.name, qty: i.qty }))
+        items: items.map((i) => ({ id: i.id, name: i.name, qty: i.qty, size: i.size || '' }))
       });
       dispatch({ type: 'clear' });
       navigate(`/order-success/${order.id}`);
@@ -64,8 +64,8 @@ export default function Checkout() {
         <aside className="summary">
           <h3>{t('orderSummary')}</h3>
           {items.map((i) => (
-            <div key={i.id} className="summary-row">
-              <span>{i.name} × {i.qty}</span>
+            <div key={i.key || `${i.id}__${i.size || ''}`} className="summary-row">
+              <span>{i.name}{i.size ? ` (${t('size')}: ${i.size})` : ''} × {i.qty}</span>
               <span>{formatPrice(i.price * i.qty)}</span>
             </div>
           ))}

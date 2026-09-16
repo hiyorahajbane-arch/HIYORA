@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, formatPrice } from '../../api.js';
 import { useTranslation } from '../../context/TranslationContext.jsx';
 
-const empty = { name: '', price: '', oldPrice: '', category: '', gender: '', description: '', image: '', stock: '' };
+const empty = { name: '', price: '', oldPrice: '', category: '', gender: '', description: '', image: '', stock: '', sizes: '' };
+
+const parseSizes = (v) => String(v || '').split(/[,،;|/]/).map((s) => s.trim()).filter(Boolean).slice(0, 20);
+const sizesToString = (s) => (Array.isArray(s) ? s.join(', ') : String(s || ''));
 
 const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
 
@@ -88,7 +91,8 @@ export default function AdminProducts() {
       gender: product.gender || '',
       description: product.description || '',
       image: product.image || '',
-      stock: product.stock
+      stock: product.stock,
+      sizes: sizesToString(product.sizes)
     });
     setEditingId(product.id);
     setTimeout(() => {
@@ -106,7 +110,8 @@ export default function AdminProducts() {
         ...form,
         price: Number(form.price) || 0,
         oldPrice: form.oldPrice ? Number(form.oldPrice) : null,
-        stock: Number(form.stock) || 0
+        stock: Number(form.stock) || 0,
+        sizes: parseSizes(form.sizes)
       };
       if (editingId) {
         await api.products.update(editingId, data);
@@ -172,6 +177,10 @@ export default function AdminProducts() {
             <label>{t('stock')}</label>
             <input type="number" min="0" value={form.stock} onChange={set('stock')} />
           </div>
+          <div>
+            <label>{t('sizes')}</label>
+            <input value={form.sizes} onChange={set('sizes')} placeholder={t('sizesPlaceholder')} />
+          </div>
         </div>
         <label>{t('description')}</label>
         <textarea value={form.description} onChange={set('description')} rows={2} />
@@ -215,6 +224,7 @@ export default function AdminProducts() {
             <th>{t('thGender')}</th>
             <th>{t('thPrice')}</th>
             <th>{t('thStock')}</th>
+            <th>{t('thSizes')}</th>
             <th>{t('thActions')}</th>
           </tr>
         </thead>
@@ -241,6 +251,7 @@ export default function AdminProducts() {
               <td>{t(genderKey(p.gender))}</td>
               <td>{formatPrice(p.price)}</td>
               <td>{p.stock}</td>
+              <td>{sizesToString(p.sizes) || '—'}</td>
               <td className="row gap">
                 <button className="btn btn-outline btn-sm" onClick={() => openEditor(p)}>{t('edit')}</button>
                 <button className="btn btn-danger btn-sm" onClick={() => remove(p)}>{t('delete')}</button>

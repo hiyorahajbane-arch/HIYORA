@@ -23,22 +23,23 @@ export default function Cart() {
       <div className="cart-layout">
         <ul className="cart-list">
           {items.map((item) => (
-            <li key={item.id} className="cart-item">
+            <li key={item.key || `${item.id}__${item.size || ''}`} className="cart-item">
               {item.image && <img src={item.image} alt={item.name} />}
               <div className="cart-item-info">
                 <Link to={`/product/${item.id}`} className="cart-item-name">{item.name}</Link>
+                {item.size && <span className="muted small">{t('size')}: {item.size}</span>}
                 <span className="muted">{formatPrice(item.price)}</span>
               </div>
               <div className="qty-control">
-                <button onClick={() => dispatch({ type: 'setQty', id: item.id, qty: item.qty - 1 })}>−</button>
+                <button onClick={() => dispatch({ type: 'setQty', key: item.key || `${item.id}__${item.size || ''}`, qty: item.qty - 1 })}>−</button>
                 <span>{item.qty}</span>
-                <button onClick={() => dispatch({ type: 'setQty', id: item.id, qty: item.qty + 1 })}>+</button>
+                <button onClick={() => dispatch({ type: 'setQty', key: item.key || `${item.id}__${item.size || ''}`, qty: item.qty + 1 })}>+</button>
               </div>
               <span className="cart-item-total">{formatPrice(item.price * item.qty)}</span>
               <button
                 className="icon-btn"
                 title={t('delete')}
-                onClick={() => dispatch({ type: 'remove', id: item.id })}
+                onClick={() => dispatch({ type: 'remove', key: item.key || `${item.id}__${item.size || ''}` })}
               >
                 ✕
               </button>

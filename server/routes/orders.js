@@ -25,7 +25,8 @@ router.post('/', async (req, res) => {
       productId: product.id,
       name: product.name,
       price: product.price,
-      qty
+      qty,
+      size: String(item.size || '')
     });
   }
 

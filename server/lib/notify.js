@@ -22,7 +22,7 @@ export async function notifyOrder(order) {
   if (!phoneRaw) phoneRaw = '212675993497';
   const phone = phoneRaw.replace(/\D/g, '');
 
-  const text = `🛒 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف العميل: ${order.customer.phone}\nالمدينة: ${order.customer.city || '-'} \nالعنوان: ${order.customer.address || '-'} \nالإجمالي: ${order.total} DH\n\nالمنتجات:\n${order.items.map((i) => `• ${i.name} × ${i.qty} = ${i.price * i.qty} DH`).join('\n')}`;
+  const text = `🛒 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف العميل: ${order.customer.phone}\nالمدينة: ${order.customer.city || '-'} \nالعنوان: ${order.customer.address || '-'} \nالإجمالي: ${order.total} DH\n\nالمنتجات:\n${order.items.map((i) => `• ${i.name}${i.size ? ` (مقاس: ${i.size})` : ''} × ${i.qty} = ${i.price * i.qty} DH`).join('\n')}`;
 
   // ntfy - يُرسل دائما
   try { await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent'); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }

@@ -163,9 +163,10 @@ app.get('/api/products/categories', async (req, res) => {
   res.json(cats);
 });
 app.post('/api/products', requireAdmin, async (req, res) => {
-  const { name, price, category, description, image, stock } = req.body || {};
+  const { name, price, category, description, image, stock, oldPrice, gender, sizes, name_fr, name_en, category_fr, category_en } = req.body || {};
   if (!name || typeof price !== 'number' || price < 0) return res.status(400).json({ error: 'الاسم والسعر مطلوبان' });
-  const product = { id: randomUUID(), name: String(name), price, category: category || '', description: description || '', image: image || '', stock: Number.isFinite(stock) ? stock : 0, createdAt: new Date().toISOString() };
+  const normSizes = Array.isArray(sizes) ? sizes.map((s) => String(s).trim()).filter(Boolean).slice(0, 20) : [];
+  const product = { id: randomUUID(), name: String(name), price, category: category || '', description: description || '', image: image || '', stock: Number.isFinite(stock) ? stock : 0, oldPrice: Number.isFinite(oldPrice) ? oldPrice : (oldPrice ? Number(oldPrice) : null), gender: gender || '', sizes: normSizes, name_fr: name_fr || '', name_en: name_en || '', category_fr: category_fr || '', category_en: category_en || '', createdAt: new Date().toISOString() };
   await updateDb(d => { d.products.unshift(product); return product; });
   res.status(201).json(product);
 });
@@ -211,7 +212,7 @@ async function notifyOrder(order) {
     }
   } catch {}
   if (!phone) phone = '212675993497';
-  const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
+  const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name}${i.size ? ` (مقاس: ${i.size})` : ''} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
   // ntfy - موضوع ثابت (يُرسل دائما)
   let ntfyOk=false;
   try { const rr=await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); ntfyOk=rr.ok; console.log('[NOTIFY] ntfy',rr.status); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
@@ -242,7 +243,7 @@ app.post('/api/orders', async (req, res) => {
     const p = d.products.find(x => x.id === item.id);
     if (!p) return res.status(400).json({ error: `منتج غير موجود: ${item.name}` });
     const qty = Math.max(1, Math.min(Number(item.qty) || 1, p.stock > 0 ? p.stock : 99999));
-    orderItems.push({ productId: p.id, name: p.name, price: p.price, qty });
+    orderItems.push({ productId: p.id, name: p.name, price: p.price, qty, size: String(item.size || '') });
   }
   const total = orderItems.reduce((s, i) => s + i.price * i.qty, 0);
   const order = { id: randomUUID().slice(0, 8).toUpperCase(), customer: { name: String(customer.name), phone: String(customer.phone), address: customer.address || '', city: customer.city || '', notes: customer.notes || '' }, items: orderItems, total, status: 'pending', createdAt: new Date().toISOString() };

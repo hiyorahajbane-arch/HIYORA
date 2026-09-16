@@ -22,10 +22,11 @@ router.get('/categories', async (req, res) => {
 });
 
 router.post('/', requireAdmin, async (req, res) => {
-  const { name, price, category, description, image, stock } = req.body || {};
+  const { name, price, category, description, image, stock, oldPrice, gender, sizes, name_fr, name_en, category_fr, category_en } = req.body || {};
   if (!name || typeof price !== 'number' || price < 0) {
     return res.status(400).json({ error: 'الاسم والسعر مطلوبان' });
   }
+  const normSizes = Array.isArray(sizes) ? sizes.map((s) => String(s).trim()).filter(Boolean).slice(0, 20) : [];
   const product = {
     id: randomUUID(),
     name: String(name),
@@ -34,6 +35,13 @@ router.post('/', requireAdmin, async (req, res) => {
     description: description || '',
     image: image || '',
     stock: Number.isFinite(stock) ? stock : 0,
+    oldPrice: Number.isFinite(oldPrice) ? oldPrice : (oldPrice ? Number(oldPrice) : null),
+    gender: gender || '',
+    sizes: normSizes,
+    name_fr: name_fr || '',
+    name_en: name_en || '',
+    category_fr: category_fr || '',
+    category_en: category_en || '',
     createdAt: new Date().toISOString()
   };
   const saved = await updateDb((db) => {
