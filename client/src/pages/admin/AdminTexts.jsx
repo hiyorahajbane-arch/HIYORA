@@ -27,11 +27,16 @@ export default function AdminTexts() {
       .then((r) => r.json())
       .then((d) => {
         const next = emptyTexts();
-        for (const k of SITE_TEXT_KEYS) next[k] = d?.[k] || '';
+        for (const f of FIELDS) next[f.key] = d?.[f.key] || t(f.defKey);
         setForm(next);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        const next = emptyTexts();
+        for (const f of FIELDS) next[f.key] = t(f.defKey);
+        setForm(next);
+        setLoading(false);
+      });
   }, []);
 
   async function save(e) {
