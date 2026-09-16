@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useCart } from '../context/CartContext.jsx';
 import { useTranslation } from '../context/TranslationContext.jsx';
+import { useSiteTexts } from '../siteImages.js';
 
 const LANGS = [
   { code: 'ar', flag: '🇲🇦', img: 'https://flagcdn.com/w20/ma.png', label: 'العربية' },
@@ -12,11 +13,12 @@ const LANGS = [
 export default function Navbar() {
   const { count } = useCart();
   const { lang, setLang, t } = useTranslation();
+  const texts = useSiteTexts();
   const [q, setQ] = useState('');
 
   return (
     <>
-      <div className="announcement">{t('freeShipping')} — {t('cashOnDelivery')}</div>
+      <div className="announcement">{texts.perk1Title || t('freeShipping')} — {texts.perk2Title || t('cashOnDelivery')}</div>
       <header className="navbar">
         <div className="navbar-inner">
           <Link to="/" className="brand">
