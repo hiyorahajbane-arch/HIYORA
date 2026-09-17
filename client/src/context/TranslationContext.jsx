@@ -6,7 +6,7 @@ const translations = {
   ar: {
     // Navbar
     'brand': 'HIYORA',
-    'brandSub': 'متجر الموضة',
+    'brandSub': 'كل الأنماط في مكان واحد',
     'home': 'الرئيسية',
     'women': 'نساء',
     'men': 'رجال',
@@ -231,7 +231,7 @@ const translations = {
   },
   fr: {
     'brand': 'HIYORA',
-    'brandSub': 'All Styles, One Place',
+    'brandSub': 'Tous les styles, au même endroit',
     'home': 'Accueil',
     'women': 'Femmes',
     'men': 'Hommes',
@@ -439,7 +439,7 @@ const translations = {
   },
   en: {
     'brand': 'HIYORA',
-    'brandSub': 'FASHION STORE',
+    'brandSub': 'All Styles, One Place',
     'home': 'Home',
     'women': 'Women',
     'men': 'Men',
