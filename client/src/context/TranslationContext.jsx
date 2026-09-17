@@ -29,6 +29,7 @@ const translations = {
     'shopNow': 'تسوّقي عروضنا',
     'shopNowMen': 'تسوّق عروضنا',
     'shopNowWomen': 'تسوّقي عروضنا',
+    'shopNowKids': 'تسوّقوا عروضنا',
     // Promo
     'seasonCollection': 'تشكيلة الموسم',
     'promoTitle': 'لا تفوّتي آخر الصيحات!',
@@ -246,6 +247,7 @@ const translations = {
     'shopNow': 'Profitez de nos offres',
     'shopNowMen': 'Profitez de nos offres',
     'shopNowWomen': 'Profitez de nos offres',
+    'shopNowKids': 'Profitez de nos offres',
     'seasonCollection': 'Collection de la saison',
     'promoTitle': 'Ne manquez pas les dernières tendances !',
     'promoDesc': 'Des pièces tendance ajoutées régulièrement pour compléter votre look.',
@@ -449,6 +451,7 @@ const translations = {
     'shopNow': 'Shop our offers',
     'shopNowMen': 'Shop our offers',
     'shopNowWomen': 'Shop our offers',
+    'shopNowKids': 'Shop our offers',
     'seasonCollection': 'Season Collection',
     'promoTitle': 'Don\'t miss the latest trends!',
     'promoDesc': 'Trendy pieces added regularly to complete your look.',

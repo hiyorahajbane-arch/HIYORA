@@ -54,7 +54,7 @@ export default function SubCategoryPage({ gender, keywords, title, subtitle, eye
           <span className="hero-eyebrow">{eyebrow}</span>
           <h1 className="hero-title">{title}</h1>
           <p className="hero-subtitle">{subtitle}</p>
-          <a href="#products" className="hero-cta">{t(gender === 'men' ? 'shopNowMen' : 'shopNowWomen')}</a>
+          <a href="#products" className="hero-cta">{t(gender === 'men' ? 'shopNowMen' : gender === 'kids' ? 'shopNowKids' : 'shopNowWomen')}</a>
         </div>
       </section>
 
