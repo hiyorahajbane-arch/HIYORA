@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 export const SITE_IMAGE_KEYS = ['heroHome', 'heroWomen', 'heroMen', 'heroKids', 'promo', 'catWomen', 'catMen', 'catKids'];
 
 export const DEFAULT_SITE_IMAGES = {
-  heroHome: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80',
+  heroHome: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1600&q=80',
   heroWomen: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1600&q=80',
   heroMen: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=1600&q=80',
   heroKids: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=1600&q=80',

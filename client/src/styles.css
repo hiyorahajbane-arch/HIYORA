@@ -235,7 +235,7 @@ a {
   min-height: 460px;
   display: flex;
   align-items: center;
-  background: var(--dark) url("https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600&q=80") center / cover no-repeat;
+  background: var(--dark) url("https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1600&q=80") center / cover no-repeat;
 }
 
 .hero::before {
