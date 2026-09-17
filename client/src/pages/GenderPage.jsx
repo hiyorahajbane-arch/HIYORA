@@ -45,7 +45,7 @@ export default function GenderPage({ gender, eyebrow, title, subtitle, heroSeed,
           <span className="hero-eyebrow">{eyebrow}</span>
           <h1 className="hero-title">{title}</h1>
           <p className="hero-subtitle">{subtitle}</p>
-          <a href="#products" className="hero-cta">{t('shopNow')}</a>
+          <a href="#products" className="hero-cta">{t(gender === 'men' ? 'shopNowMen' : 'shopNowWomen')}</a>
         </div>
       </section>
 
