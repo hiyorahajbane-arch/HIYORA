@@ -22,7 +22,8 @@ export default function Navbar() {
       <header className="navbar">
         <div className="navbar-inner">
           <Link to="/" className="brand">
-            {t('brand')}<small>{t('brandSub')}</small>
+            <img src="/images/logo-hiyora.jpeg" alt="HIYORA" className="brand-logo" />
+            <span className="brand-text">{t('brand')}<small>{t('brandSub')}</small></span>
           </Link>
           <div className="nav-links">
             <NavLink to="/" end>{t('home')}</NavLink>
