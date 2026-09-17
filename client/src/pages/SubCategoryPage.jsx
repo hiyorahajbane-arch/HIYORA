@@ -95,7 +95,7 @@ export default function SubCategoryPage({ gender, keywords, title, subtitle, eye
         </section>
 
         <Perks />
-        <Newsletter />
+        <Newsletter gender={gender} />
       </main>
     </div>
   );

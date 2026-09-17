@@ -87,7 +87,7 @@ export default function GenderPage({ gender, eyebrow, title, subtitle, heroSeed,
         </section>
 
         <Perks />
-        <Newsletter />
+        <Newsletter gender={gender} />
       </main>
     </div>
   );

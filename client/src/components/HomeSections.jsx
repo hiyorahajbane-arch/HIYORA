@@ -83,10 +83,12 @@ export function Perks() {
   );
 }
 
-export function Newsletter() {
+export function Newsletter({ gender } = {}) {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
+  const titleKey = gender === 'men' ? 'newsletterTitleMen' : gender === 'kids' ? 'newsletterTitleKids' : 'newsletterTitle';
+  const descKey = gender === 'men' ? 'newsletterDescMen' : gender === 'kids' ? 'newsletterDescKids' : 'newsletterDesc';
 
   function submit(e) {
     e.preventDefault();
@@ -96,8 +98,8 @@ export function Newsletter() {
 
   return (
     <section className="newsletter">
-      <h2>{t('newsletterTitle')}</h2>
-      <p>{t('newsletterDesc')}</p>
+      <h2>{t(titleKey)}</h2>
+      <p>{t(descKey)}</p>
       {done ? (
         <p className="newsletter-success">{t('newsletterSuccess')}</p>
       ) : (
