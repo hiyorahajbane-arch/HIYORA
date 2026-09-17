@@ -231,7 +231,7 @@ const translations = {
   },
   fr: {
     'brand': 'HIYORA',
-    'brandSub': 'BOUTIQUE MODE',
+    'brandSub': 'All Styles, One Place',
     'home': 'Accueil',
     'women': 'Femmes',
     'men': 'Hommes',

@@ -148,6 +148,7 @@ a {
   letter-spacing: 5px;
   color: var(--gold);
   font-family: "Segoe UI", Tahoma, sans-serif;
+  font-style: italic;
 }
 
 .nav-links {
