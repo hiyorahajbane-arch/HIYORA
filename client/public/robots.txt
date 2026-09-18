@@ -6,4 +6,4 @@ Disallow: /cart
 Disallow: /checkout
 Disallow: /order-success
 
-Sitemap: https://hiyora-fashion.vercel.app/sitemap.xml
+Sitemap: https://hiyora.vercel.app/sitemap.xml
