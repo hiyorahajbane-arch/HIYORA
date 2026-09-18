@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://hiyora.vercel.app/</loc>
+    <loc>https://hiyora-fashion.vercel.app/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/women</loc>
+    <loc>https://hiyora-fashion.vercel.app/women</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/women/clothes</loc>
+    <loc>https://hiyora-fashion.vercel.app/women/clothes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/women/shoes-bags</loc>
+    <loc>https://hiyora-fashion.vercel.app/women/shoes-bags</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/women/accessories</loc>
+    <loc>https://hiyora-fashion.vercel.app/women/accessories</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/men</loc>
+    <loc>https://hiyora-fashion.vercel.app/men</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/men/clothes</loc>
+    <loc>https://hiyora-fashion.vercel.app/men/clothes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/men/shoes-bags</loc>
+    <loc>https://hiyora-fashion.vercel.app/men/shoes-bags</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/men/accessories</loc>
+    <loc>https://hiyora-fashion.vercel.app/men/accessories</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/kids</loc>
+    <loc>https://hiyora-fashion.vercel.app/kids</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/kids/clothes</loc>
+    <loc>https://hiyora-fashion.vercel.app/kids/clothes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/kids/shoes-bags</loc>
+    <loc>https://hiyora-fashion.vercel.app/kids/shoes-bags</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://hiyora.vercel.app/kids/accessories</loc>
+    <loc>https://hiyora-fashion.vercel.app/kids/accessories</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
