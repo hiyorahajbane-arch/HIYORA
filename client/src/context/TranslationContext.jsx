@@ -59,7 +59,7 @@ const translations = {
     'footerBrand': 'HIYORA',
     'footerDesc': 'نقدّم لكم تشكيلة مختارة بعناية لتواكبوا أحدث صيحات الموضة. اكتشفوا قطعاً عصرية وأنيقة بأسعار في المتناول.',
     'info': 'معلومات',
-    'contactUs': 'تواصلي معنا',
+    'contactUs': 'تواصلوا معنا',
     'footerPhone': '+212 675 993 497',
     'footerEmail': 'contact@hiyora.store',
     'footerAddress': 'التوصيل لجميع المدن',
