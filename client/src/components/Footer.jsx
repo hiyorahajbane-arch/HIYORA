@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-grid">
         <div>
-          <div className="footer-brand"><img src="/images/logo-hiyora.jpeg" alt="HIYORA" className="footer-logo" />{t('footerBrand')}</div>
+          <div className="footer-brand"><img src="/images/logo-hiyora.jpeg" alt="HIYORA FASHION" className="footer-logo" />{t('footerBrand')}</div>
           <p>{t('footerDesc')}</p>
         </div>
         <div>

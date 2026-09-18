@@ -22,10 +22,10 @@ export async function notifyOrder(order) {
   if (!phoneRaw) phoneRaw = '212675993497';
   const phone = phoneRaw.replace(/\D/g, '');
 
-  const text = `🛒 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف العميل: ${order.customer.phone}\nالمدينة: ${order.customer.city || '-'} \nالعنوان: ${order.customer.address || '-'} \nالإجمالي: ${order.total} DH\n\nالمنتجات:\n${order.items.map((i) => `• ${i.name}${i.size ? ` (مقاس: ${i.size})` : ''} × ${i.qty} = ${i.price * i.qty} DH`).join('\n')}`;
+  const text = `🛒 طلب جديد HIYORA FASHION!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف العميل: ${order.customer.phone}\nالمدينة: ${order.customer.city || '-'} \nالعنوان: ${order.customer.address || '-'} \nالإجمالي: ${order.total} DH\n\nالمنتجات:\n${order.items.map((i) => `• ${i.name}${i.size ? ` (مقاس: ${i.size})` : ''} × ${i.qty} = ${i.price * i.qty} DH`).join('\n')}`;
 
   // ntfy - يُرسل دائما
-  try { await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent'); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
+  try { await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA FASHION', Priority: 'high', Tags: 'shopping_cart' } }); console.log('[NOTIFY] ntfy sent'); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   // UltraMsg WhatsApp (أسهل - امسح QR)
   if (ultraInstance && ultraToken) {
     try { const url=`https://api.ultramsg.com/${ultraInstance}/messages/chat`; const r=await fetch(url,{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token:ultraToken, to:phone, body:text})}); console.log('[NOTIFY] UltraMsg',r.status, (await r.text()).slice(0,200)); if(r.ok) return { ok:true, provider:'ultramsg' }; } catch(e){ console.error('[NOTIFY] UltraMsg failed',e.message); }

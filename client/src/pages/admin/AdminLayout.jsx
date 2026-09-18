@@ -34,7 +34,7 @@ export default function AdminLayout() {
   return (
     <div className="admin">
       <aside className="admin-sidebar">
-        <h2>HIYORA</h2>
+        <h2>HIYORA FASHION</h2>
         <NavLink to="/admin" end>{t('adminHome')}</NavLink>
         <NavLink to="/admin/products">{t('adminProducts')}</NavLink>
         <NavLink to="/admin/orders">{t('adminOrders')}</NavLink>

@@ -97,7 +97,7 @@ function requireAdmin(req, res, next) {
   try { req.admin = jwt.verify(t, JWT_SECRET); next(); } catch { return res.status(401).json({ error: 'الجلسة انتهت، سجل الدخول مجدداً' }); }
 }
 
-app.get('/api', (req, res) => res.json({ name: 'HIYORA - واجهة برمجية للمتجر', version: '1.0.0' }));
+app.get('/api', (req, res) => res.json({ name: 'HIYORA FASHION - واجهة برمجية للمتجر', version: '1.0.0' }));
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.get('/api/notify/test', async (req, res) => {
   const fake={id:'TEST123', customer:{name:'زبون تجريبي', phone:'0600000000', city:'Casa', address:'-'}, total:299, items:[{name:'منتج تجريبي', qty:1, price:299}]};
@@ -140,7 +140,7 @@ app.post('/api/push/subscribe', async (req,res)=>{
   res.json({ok:true});
 });
 app.post('/api/push/test', requireAdmin, async (req,res)=>{
-  await sendPush({title:'HIYORA تجريب', body:'هذا إشعار تجريبي - سيصلك كل طلب هنا'});
+  await sendPush({title:'HIYORA FASHION تجريب', body:'هذا إشعار تجريبي - سيصلك كل طلب هنا'});
   res.json({ok:true});
 });
 async function sendPush(payload){
@@ -229,10 +229,10 @@ async function notifyOrder(order) {
     }
   } catch {}
   if (!phone) phone = '212675993497';
-  const text = `\uD83D\uDED2 طلب جديد HIYORA!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name}${i.size ? ` (مقاس: ${i.size})` : ''} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
+  const text = `\uD83D\uDED2 طلب جديد HIYORA FASHION!\n\nرقم: ${order.id}\nالعميل: ${order.customer.name}\nهاتف: ${order.customer.phone}\nالمدينة: ${order.customer.city||'-'}\nالعنوان: ${order.customer.address||'-'}\nالإجمالي: ${order.total} DH\n\n${order.items.map(i=>`\u2022 ${i.name}${i.size ? ` (مقاس: ${i.size})` : ''} x${i.qty} = ${i.price*i.qty} DH`).join('\n')}`;
   // ntfy - موضوع ثابت (يُرسل دائما)
   let ntfyOk=false;
-  try { const rr=await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA', Priority: 'high', Tags: 'shopping_cart' } }); ntfyOk=rr.ok; console.log('[NOTIFY] ntfy',rr.status); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
+  try { const rr=await fetch(`https://ntfy.sh/hiyora-675993497`, { method: 'POST', body: text, headers: { Title: 'طلب جديد HIYORA FASHION', Priority: 'high', Tags: 'shopping_cart' } }); ntfyOk=rr.ok; console.log('[NOTIFY] ntfy',rr.status); } catch(e){ console.error('[NOTIFY] ntfy failed',e.message); }
   // Web Push
   try { const wp = await getWebPush(); if (wp) { const db2=await getDb(); const subs=db2.pushSubs||[]; const payload=JSON.stringify({title:`طلب جديد #${order.id}`, body:`${order.customer.name} - ${order.total} DH`}); await Promise.all(subs.map(s=> wp.sendNotification(s, payload).catch(()=>{}))); console.log('[NOTIFY] webpush', subs.length); } } catch(e){ console.error('[NOTIFY] webpush failed',e.message); }
   // UltraMsg WhatsApp (أسهل - امسح QR فقط)
