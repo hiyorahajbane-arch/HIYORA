@@ -25,8 +25,8 @@ const translations = {
     // Hero
     'hiyoraCollection': 'HIYORA COLLECTION',
     'hiyoraTitle': 'HIYORA',
-    'hiyoraSubtitle': 'اكتشفي عالمك الخاص بالموضة — أنيق، بسيط، لا يُقاوم',
-    'shopNow': 'تسوّقي عروضنا',
+    'hiyoraSubtitle': 'اكتشفوا عالمكم الخاص بالموضة — أنيق، بسيط، لا يُقاوم',
+    'shopNow': 'تسوّقوا عروضنا',
     'shopNowMen': 'تسوّق عروضنا',
     'shopNowWomen': 'تسوّقي عروضنا',
     'shopNowKids': 'تسوّقوا عروضنا',
