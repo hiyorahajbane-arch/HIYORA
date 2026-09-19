@@ -24,7 +24,6 @@ const translations = {
     'loading': 'جارِ التحميل...',
     // Hero
     'hiyoraCollection': 'HIYORA COLLECTION',
-    'hiyoraTitle': '',
     'hiyoraSubtitle': 'اكتشفوا عالمكم الخاص بالموضة — أنيق، بسيط، لا يُقاوم',
     'shopNow': 'تسوّقوا عروضنا',
     'shopNowMen': 'تسوّق عروضنا',
@@ -246,7 +245,6 @@ const translations = {
     'noProducts': 'Aucun produit correspondant.',
     'loading': 'Chargement...',
     'hiyoraCollection': 'COLLECTION HIYORA',
-    'hiyoraTitle': '',
     'hiyoraSubtitle': 'Découvrez votre univers mode — Chic, simple, irrésistible',
     'shopNow': 'Profitez de nos offres',
     'shopNowMen': 'Profitez de nos offres',
@@ -451,7 +449,6 @@ const translations = {
     'noProducts': 'No matching products.',
     'loading': 'Loading...',
     'hiyoraCollection': 'HIYORA COLLECTION',
-    'hiyoraTitle': '',
     'hiyoraSubtitle': 'Discover your fashion universe — Chic, simple, irresistible',
     'shopNow': 'Shop our offers',
     'shopNowMen': 'Shop our offers',
