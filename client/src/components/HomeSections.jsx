@@ -10,7 +10,6 @@ export function Hero() {
     <section className="hero" style={{ backgroundImage: `url("${images.heroHome}")` }}>
       <div className="hero-content">
         <span className="hero-eyebrow">{t('hiyoraCollection')}</span>
-        <h1 className="hero-title">{t('hiyoraTitle')}</h1>
         <p className="hero-subtitle">{t('hiyoraSubtitle')}</p>
         <a href="#latest" className="hero-cta">{t('shopNow')}</a>
       </div>
