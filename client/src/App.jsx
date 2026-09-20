@@ -17,6 +17,7 @@ import AdminOrders from './pages/admin/AdminOrders.jsx';
 import AdminSettings from './pages/admin/AdminSettings.jsx';
 import AdminImages from './pages/admin/AdminImages.jsx';
 import AdminTexts from './pages/admin/AdminTexts.jsx';
+import ParcAuto from './pages/ParcAuto.jsx';
 
 export default function App() {
   const { t, lang } = useTranslation();
@@ -227,6 +228,7 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-success/:id" element={<OrderSuccess />} />
+        <Route path="/parc" element={<ParcAuto />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
