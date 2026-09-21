@@ -7,7 +7,8 @@ export function Hero() {
   const { t } = useTranslation();
   const images = useSiteImages();
   return (
-    <section className="hero" style={{ backgroundImage: `url("${images.heroHome}")` }}>
+    <section className="hero">
+      <img src={images.heroHome} alt="HIYORA FASHION" className="hero-img" loading="eager" />
       <div className="hero-content">
         <span className="hero-eyebrow">{t('hiyoraCollection')}</span>
         <p className="hero-subtitle">{t('hiyoraSubtitle')}</p>
