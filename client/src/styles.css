@@ -249,27 +249,34 @@ a {
   position: relative;
   border-radius: 0 0 28px 28px;
   overflow: hidden;
-  min-height: 620px;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  background: var(--dark) url("https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1600&q=80") center / 100% auto no-repeat;
+  display: block;
+  background: var(--dark);
 }
-
+.hero-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
 .hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(to left, rgba(20, 12, 12, 0.32) 22%, rgba(20, 12, 12, 0.14) 55%, rgba(20, 12, 12, 0.02) 100%);
+  z-index: 1;
+  pointer-events: none;
 }
-
 .hero-content {
-  position: relative;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
   padding: 64px 32px;
   width: 100%;
   color: #fff;
+  z-index: 2;
 }
 
 .hero-eyebrow {
