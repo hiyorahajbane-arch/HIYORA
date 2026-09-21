@@ -4,16 +4,10 @@ import { useTranslation } from '../context/TranslationContext.jsx';
 import { useSiteImages, useSiteTexts } from '../siteImages.js';
 
 export function Hero() {
-  const { t } = useTranslation();
   const images = useSiteImages();
   return (
     <section className="hero">
       <img src={images.heroHome} alt="HIYORA FASHION" className="hero-img" loading="eager" />
-      <div className="hero-content">
-        <span className="hero-eyebrow">{t('hiyoraCollection')}</span>
-        <p className="hero-subtitle">{t('hiyoraSubtitle')}</p>
-        <a href="#latest" className="hero-cta">{t('shopNow')}</a>
-      </div>
     </section>
   );
 }
