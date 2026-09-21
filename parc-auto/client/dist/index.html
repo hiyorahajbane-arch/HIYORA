@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parc Auto - Direction Publique | 50 Véhicules</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#f1f5f9;color:#0f172a}
+.card{background:white;border:1px solid #e2e8f0;border-radius:14px;padding:16px;margin-bottom:12px}
+.btn{padding:7px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:13px}
+.btn-dark{background:#0f172a;color:white} .btn-light{background:white;border:1px solid #e2e8f0} .btn-green{background:#16a34a;color:white} .btn-red{background:#dc2626;color:white} .btn-amber{background:#d97706;color:white}
+input,select,textarea{padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;width:100%;background:white}
+table{width:100%;border-collapse:collapse;font-size:12px} th{padding:7px 8px;text-align:left;background:#f8fafc;color:#475569;font-size:11px;white-space:nowrap} td{padding:7px 8px;border-top:1px solid #f1f5f9;vertical-align:top}
+.badge{padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700;display:inline-block}
+.tab{padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:600;font-size:12px;border:1px solid #e2e8f0;background:white}
+.tab.active{background:#0f172a;color:white;border-color:#0f172a}
+.kpi{padding:14px;border-radius:14px;border:1px solid #e2e8f0}
+.alert-row{background:#fff7ed}
+@media print{ .no-print{display:none} }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useMemo}=React;
+
+function App(){
+  const [data,setData]=useState(null);
+  const [tab,setTab]=useState('dashboard');
+  const [q,setQ]=useState('');
+  const [showV,setShowV]=useState(false);
+  const [editV,setEditV]=useState(null);
+  const [showM,setShowM]=useState(false);
+  const [showC,setShowC]=useState(false);
+  const [showE,setShowE]=useState(false);
+  const [showPV,setShowPV]=useState(false);
+  const [showCh,setShowCh]=useState(false);
+
+  const fetchData=()=>fetch('/api/parc').then(r=>r.json()).then(setData);
+  useEffect(fetchData,[]);
+
+  const filteredVehicules = useMemo(()=>{
+    if(!data) return [];
+    if(!q) return data.vehicules;
+    const s=q.toLowerCase();
+    return data.vehicules.filter(v=> `${v.matricule} ${v.marque} ${v.modele} ${v.chassis} ${v.affectation}`.toLowerCase().includes(s));
+  },[data,q]);
+
+  const badge=(s)=>{
+    const m={
+      disponible:{bg:'#dcfce7',c:'#166534',t:'Disponible'},
+      en_mission:{bg:'#dbeafe',c:'#1e40af',t:'En mission'},
+      en_panne:{bg:'#fee2e2',c:'#991b1b',t:'En panne'},
+      en_attente_chef_parc:{bg:'#fef9c3',c:'#854d0e',t:'Attente Chef Parc'},
+      en_attente_direction:{bg:'#ffedd5',c:'#9a3412',t:'Attente Direction'},
+      validée_direction:{bg:'#dcfce7',c:'#166534',t:'Validée'},
+      validée:{bg:'#dcfce7',c:'#166534',t:'Validée'},
+      terminée:{bg:'#e5e7eb',c:'#374151',t:'Terminée'},
+      refusée:{bg:'#fee2e2',c:'#991b1b',t:'Refusée'},
+      en_cours:{bg:'#dbeafe',c:'#1e40af',t:'En cours'},
+      payé:{bg:'#dcfce7',c:'#166534'}, en_attente:{bg:'#fef9c3',c:'#854d0e'},
+    };
+    const st=m[s]||{bg:'#f1f5f9',c:'#475569',t:s};
+    return <span className="badge" style={{background:st.bg,color:st.c}}>{st.t||s}</span>
+  };
+
+  if(!data) return <div style={{padding:40,textAlign:'center'}}>Chargement du parc 50 véhicules...</div>;
+
+  return <div style={{maxWidth:1300,margin:'0 auto',padding:16}}>
+    {/* HEADER */}
+    <div style={{background:'#0f172a',color:'white',borderRadius:16,padding:20,marginBottom:16,display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
+      <div>
+        <div style={{fontSize:10,letterSpacing:2,opacity:.7}}>ROYAUME DU MAROC — DIRECTION PUBLIQUE</div>
+        <h1 style={{margin:'4px 0',fontSize:22}}>🚗 Gestion Parc Automobile — 50 Véhicules</h1>
+        <div style={{opacity:.8,fontSize:12}}>Système complet • Workflow validation • Alertes 30j • Coûts • Intranet • HAJBANE</div>
+      </div>
+      <div style={{display:'flex',gap:8,alignItems:'center'}}>
+        <div style={{background:'white',color:'#0f172a',padding:'10px 14px',borderRadius:12,textAlign:'center'}}><div style={{fontSize:20,fontWeight:800}}>{data.stats.totalVehicules}</div><div style={{fontSize:10}}>VÉHICULES</div></div>
+        <div style={{background:'#dcfce7',color:'#166534',padding:'10px 14px',borderRadius:12,textAlign:'center'}}><div style={{fontSize:16,fontWeight:800}}>{data.stats.disponibles}</div><div style={{fontSize:10}}>DISPO</div></div>
+        <div style={{background:'#fee2e2',color:'#991b1b',padding:'10px 14px',borderRadius:12,textAlign:'center'}}><div style={{fontSize:16,fontWeight:800}}>{data.stats.alertesCount}</div><div style={{fontSize:10}}>ALERTES</div></div>
+      </div>
+    </div>
+
+    {/* TABS */}
+    <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:12}} className="no-print">
+      {[
+        ['dashboard','📊 Tableau Directeur'],
+        ['vehicules',`🚙 Véhicules (${data.vehicules.length})`],
+        ['missions',`📋 Missions (${data.missions.length})`],
+        ['carburant','⛽ Carburant'],
+        ['maintenance','🔧 Maintenance'],
+        ['chauffeurs',`👨‍✈️ Chauffeurs & PV (${data.infractions.length} PV)`],
+      ].map(([id,l])=> <button key={id} className={tab===id?'tab active':'tab'} onClick={()=>setTab(id)}>{l}</button>)}
+      <input placeholder="🔍 Rechercher matricule / marque / châssis / affectation" value={q} onChange={e=>setQ(e.target.value)} style={{marginLeft:'auto',minWidth:280,padding:'8px 12px',borderRadius:999}}/>
+    </div>
+
+    {/* DASHBOARD DIRECTEUR */}
+    {tab==='dashboard' && <div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:10,marginBottom:12}}>
+        <div className="kpi" style={{background:'#f0fdf4',borderColor:'#bbf7d0'}}><div style={{fontSize:22,fontWeight:800,color:'#16a34a'}}>{data.stats.disponibles}</div><div style={{fontSize:11}}>Disponibles</div><div style={{fontSize:10,color:'#64748b'}}>{Math.round(data.stats.disponibles/50*100)}% du parc</div></div>
+        <div className="kpi" style={{background:'#eff6ff',borderColor:'#bfdbfe'}}><div style={{fontSize:22,fontWeight:800,color:'#2563eb'}}>{data.stats.enMission}</div><div style={{fontSize:11}}>En mission</div></div>
+        <div className="kpi" style={{background:'#fef2f2',borderColor:'#fecaca'}}><div style={{fontSize:22,fontWeight:800,color:'#dc2626'}}>{data.stats.enPanne}</div><div style={{fontSize:11}}>En panne</div></div>
+        <div className="kpi" style={{background:'#fff7ed',borderColor:'#fed7aa'}}><div style={{fontSize:22,fontWeight:800,color:'#ea580c'}}>{data.stats.alertesCount}</div><div style={{fontSize:11}}>Alertes &lt;30j</div><div style={{fontSize:10,color:'#9a3412'}}>VT / Assurance</div></div>
+        <div className="kpi"><div style={{fontSize:13,fontWeight:700}}>{(data.stats.totalKm).toLocaleString()} km</div><div style={{fontSize:11}}>Kilométrage total</div><div style={{fontSize:10,color:'#64748b'}}>Moy: {Math.round(data.stats.totalKm/50).toLocaleString()} km/véh</div></div>
+        <div className="kpi"><div style={{fontSize:13,fontWeight:700}}>{(data.stats.totalCarburant+data.stats.totalEntretien+data.stats.totalPV).toLocaleString()} DH</div><div style={{fontSize:11}}>Coût total</div><div style={{fontSize:10,color:'#64748b'}}>Carb:{data.stats.totalCarburant} + Ent:{data.stats.totalEntretien} + PV:{data.stats.totalPV}</div></div>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1.2fr .8fr',gap:12}}>
+        <div className="card">
+          <h3 style={{margin:'0 0 10px',fontSize:14}}>💰 Coût total par véhicule (Top 10)</h3>
+          <table><thead><tr><th>#</th><th>Matricule</th><th>Véhicule</th><th>Carburant</th><th>Entretien</th><th>PV</th><th>Total</th><th>Conso</th></tr></thead>
+          <tbody>{data.coutParVehicule.slice(0,10).map((c,i)=> <tr key={c.vehicule.id}><td>{i+1}</td><td><b>{c.vehicule.matricule}</b></td><td>{c.vehicule.marque} {c.vehicule.modele}</td><td>{c.carburant} DH</td><td>{c.entretien} DH</td><td style={{color:c.infractions?'#dc2626':'#64748b'}}>{c.infractions} DH</td><td><b>{c.total} DH</b></td><td>{c.consoMoy==='-'?'-':c.consoMoy+' L/100'}</td></tr>)}</tbody></table>
+        </div>
+        <div>
+          <div className="card">
+            <h3 style={{margin:'0 0 8px',fontSize:14}}>⚠️ Alertes à prévoir (30 jours)</h3>
+            {data.alertes.length===0? <div style={{color:'#16a34a'}}>Aucune alerte ✅</div> :
+              <table><thead><tr><th>Matricule</th><th>VT</th><th>Assurance</th><th>Jours</th></tr></thead><tbody>{data.alertes.slice(0,8).map(v=>{
+                const jVT=Math.ceil((new Date(v.visiteTechnique)-new Date())/86400000);
+                const jAss=Math.ceil((new Date(v.assurance)-new Date())/86400000);
+                const crit = Math.min(jVT,jAss);
+                return <tr key={v.id} style={{background: crit<0?'#fee2e2': crit<7?'#ffedd5':'#fff7ed'}}><td>{v.matricule}</td><td>{v.visiteTechnique}</td><td>{v.assurance}</td><td style={{fontWeight:700,color: crit<0?'#dc2626':'#ea580c'}}>{crit<0?`Expiré ${-crit}j`: `${crit}j`}</td></tr>
+              })}</tbody></table>
+            }
+            <div style={{fontSize:11,color:'#64748b',marginTop:6}}>Total alertes: {data.alertes.length} / 50</div>
+          </div>
+          <div className="card">
+            <h3 style={{margin:'0 0 8px',fontSize:14}}>🔧 Véhicules les plus en panne</h3>
+            {data.pannes.length===0? <div style={{fontSize:12,color:'#64748b'}}>Aucune panne enregistrée</div> :
+              <table><thead><tr><th>Véhicule</th><th>Matricule</th><th>Nb Réparations</th></tr></thead><tbody>{data.pannes.map(p=> <tr key={p.vehicule.id}><td>{p.vehicule.marque} {p.vehicule.modele}</td><td>{p.vehicule.matricule}</td><td><span className="badge" style={{background:'#fee2e2',color:'#991b1b'}}>{p.nb}</span></td></tr>)}</tbody></table>
+            }
+          </div>
+          <div className="card" style={{background:'#f8fafc'}}>
+            <h3 style={{margin:'0 0 6px',fontSize:13}}>📌 État du parc</h3>
+            <div style={{fontSize:12,lineHeight:1.8}}>
+              • Disponible: {data.stats.disponibles} ({Math.round(data.stats.disponibles/50*100)}%)<br/>
+              • En mission: {data.stats.enMission}<br/>
+              • En panne: {data.stats.enPanne}<br/>
+              • Affectations: {[...new Set(data.vehicules.map(v=>v.affectation))].join(', ')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>}
+
+    {/* VEHICULES */}
+    {tab==='vehicules' && <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10,flexWrap:'wrap',gap:8}}>
+        <h3 style={{margin:0}}>1. Gestion des Véhicules — 50</h3>
+        <button className="btn btn-dark" onClick={()=>{setEditV(null);setShowV(!showV)}}>+ Ajouter véhicule</button>
+      </div>
+      {showV && <form onSubmit={async e=>{
+        e.preventDefault(); const b=Object.fromEntries(new FormData(e.target));
+        b.km=Number(b.km)||0; b.annee=Number(b.annee)||2020; b.dotationMensuelle=Number(b.dotationMensuelle)||500;
+        const url = editV? `/api/parc/vehicules/${editV.id}` : '/api/parc/vehicules';
+        const method = editV? 'PUT':'POST';
+        await fetch(url,{method,headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
+        setShowV(false); setEditV(null); fetchData();
+      }} style={{background:'#f8fafc',padding:14,borderRadius:12,marginBottom:12,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:8}}>
+        <input name="matricule" placeholder="Matricule * (ex: 12345 | أ | 12)" required defaultValue={editV?.matricule}/>
+        <input name="marque" placeholder="Marque *" required defaultValue={editV?.marque}/>
+        <input name="modele" placeholder="Modèle *" required defaultValue={editV?.modele}/>
+        <input name="chassis" placeholder="N° Châssis *" required defaultValue={editV?.chassis}/>
+        <input name="type" placeholder="Type (Berline, 4x4, Utilitaire)" defaultValue={editV?.type}/>
+        <select name="carburant" defaultValue={editV?.carburant||'Diesel'}><option>Diesel</option><option>Essence</option><option>Hybride</option></select>
+        <input name="annee" type="number" placeholder="Année" defaultValue={editV?.annee}/>
+        <input name="dateMiseEnCirculation" type="date" defaultValue={editV?.dateMiseEnCirculation} title="Date mise en circulation"/>
+        <input name="km" type="number" placeholder="Kilométrage" defaultValue={editV?.km}/>
+        <input name="affectation" placeholder="Affectation (Direction Générale...)" defaultValue={editV?.affectation} list="affList"/><datalist id="affList"><option value="Direction Générale"/><option value="Service Technique"/><option value="Service Logistique"/><option value="Parc Central"/></datalist>
+        <select name="statut" defaultValue={editV?.statut||'disponible'}><option value="disponible">Disponible</option><option value="en_mission">En mission</option><option value="en_panne">En panne</option></select>
+        <input name="carteCarburant" placeholder="Carte carburant (CC-...)" defaultValue={editV?.carteCarburant}/>
+        <input name="dotationMensuelle" type="number" placeholder="Dotation DH/mois" defaultValue={editV?.dotationMensuelle}/>
+        <input name="assurance" type="date" defaultValue={editV?.assurance} title="Assurance"/><input name="visiteTechnique" type="date" defaultValue={editV?.visiteTechnique} title="Visite Technique"/><input name="vignette" type="date" defaultValue={editV?.vignette} title="Vignette"/>
+        <button className="btn btn-dark" style={{gridColumn:'1/-1'}}>{editV?'Modifier':'Enregistrer'}</button>
+      </form>}
+      <div style={{overflowX:'auto'}}>
+        <table><thead><tr><th>Matricule</th><th>Marque/Modèle</th><th>Châssis</th><th>Mise en circulation</th><th>Affectation</th><th>KM</th><th>Carte Carb.</th><th>Statut</th><th>VT / Assurance</th><th>Actions</th></tr></thead>
+        <tbody>{filteredVehicules.map(v=>{
+          const jVT=Math.ceil((new Date(v.visiteTechnique)-new Date())/86400000);
+          const alert = jVT<30;
+          return <tr key={v.id} style={alert?{background:'#fff7ed'}:{}}><td><b>{v.matricule}</b><div style={{fontSize:10,color:'#64748b'}}>{v.type}</div></td><td>{v.marque} {v.modele}<div style={{fontSize:10,color:'#64748b'}}>{v.annee} • {v.carburant}</div></td><td style={{fontFamily:'monospace',fontSize:11}}>{v.chassis}</td><td>{v.dateMiseEnCirculation}</td><td>{v.affectation}</td><td>{Number(v.km).toLocaleString()}</td><td>{v.carteCarburant}<div style={{fontSize:10,color:'#64748b'}}>{v.dotationMensuelle} DH/mois</div></td><td>{badge(v.statut)}</td><td><div style={{fontSize:11}}>{v.visiteTechnique} {alert&&'⚠️'}</div><div style={{fontSize:10,color:'#64748b'}}>{v.assurance}</div></td><td><button className="btn btn-light" style={{padding:'4px 6px',fontSize:11}} onClick={()=>{setEditV(v);setShowV(true)}}>✏️</button> <button className="btn btn-light" style={{padding:'4px 6px',fontSize:11,color:'#dc2626'}} onClick={async()=>{if(confirm('Supprimer '+v.matricule+' ?')){await fetch('/api/parc/vehicules/'+v.id,{method:'DELETE'});fetchData()}}}>🗑️</button></td></tr>
+        })}</tbody></table>
+      </div>
+      <div style={{fontSize:11,color:'#64748b',marginTop:8}}>Affichage {filteredVehicules.length} / 50 véhicules {q&&`• filtre: "${q}"`}</div>
+    </div>}
+
+    {/* MISSIONS */}
+    {tab==='missions' && <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}><h3 style={{margin:0}}>2. Missions & Demandes — Workflow</h3><button className="btn btn-dark" onClick={()=>setShowM(!showM)}>+ Nouvelle demande</button></div>
+      <div style={{background:'#f8fafc',padding:10,borderRadius:10,fontSize:11,marginBottom:10,display:'flex',gap:12,flexWrap:'wrap'}}>
+        <span>Demande → <b>Chef Parc</b> → <b>Direction</b> → Bon de mission → KM départ/retour</span>
+        <span style={{marginLeft:'auto'}}>Légende: {badge('en_attente_chef_parc')} {badge('en_attente_direction')} {badge('validée_direction')} {badge('terminée')} {badge('refusée')}</span>
+      </div>
+      {showM && <form onSubmit={async e=>{
+        e.preventDefault(); const b=Object.fromEntries(new FormData(e.target)); b.kmDepart=Number(b.kmDepart)||0; b.kmRetour=Number(b.kmRetour)||0;
+        await fetch('/api/parc/missions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}); setShowM(false); fetchData();
+      }} style={{background:'#f8fafc',padding:14,borderRadius:12,marginBottom:12,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:8}}>
+        <select name="vehiculeId" required><option value="">-- Véhicule (50) --</option>{data.vehicules.filter(v=>v.statut!=='en_panne').map(v=> <option key={v.id} value={v.id}>{v.matricule} — {v.marque} {v.modele}</option>)}</select>
+        <input name="chauffeur" placeholder="Chauffeur" required list="chList"/><datalist id="chList">{data.chauffeurs.map(c=> <option key={c.id} value={c.nom}/>)}</datalist>
+        <input name="demandeur" placeholder="Service demandeur *" required/>
+        <input name="destination" placeholder="Destination *" required/>
+        <input name="dateDepart" type="date" required/><input name="dateRetour" type="date"/>
+        <input name="kmDepart" type="number" placeholder="KM départ"/><input name="kmRetour" type="number" placeholder="KM retour (à remplir au retour)"/>
+        <select name="statut"><option value="en_attente_chef_parc">En attente Chef Parc</option><option value="en_attente_direction">En attente Direction</option><option value="validée_direction">Validée Direction</option></select>
+        <input name="motif" placeholder="Motif / Objet mission" style={{gridColumn:'1/-1'}}/>
+        <button className="btn btn-dark" style={{gridColumn:'1/-1'}}>Créer demande</button>
+      </form>}
+      <div style={{overflowX:'auto'}}><table><thead><tr><th>Date</th><th>Bon</th><th>Véhicule</th><th>Chauffeur</th><th>Demandeur → Destination</th><th>KM</th><th>Workflow</th><th>Actions</th></tr></thead>
+      <tbody>{data.missions.map(m=> <tr key={m.id}><td>{m.dateDepart}<div style={{fontSize:10,color:'#64748b'}}>{m.dateRetour||'—'}</div></td><td style={{fontFamily:'monospace',fontWeight:700}}>{m.bonMission||'—'}</td><td>{m.vehicule?.matricule||'-'}<div style={{fontSize:10,color:'#64748b'}}>{m.vehicule?.marque} {m.vehicule?.modele}</div></td><td>{m.chauffeur}</td><td><b>{m.demandeur}</b><div style={{fontSize:11}}>→ {m.destination}</div><div style={{fontSize:10,color:'#64748b'}}>{m.motif}</div></td><td>{m.kmDepart||'-'} → {m.kmRetour||'...'}</td><td>{badge(m.statut)}</td><td>
+        {m.statut==='en_attente_chef_parc' && <><button className="btn btn-green" style={{padding:'4px 6px',fontSize:10}} onClick={async()=>{await fetch(`/api/parc/missions/${m.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statut:'en_attente_direction'})});fetchData()}}>✔ Chef Parc</button> <button className="btn btn-red" style={{padding:'4px 6px',fontSize:10}} onClick={async()=>{await fetch(`/api/parc/missions/${m.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statut:'refusée'})});fetchData()}}>Refuser</button></>}
+        {m.statut==='en_attente_direction' && <><button className="btn btn-green" style={{padding:'4px 6px',fontSize:10}} onClick={async()=>{await fetch(`/api/parc/missions/${m.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statut:'validée_direction'})});fetchData()}}>✔ Direction</button> <button className="btn btn-red" style={{padding:'4px 6px',fontSize:10}} onClick={async()=>{await fetch(`/api/parc/missions/${m.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statut:'refusée'})});fetchData()}}>Refuser</button></>}
+        {(m.statut==='validée_direction'||m.statut==='validée') && <button className="btn btn-dark" style={{padding:'4px 6px',fontSize:10}} onClick={async()=>{const km=prompt('KM retour ?', m.kmRetour||''); if(km) {await fetch(`/api/parc/missions/${m.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statut:'terminée', kmRetour:km})});fetchData()}}}>Clôturer</button>}
+        {m.bonMission && <button className="btn btn-light" style={{padding:'4px 6px',fontSize:10}} onClick={()=>window.print()}>🖨️ Bon</button>}
+      </td></tr>)}</tbody></table></div>
+    </div>}
+
+    {/* CARBURANT */}
+    {tab==='carburant' && <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}><h3 style={{margin:0}}>3. Gestion Carburant — Cartes & Dotations</h3><button className="btn btn-dark" onClick={()=>setShowC(!showC)}>+ Bon carburant / Plein</button></div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:8,marginBottom:10}}>
+        {data.vehicules.slice(0,6).map(v=>{
+          const consos = data.carburants.filter(c=>c.vehiculeId===v.id);
+          const totalL = consos.reduce((s,c)=>s+c.litres,0);
+          const totalDH = consos.reduce((s,c)=>s+c.montant,0);
+          return <div key={v.id} style={{border:'1px solid #e2e8f0',borderRadius:10,padding:10,fontSize:11}}><b>{v.matricule}</b> — {v.carteCarburant}<br/>Dotation: <b>{v.dotationMensuelle} DH</b> • Conso: {totalL}L / {totalDH}DH</div>
+        })}
+      </div>
+      {showC && <form onSubmit={async e=>{
+        e.preventDefault(); const b=Object.fromEntries(new FormData(e.target)); b.litres=Number(b.litres); b.montant=Number(b.montant); b.km=Number(b.km);
+        await fetch('/api/parc/carburants',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}); setShowC(false); fetchData();
+      }} style={{background:'#f8fafc',padding:14,borderRadius:12,marginBottom:12,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:8}}>
+        <select name="vehiculeId" required><option value="">-- Véhicule --</option>{data.vehicules.map(v=> <option key={v.id} value={v.id}>{v.matricule} ({v.carteCarburant})</option>)}</select>
+        <input name="carte" placeholder="Carte (auto)"/><input name="bon" placeholder="N° Bon carburant"/><input name="date" type="date" required/><input name="litres" type="number" step="0.1" placeholder="Litres" required/><input name="montant" type="number" placeholder="Montant DH (auto 13.5)"/><input name="km" type="number" placeholder="KM compteur" required/><input name="station" placeholder="Station"/><button className="btn btn-dark" style={{gridColumn:'1/-1'}}>Enregistrer</button>
+      </form>}
+      <div style={{overflowX:'auto'}}><table><thead><tr><th>Date</th><th>Bon</th><th>Véhicule / Carte</th><th>Litres</th><th>Montant</th><th>KM</th><th>Conso L/100</th><th>Station</th></tr></thead>
+      <tbody>{data.carburants.map(c=>{
+        const v=data.vehicules.find(x=>x.id===c.vehiculeId);
+        // conso approx
+        const idx = data.carburants.filter(x=>x.vehiculeId===c.vehiculeId).sort((a,b)=>a.km-b.km);
+        let conso='-';
+        if(idx.length>=2){
+          const prev = idx[idx.indexOf(c)-1];
+          if(prev && c.km>prev.km) conso = ((c.litres/(c.km-prev.km))*100).toFixed(1);
+        }
+        return <tr key={c.id}><td>{c.date}</td><td style={{fontFamily:'monospace'}}>{c.bon||'-'}</td><td>{v?.matricule||'-'}<div style={{fontSize:10,color:'#64748b'}}>{c.carte||v?.carteCarburant}</div></td><td>{c.litres} L</td><td>{c.montant} DH</td><td>{c.km}</td><td>{conso==='-'?'-':conso}</td><td>{c.station}</td></tr>
+      })}</tbody></table></div>
+    </div>}
+
+    {/* MAINTENANCE */}
+    {tab==='maintenance' && <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}><h3 style={{margin:0}}>4. Maintenance & Contrôle — Alertes 30j</h3><button className="btn btn-dark" onClick={()=>setShowE(!showE)}>+ Intervention</button></div>
+      <div style={{background:'#fff7ed',border:'1px solid #fed7aa',padding:10,borderRadius:10,marginBottom:10,fontSize:12}}>
+        <b>Alertes automatiques:</b> {data.alertes.length} véhicules avec VT/Assurance expirant dans &lt;30j — <span style={{color:'#dc2626',fontWeight:700}}>{data.alertes.slice(0,3).map(v=>v.matricule).join(', ')}{data.alertes.length>3?'...':''}</span>
+      </div>
+      {showE && <form onSubmit={async e=>{
+        e.preventDefault(); const b=Object.fromEntries(new FormData(e.target)); b.montant=Number(b.montant); b.km=Number(b.km);
+        await fetch('/api/parc/entretiens',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}); setShowE(false); fetchData();
+      }} style={{background:'#f8fafc',padding:14,borderRadius:12,marginBottom:12,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:8}}>
+        <select name="vehiculeId" required><option value="">-- Véhicule --</option>{data.vehicules.map(v=> <option key={v.id} value={v.id}>{v.matricule}</option>)}</select>
+        <input name="date" type="date" required/><select name="type"><option>Vidange</option><option>Réparation</option><option>Visite Technique</option><option>Assurance</option><option>Vignette</option><option>Pneus</option><option>Pièces</option></select>
+        <input name="km" type="number" placeholder="KM"/><input name="montant" type="number" placeholder="Montant DH"/><input name="fournisseur" placeholder="Fournisseur / Garage"/><input name="pieces" placeholder="Pièces de rechange"/><input name="description" placeholder="Description" style={{gridColumn:'1/-1'}}/><button className="btn btn-dark" style={{gridColumn:'1/-1'}}>Enregistrer</button>
+      </form>}
+      <div style={{overflowX:'auto'}}><table><thead><tr><th>Date</th><th>Véhicule</th><th>Type</th><th>KM</th><th>Montant</th><th>Fournisseur</th><th>Pièces</th><th>Description</th></tr></thead>
+      <tbody>{data.entretiens.map(e=>{
+        const v=data.vehicules.find(x=>x.id===e.vehiculeId);
+        return <tr key={e.id} style={e.type==='Réparation'?{background:'#fef2f2'}:{}}><td>{e.date}</td><td>{v?.matricule||'-'}<div style={{fontSize:10,color:'#64748b'}}>{v?.marque} {v?.modele}</div></td><td><span className="badge" style={{background: e.type==='Vidange'?'#fef9c3':'#f1f5f9',color:'#334155'}}>{e.type}</span></td><td>{e.km}</td><td><b>{e.montant} DH</b></td><td>{e.fournisseur}</td><td style={{fontSize:11}}>{e.pieces||'-'}</td><td style={{fontSize:11}}>{e.description}</td></tr>
+      })}</tbody></table></div>
+    </div>}
+
+    {/* CHAUFFEURS & INFRACTIONS */}
+    {tab==='chauffeurs' && <div>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}><h3 style={{margin:0}}>5. Chauffeurs</h3><button className="btn btn-dark" onClick={()=>setShowCh(!showCh)}>+ Ajouter</button></div>
+          {showCh && <form onSubmit={async e=>{e.preventDefault(); const b=Object.fromEntries(new FormData(e.target)); await fetch('/api/parc/chauffeurs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}); setShowCh(false); fetchData()}} style={{background:'#f8fafc',padding:10,borderRadius:10,marginBottom:10,display:'grid',gap:6}}>
+            <input name="nom" placeholder="Nom complet *" required/><input name="matricule" placeholder="Matricule CH-..."/><input name="permis" placeholder="Permis (B, C...)"/><input name="tel" placeholder="Téléphone"/><input name="affectation" placeholder="Affectation véhicule"/><select name="statut"><option value="disponible">Disponible</option><option value="en_mission">En mission</option></select><button className="btn btn-dark">Enregistrer</button>
+          </form>}
+          <table><thead><tr><th>Nom</th><th>Matricule</th><th>Permis</th><th>Affectation</th><th>Statut</th></tr></thead>
+          <tbody>{data.chauffeurs.map(c=> <tr key={c.id}><td><b>{c.nom}</b><div style={{fontSize:10,color:'#64748b'}}>{c.tel}</div></td><td>{c.matricule}</td><td>{c.permis}</td><td>{c.affectation}</td><td>{badge(c.statut)}</td></tr>)}</tbody></table>
+        </div>
+        <div className="card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}><h3 style={{margin:0}}>PV & Infractions</h3><button className="btn btn-dark" onClick={()=>setShowPV(!showPV)}>+ Ajouter PV</button></div>
+          {showPV && <form onSubmit={async e=>{e.preventDefault(); const b=Object.fromEntries(new FormData(e.target)); b.montant=Number(b.montant); b.points=Number(b.points)||0; await fetch('/api/parc/infractions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}); setShowPV(false); fetchData()}} style={{background:'#fef2f2',padding:10,borderRadius:10,marginBottom:10,display:'grid',gap:6}}>
+            <select name="vehiculeId" required><option value="">-- Véhicule --</option>{data.vehicules.map(v=> <option key={v.id} value={v.id}>{v.matricule}</option>)}</select>
+            <input name="chauffeur" placeholder="Chauffeur" list="ch2"/><datalist id="ch2">{data.chauffeurs.map(c=> <option key={c.id} value={c.nom}/>)}</datalist>
+            <input name="date" type="date" required/><input name="type" placeholder="Type (Excès vitesse, Stationnement...)" required/><input name="lieu" placeholder="Lieu"/><input name="numeroPV" placeholder="N° PV"/><input name="montant" type="number" placeholder="Montant DH"/><input name="points" type="number" placeholder="Points"/><select name="statut"><option value="en_attente">En attente</option><option value="payé">Payé</option><option value="contesté">Contesté</option></select><button className="btn btn-red">Enregistrer PV</button>
+          </form>}
+          <div style={{overflowX:'auto'}}><table><thead><tr><th>Date</th><th>Véhicule / Chauffeur</th><th>Infraction</th><th>Montant</th><th>Statut</th></tr></thead>
+          <tbody>{data.infractions.map(p=> <tr key={p.id}><td>{p.date}<div style={{fontSize:10,color:'#64748b'}}>{p.numeroPV}</div></td><td>{p.vehicule?.matricule||'-'}<div style={{fontSize:10,color:'#64748b'}}>{p.chauffeur}</div></td><td>{p.type}<div style={{fontSize:10,color:'#64748b'}}>{p.lieu} • {p.points} pts</div></td><td><b>{p.montant} DH</b></td><td>{badge(p.statut)}</td></tr>)}</tbody></table></div>
+        </div>
+      </div>
+      <div className="card" style={{marginTop:12}}>
+        <h3 style={{margin:'0 0 8px'}}>Affectations Chauffeur ↔ Véhicule</h3>
+        <table><thead><tr><th>Chauffeur</th><th>Véhicule affecté (exemple)</th><th>Mission en cours</th></tr></thead>
+        <tbody>{data.chauffeurs.map(c=>{
+          const m=data.missions.find(m=>m.chauffeur===c.nom && m.statut!=='terminée' && m.statut!=='refusée');
+          return <tr key={c.id}><td>{c.nom}</td><td>{m?.vehicule?.matricule||c.affectation||'—'}</td><td>{m? `${m.destination} ${badge(m.statut)}`:'Aucune'}</td></tr>
+        })}</tbody></table>
+      </div>
+    </div>}
+
+    <div style={{textAlign:'center',padding:12,fontSize:11,color:'#64748b',marginTop:12}} className="no-print">
+      ✅ <b>Parc Auto Direction Publique — 50 véhicules — HAJBANE</b> • Dossier <code>parc-auto/</code> • Port 3002 • Standalone
+    </div>
+  </div>
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

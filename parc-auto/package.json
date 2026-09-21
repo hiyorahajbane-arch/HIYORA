@@ -1,0 +1,15 @@
+{
+  "name": "parc-auto-direction-publique",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Gestion de Parc Automobile pour Direction Publique - STANDALONE (indépendant de HIYORA)",
+  "scripts": {
+    "dev": "node server/server.js",
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

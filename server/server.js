@@ -7,7 +7,6 @@ import authRouter from './routes/auth.js';
 import productsRouter from './routes/products.js';
 import ordersRouter from './routes/orders.js';
 import settingsRouter from './routes/settings.js';
-import parcRouter from './routes/parc.js';
 import { getDb } from './lib/db.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -32,7 +31,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/settings', settingsRouter);
-app.use('/api/parc', parcRouter);
 
 const CLIENT_DIST = join(__dirname, '..', 'client', 'dist');
 app.use(express.static(CLIENT_DIST));
