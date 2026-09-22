@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>زواج HAJBANE — موقع زواج إسلامي جاد | Muslima-like</title>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,Tajawal,sans-serif;background:#fdfcfb;color:#1c1917}
+.header{background:linear-gradient(135deg,#0f766e,#115e59);color:white;padding:18px;border-radius:16px;margin-bottom:14px}
+.card{background:white;border:1px solid #e7e5e4;border-radius:14px;padding:14px;margin-bottom:10px}
+.btn{padding:8px 14px;border-radius:999px;border:none;cursor:pointer;font-weight:700;font-size:13px}
+.btn-teal{background:#0f766e;color:white} .btn-gold{background:#d97706;color:white} .btn-light{background:white;border:1px solid #e7e5e4}
+.badge{padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
+.tab{padding:7px 12px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px;border:1px solid #e7e5e4;background:white}
+.tab.active{background:#0f766e;color:white;border-color:#0f766e}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+input,select,textarea{padding:8px 10px;border:1px solid #e7e5e4;border-radius:10px;font-size:13px;width:100%}
+.profile-img{width:100%;height:220px;object-fit:cover;border-radius:12px}
+.heart{color:#e11d48}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+function App(){
+  const [data,setData]=useState(null);
+  const [tab,setTab]=useState('accueil');
+  const [genre,setGenre]=useState('');
+  const [ville,setVille]=useState('');
+  const [profiles,setProfiles]=useState([]);
+  const [showAdd,setShowAdd]=useState(false);
+  const [selected,setSelected]=useState(null);
+  const [demandes,setDemandes]=useState([]);
+  const fetchAll=()=>{
+    fetch('/api/zawaj').then(r=>r.json()).then(d=>{setData(d); setProfiles(d.profiles);});
+    fetch('/api/zawaj/demandes').then(r=>r.json()).then(setDemandes);
+  };
+  useEffect(fetchAll,[]);
+  const search=()=>{
+    const q=new URLSearchParams(); if(genre) q.set('genre',genre); if(ville) q.set('ville',ville);
+    fetch('/api/zawaj/profiles?'+q.toString()).then(r=>r.json()).then(setProfiles);
+  };
+  useEffect(search,[genre,ville]);
+  const like=async(id)=>{
+    await fetch('/api/zawaj/like/'+id,{method:'POST'});
+    fetchAll();
+  };
+  const envoyerDemande=async(toId)=>{
+    const msg=prompt('رسالة طلب الزواج (سيتوصل بها الطرف الآخر):','السلام عليكم، أعجبت ببروفايلك وأرغب في التعارف الجاد قصد الزواج الحلال.');
+    if(!msg) return;
+    await fetch('/api/zawaj/demandes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({from: profiles[0]?.id || 'U-100', to: toId, message: msg})});
+    alert('تم إرسال طلب الزواج بنجاح ✅ سيتوصل الطرف الآخر بالإشعار');
+    fetchAll();
+  };
+  if(!data) return <div style={{padding:40,textAlign:'center'}}>جاري التحميل...</div>;
+  return <div style={{maxWidth:1100,margin:'0 auto',padding:14}}>
+    <div className="header">
+      <div style={{display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
+        <div>
+          <div style={{fontSize:11,letterSpacing:2,opacity:.8}}>HAJBANE — ZAWĀJ HALAL</div>
+          <h1 style={{margin:'4px 0',fontSize:22}}>🌙 زواج HAJBANE — موقع زواج إسلامي جاد</h1>
+          <div style={{fontSize:12,opacity:.9}}>على سنة الله ورسوله • 18+ فقط • خصوصية تامة للمرأة • توثيق • إشراف</div>
+        </div>
+        <div style={{background:'white',color:'#0f766e',padding:'10px 14px',borderRadius:12,textAlign:'center'}}>
+          <div style={{fontSize:20,fontWeight:800}}>{data.stats.total}</div><div style={{fontSize:10}}>أعضاء</div>
+          <div style={{fontSize:10,marginTop:4}}>{data.stats.hommes} رجال • {data.stats.femmes} نساء • ✅ {data.stats.verifie} موثق</div>
+        </div>
+      </div>
+    </div>
+
+    <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:12}}>
+      {[
+        ['accueil','🏠 الرئيسية'],
+        ['recherche','🔍 البحث'],
+        ['profils','👥 البروفايلات'],
+        ['demandes','💌 الطلبات ('+demandes.length+')'],
+        ['premium','⭐ المميز'],
+      ].map(([id,l])=> <button key={id} className={tab===id?'tab active':'tab'} onClick={()=>setTab(id)}>{l}</button>)}
+      <button className="btn btn-gold" style={{marginRight:'auto'}} onClick={()=>setShowAdd(!showAdd)}>+ إنشاء بروفايل</button>
+    </div>
+
+    {showAdd && <form className="card" onSubmit={async e=>{
+      e.preventDefault(); const b=Object.fromEntries(new FormData(e.target)); b.age=Number(b.age); b.premium=false; b.verifie=false;
+      if(b.age<18){alert('السن يجب أن يكون +18'); return;}
+      await fetch('/api/zawaj/profiles',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
+      setShowAdd(false); fetchAll(); e.target.reset();
+    }} style={{background:'#f0fdfa',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:8}}>
+      <input name="nom" placeholder="الاسم *" required/>
+      <input name="age" type="number" placeholder="السن * (18+)" required min="18" max="70"/>
+      <select name="genre" required><option value="">الجنس</option><option value="homme">رجل</option><option value="femme">امرأة</option></select>
+      <input name="ville" placeholder="المدينة *" required/>
+      <input name="pays" placeholder="الدولة" defaultValue="Maroc"/>
+      <select name="situation"><option value="Célibataire">أعزب/عزباء</option><option value="Divorcé">مطلق/ة</option><option value="Veuf">أرمل/ة</option></select>
+      <select name="priere"><option value="Toujours">أصلي دائما</option><option value="Parfois">أحيانا</option></select>
+      <select name="hijab"><option value="Oui">محجبة</option><option value="Non">غير محجبة</option><option value="-">-</option></select>
+      <input name="travail" placeholder="العمل"/>
+      <input name="photo" placeholder="رابط الصورة (اختياري)" defaultValue="https://i.pravatar.cc/300?img=8"/>
+      <textarea name="description" placeholder="نبذة عنك و عن شريك الحياة المطلوب" style={{gridColumn:'1/-1'}} rows="2"></textarea>
+      <button className="btn btn-teal" style={{gridColumn:'1/-1'}}>نشر البروفايل</button>
+    </form>}
+
+    {tab==='accueil' && <div>
+      <div className="card" style={{background:'linear-gradient(135deg,#fef3c7,#fde68a)',borderColor:'#f59e0b'}}>
+        <h3 style={{margin:'0 0 6px'}}>💍 لماذا زواج HAJBANE؟</h3>
+        <div style={{fontSize:13,lineHeight:1.7}}>
+          • زواج حلال جاد فقط — لا تعارف عابر<br/>
+          • خصوصية المرأة: الصورة والرسائل لا تظهر إلا بموافقتها<br/>
+          • توثيق بالعلامة الزرقاء ✅ لمحاربة المزيفين<br/>
+          • إشراف ومراقبة يومية + منع القاصرين (&lt;18)
+        </div>
+      </div>
+      <div className="grid">
+        {profiles.slice(0,6).map(p=> <div key={p.id} className="card" style={{padding:0,overflow:'hidden'}}>
+          <img src={p.photo} className="profile-img"/>
+          <div style={{padding:10}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <b>{p.nom}، {p.age} سنة</b> {p.verifie && <span className="badge" style={{background:'#dcfce7',color:'#166534'}}>✅ موثق</span>}
+            </div>
+            <div style={{fontSize:12,color:'#57534e'}}>{p.ville} • {p.pays} • {p.situation}</div>
+            <div style={{fontSize:11,marginTop:4}}>{p.priere==='Toujours'?'🕌 يصلي':'🕌'} {p.hijab==='Oui'?'🧕 محجبة':''} {p.travail}</div>
+            <div style={{fontSize:12,color:'#44403c',marginTop:6, minHeight:36}}>{p.description.slice(0,70)}...</div>
+            <div style={{display:'flex',gap:6,marginTop:8}}>
+              <button className="btn btn-teal" style={{flex:1}} onClick={()=>envoyerDemande(p.id)}>💌 طلب زواج</button>
+              <button className="btn btn-light" onClick={()=>like(p.id)}>❤️ {p.likes}</button>
+            </div>
+          </div>
+        </div>)}
+      </div>
+    </div>}
+
+    {tab==='recherche' && <div className="card">
+      <h3>🔍 البحث المتقدم</h3>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:8,marginBottom:12}}>
+        <select value={genre} onChange={e=>setGenre(e.target.value)}><option value="">الكل</option><option value="homme">رجال</option><option value="femme">نساء</option></select>
+        <input placeholder="المدينة (مثلا: Casablanca)" value={ville} onChange={e=>setVille(e.target.value)}/>
+        <button className="btn btn-teal" onClick={search}>بحث</button>
+        <button className="btn btn-light" onClick={()=>{setGenre('');setVille('');fetchAll()}}>إعادة</button>
+      </div>
+      <div style={{fontSize:12,color:'#57534e',marginBottom:8}}>النتائج: {profiles.length} بروفايل</div>
+      <div className="grid">
+        {profiles.map(p=> <div key={p.id} className="card" style={{padding:0,overflow:'hidden'}}>
+          <img src={p.photo} className="profile-img" style={{height:180}}/>
+          <div style={{padding:10}}>
+            <b>{p.nom} {p.age}س</b> • {p.ville} {p.premium && <span className="badge" style={{background:'#fef3c7',color:'#92400e'}}>⭐ مميز</span>}
+            <div style={{fontSize:11,marginTop:4}}>{p.description.slice(0,60)}...</div>
+            <button className="btn btn-teal" style={{width:'100%',marginTop:8}} onClick={()=>envoyerDemande(p.id)}>طلب زواج</button>
+          </div>
+        </div>)}
+      </div>
+    </div>}
+
+    {tab==='profils' && <div className="grid">
+      {profiles.map(p=> <div key={p.id} className="card">
+        <img src={p.photo} className="profile-img"/>
+        <h3 style={{margin:'8px 0 4px'}}>{p.nom} — {p.age} سنة {p.verifie?'✅':''} {p.premium?'⭐':''}</h3>
+        <div style={{fontSize:12,lineHeight:1.6}}>
+          <b>المدينة:</b> {p.ville}، {p.pays}<br/>
+          <b>الحالة:</b> {p.situation}<br/>
+          <b>الصلاة:</b> {p.priere} {p.hijab==='Oui'?'• محجبة':''} {p.barbe==='Oui'?'• ملتحي':''}<br/>
+          <b>العمل:</b> {p.travail} • <b>الدراسة:</b> {p.etude}<br/>
+          <b>النبذة:</b> {p.description}
+        </div>
+        <div style={{display:'flex',gap:6,marginTop:10}}>
+          <button className="btn btn-teal" style={{flex:1}} onClick={()=>envoyerDemande(p.id)}>💌 إرسال طلب</button>
+          <button className="btn btn-light" onClick={()=>setSelected(p)}>👁️ عرض</button>
+        </div>
+        <div style={{fontSize:11,color:'#78716c',marginTop:6}}>👁️ {p.vues} مشاهدة • ❤️ {p.likes} إعجاب</div>
+      </div>)}
+    </div>}
+
+    {tab==='demandes' && <div className="card">
+      <h3>💌 طلبات الزواج</h3>
+      {demandes.length===0? <div style={{color:'#57534e'}}>لا توجد طلبات بعد — أرسل أول طلب من البروفايلات</div> :
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:12}}>
+          <thead><tr style={{background:'#f5f5f4'}}><th style={{padding:8,textAlign:'right'}}>من → إلى</th><th>الرسالة</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody>{demandes.map(d=>{
+            const from=profiles.find(p=>p.id===d.from); const to=profiles.find(p=>p.id===d.to);
+            return <tr key={d.id} style={{borderTop:'1px solid #e7e5e4'}}><td style={{padding:8}}>{from?.nom||d.from} → {to?.nom||d.to}</td><td style={{padding:8}}>{d.message}</td><td style={{padding:8}}><span className="badge" style={{background: d.statut==='acceptée'?'#dcfce7':'#fef3c7',color:'#1c1917'}}>{d.statut}</span></td><td style={{padding:8}}>{d.statut==='en_attente' && <><button className="btn btn-teal" style={{padding:'4px 8px',fontSize:11}} onClick={async()=>{await fetch('/api/zawaj/demandes/'+d.id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statut:'acceptée'})});fetchAll()}}>قبول</button> <button className="btn btn-light" style={{padding:'4px 8px',fontSize:11}} onClick={async()=>{await fetch('/api/zawaj/demandes/'+d.id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({statut:'refusée'})});fetchAll()}}>رفض</button></>}</td></tr>
+          })}</tbody>
+        </table>
+      }
+    </div>}
+
+    {tab==='premium' && <div>
+      <div className="card" style={{background:'linear-gradient(135deg,#0f766e,#115e59)',color:'white',textAlign:'center'}}>
+        <h2 style={{margin:'0 0 6px'}}>⭐ اشتراك HAJBANE المميز</h2>
+        <div style={{fontSize:13,opacity:.9}}>تواصل بلا حدود • شوف من زار بروفايلك • اظهر أولا في البحث</div>
+        <div style={{marginTop:12,display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
+          <div style={{background:'white',color:'#0f766e',padding:'12px 16px',borderRadius:12}}><div style={{fontWeight:800}}>149 DH / شهر</div><div style={{fontSize:11}}>الأساسي</div><button className="btn btn-teal" style={{marginTop:6}} onClick={()=>alert('سيتم توجيهك للدفع — Demo')}>اشترك</button></div>
+          <div style={{background:'#fef3c7',color:'#92400e',padding:'12px 16px',borderRadius:12,border:'2px solid #f59e0b'}}><div style={{fontWeight:800}}>299 DH / 3 أشهر</div><div style={{fontSize:11}}>الأكثر توفيرا ⭐</div><button className="btn btn-gold" style={{marginTop:6}} onClick={()=>alert('سيتم توجيهك للدفع — Demo')}>اشترك</button></div>
+        </div>
+        <div style={{fontSize:11,marginTop:10,opacity:.8}}>الدفع: MoPay • Wafacash • البطاقة • التحويل</div>
+      </div>
+      <div className="card">
+        <h3>لماذا المميز؟</h3>
+        <div style={{fontSize:13,lineHeight:1.8}}>
+          ✅ رسائل غير محدودة (المجاني: 1 رسالة/يوم)<br/>
+          ✅ تعرف من زار بروفايلك و من أعجب بك<br/>
+          ✅ بروفايلك يظهر في الأعلى<br/>
+          ✅ علامة ⭐ تزيد الثقة 3x
+        </div>
+      </div>
+    </div>}
+
+    {selected && <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.5)',display:'flex',alignItems:'center',justifyContent:'center',padding:20}} onClick={()=>setSelected(null)}>
+      <div className="card" style={{maxWidth:400,width:'100%'}} onClick={e=>e.stopPropagation()}>
+        <img src={selected.photo} className="profile-img"/>
+        <h3>{selected.nom} — {selected.age} سنة</h3>
+        <div style={{fontSize:13}}>{selected.description}</div>
+        <div style={{fontSize:12,marginTop:6}}>{selected.ville} • {selected.pays} • {selected.travail}</div>
+        <button className="btn btn-light" style={{width:'100%',marginTop:10}} onClick={()=>setSelected(null)}>إغلاق</button>
+      </div>
+    </div>}
+
+    <div style={{textAlign:'center',padding:12,fontSize:11,color:'#78716c',marginTop:10}}>
+      ✅ <b>زواج HAJBANE — Muslima-like</b> • Standalone • Port 3003 • 18+ • زواج حلال جاد فقط • HAJBANE
+    </div>
+  </div>
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

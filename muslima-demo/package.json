@@ -1,0 +1,9 @@
+{
+  "name": "zawaj-hajbane-muslima",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Site zawaj halal HAJBANE - style Muslima - STANDALONE",
+  "scripts": { "start": "node server/server.js" },
+  "dependencies": { "cors": "^2.8.5", "express": "^4.19.2" }
+}
