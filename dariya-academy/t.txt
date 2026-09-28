@@ -1,0 +1,12 @@
+
+  ===========================================================
+    Dariya Academy  |  darija - francais - english - espanol - deutsch
+  ===========================================================
+  [*] Port 4000 is busy, moving to port 4001.
+
+  [.] Wiping the database and re-seeding the demo accounts...
+WOULD-WIPE-DB
+
+  [X] Something failed. Scroll up for the error.
+
+Appuyez sur une touche pour continuer... 

@@ -1,0 +1,24 @@
+{
+  "name": "dariya-academy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dariya Academy - منصة تعلم اللغات للمغاربة بالمهجر (دارجة، فرنسي، إنجليزي، إسباني، ألماني)",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "seed": "npm run seed --prefix server",
+    "seed:force": "npm run seed:force --prefix server",
+    "dev": "concurrently -n SERVER,CLIENT -c green,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "test": "npm test --prefix server",
+    "test:client": "npm run test:client --prefix server",
+    "test:all": "npm test && npm run test:client",
+    "lint:content": "node scripts/check-content.mjs server/src/content"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

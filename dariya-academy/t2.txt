@@ -1,0 +1,16 @@
+
+  ===========================================================
+    Dariya Academy  |  darija - francais - english - espanol - deutsch
+  ===========================================================
+  [*] Port 4000 is busy, moving to port 4001.
+
+  [.] Regenerating lessons.json from the content files...
+
+  Mode : dev
+  Site : http://localhost:5173
+  API  : http://localhost:4001
+  Stop : press CTRL+C in this window
+
+DEV-STARTED-HERE
+
+  Bye.

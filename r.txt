@@ -1,0 +1,31 @@
+'C:\WINDOWS\system32' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+'de.js' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+v24.19.0
+'R]' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+'exist' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+'ll' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+'TAR]' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+Le chemin d’accès spécifié est introuvable.
+'--prefix' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+'�اتيك' n’est pas reconnu en tant que commande interne
+ou externe, un programme exécutable ou un fichier de commandes.
+[STAR] Client is up to date, skipping build.
+
+[STAR] Starting store...
+  Server: http://localhost:3001
+  Admin:  http://localhost:3001/admin  (admin / admin123)
+
+[STAR] Opening browser automatically in 4 seconds...
+
+> souk-server@1.0.0 start
+> node server.js
+
+[HIYORA] الخادم يعمل على http://localhost:3001
+[HIYORA] عدد المنتجات المبدئية: 19

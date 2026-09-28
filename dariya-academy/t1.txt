@@ -1,0 +1,17 @@
+
+  ===========================================================
+    Dariya Academy  |  darija - francais - english - espanol - deutsch
+  ===========================================================
+  [*] Port 4000 is busy, moving to port 4001.
+
+  [.] Regenerating lessons.json from the content files...
+
+  Mode : prod
+  Site : http://localhost:4001
+  API  : http://localhost:4001
+  Stop : press CTRL+C in this window
+
+BROWSER-OPEN-CALLED & rem "C:\WINDOWS\system32\cmd.exe" /c node "server\scripts\open-browser.mjs" "http://localhost:4001" "4001"
+SERVER-STARTED-HERE
+
+  Bye.

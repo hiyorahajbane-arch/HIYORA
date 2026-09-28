@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# generated from server/src/content at boot / by `npm run seed`
+server/data/db.json
+server/data/lessons.json
+
+*.log
+.DS_Store
+Thumbs.db

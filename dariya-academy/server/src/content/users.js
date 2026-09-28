@@ -1,0 +1,55 @@
+import bcrypt from 'bcryptjs'
+
+/** Seeded accounts so the demo is usable straight after `npm run seed`. */
+const hash = (pw) => bcrypt.hashSync(pw, 10)
+
+export const seedUsers = [
+  {
+    id: 'u_demo',
+    email: 'demo@dariya.academy',
+    passwordHash: hash('demo1234'),
+    name: 'ياسين',
+    country: 'France',
+    city: 'Lyon',
+    nativeLanguage: 'darija',
+    targetLanguages: ['darija', 'fr', 'en'],
+    dailyGoal: 10,
+    xp: 340,
+    streak: 5,
+    bestStreak: 12,
+    lastPractice: null,
+    createdAt: '2026-01-10T09:00:00.000Z',
+  },
+  {
+    id: 'u_salma',
+    email: 'salma@dariya.academy',
+    passwordHash: hash('salma1234'),
+    name: 'سلمى',
+    country: 'Espagne',
+    city: 'Barcelona',
+    nativeLanguage: 'darija',
+    targetLanguages: ['darija', 'es'],
+    dailyGoal: 15,
+    xp: 180,
+    streak: 2,
+    bestStreak: 6,
+    lastPractice: null,
+    createdAt: '2026-02-02T09:00:00.000Z',
+  },
+  {
+    id: 'u_hamza',
+    email: 'hamza@dariya.academy',
+    passwordHash: hash('hamza1234'),
+    name: 'حمزة',
+    country: 'Belgique',
+    city: 'Bruxelles',
+    nativeLanguage: 'darija',
+    targetLanguages: ['darija', 'fr', 'de'],
+    dailyGoal: 20,
+    xp: 95,
+    streak: 1,
+    bestStreak: 3,
+    lastPractice: null,
+    createdAt: '2026-03-18T09:00:00.000Z',
+  },
+]
