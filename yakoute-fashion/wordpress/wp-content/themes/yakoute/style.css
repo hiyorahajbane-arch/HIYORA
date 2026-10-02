@@ -1,0 +1,314 @@
+/*
+Theme Name:   Yakoute Fashion
+Theme URI:    http://localhost:8080
+Author:       Yakoute Fashion
+Description:  Custom child theme of Storefront for Yakoute Fashion - Arabic/RTL fashion store. Deep burgundy + gold on warm cream. Payment on delivery, free shipping Morocco.
+Version:      1.0.0
+Template:     storefront
+License:      GNU General Public License v3 or later
+License URI:  https://www.gnu.org/licenses/gpl-3.0.html
+Text Domain:  yakoute
+Tags:         e-commerce, rtl-language-support, custom-colors, custom-logo, featured-images
+*/
+
+/* ==========================================================================
+   Design tokens (same style language as hiyora, brand-independent)
+   ========================================================================== */
+:root {
+    --yak-primary: #8a1c2e;          /* deep burgundy */
+    --yak-primary-dark: #671221;
+    --yak-gold: #c9a24b;
+    --yak-gold-light: #f3e8cf;
+    --yak-bg: #faf7f2;                /* warm cream */
+    --yak-card: #ffffff;
+    --yak-dark: #241a1a;             /* announcement bar */
+    --yak-text: #2b2222;
+    --yak-muted: #8a7f7a;
+    --yak-border: #e9ded2;
+    --yak-success: #16a34a;
+    --yak-danger: #dc2626;
+    --yak-radius: 12px;
+    --yak-shadow: 0 2px 12px rgba(138, 28, 46, 0.08);
+    --yak-shadow-lg: 0 8px 30px rgba(138, 28, 46, 0.16);
+    --yak-serif: "Playfair Display", Georgia, "Noto Naskh Arabic", "Times New Roman", serif;
+    --yak-sans: "Cairo", "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+body.yakoute,
+body {
+    font-family: var(--yak-sans);
+    color: var(--yak-text);
+    background-color: var(--yak-bg);
+    line-height: 1.7;
+}
+
+h1, h2, h3, h4, .page-title, .site-title,
+.entry-title, .woocommerce-products-header__title {
+    font-family: var(--yak-serif);
+    color: var(--yak-primary-dark);
+    letter-spacing: 0.2px;
+}
+
+a { color: var(--yak-primary); }
+a:hover { color: var(--yak-gold); }
+
+.site-header, .site-content { max-width: 1200px; }
+
+/* ==========================================================================
+   Announcement bar (توصيل مجاني - الدفع عند الاستلام)
+   ========================================================================== */
+.yak-announcement {
+    background: var(--yak-dark);
+    color: #f3e8cf;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+.yak-announcement strong { color: var(--yak-gold); }
+
+/* ==========================================================================
+   Sticky navbar
+   ========================================================================== */
+.yak-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: var(--yak-card);
+    box-shadow: var(--yak-shadow);
+    border-bottom: 1px solid var(--yak-border);
+}
+.yak-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 20px;
+}
+.yak-brand img { max-height: 48px; display: block; }
+.yak-menu { display: flex; gap: 26px; list-style: none; margin: 0; padding: 0; }
+.yak-menu a {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--yak-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+}
+.yak-menu a:hover,
+.yak-menu .current-menu-item > a { color: var(--yak-primary); border-bottom-color: var(--yak-gold); }
+.yak-actions { display: flex; align-items: center; gap: 16px; }
+.yak-lang-switch { display: flex; gap: 6px; }
+.yak-lang-switch a {
+    font-size: 12px; font-weight: 700; text-decoration: none;
+    padding: 4px 8px; border-radius: 6px; background: var(--yak-gold-light); color: var(--yak-primary-dark);
+}
+.yak-lang-switch a.active { background: var(--yak-primary); color: #fff; }
+.yak-cart-link { position: relative; font-size: 22px; text-decoration: none; color: var(--yak-primary); }
+.yak-cart-count {
+    position: absolute; top: -6px; inset-inline-end: -10px;
+    background: var(--yak-primary); color: #fff;
+    font-size: 11px; font-weight: 700; border-radius: 50%;
+    min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
+    padding: 0 4px;
+}
+
+/* ==========================================================================
+   Hero
+   ========================================================================== */
+.yak-hero {
+    position: relative;
+    background: linear-gradient(135deg, var(--yak-primary-dark), var(--yak-primary) 55%, #a02a3f);
+    color: #fff;
+    border-radius: var(--yak-radius);
+    overflow: hidden;
+    margin: 28px auto;
+    max-width: 1200px;
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px;
+    box-shadow: var(--yak-shadow-lg);
+}
+.yak-hero::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(201,162,75,.28), transparent 55%);
+}
+.yak-hero-inner { position: relative; z-index: 1; max-width: 720px; }
+.yak-hero .eyebrow {
+    font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--yak-gold); margin-bottom: 14px; font-weight: 700;
+}
+.yak-hero h1 {
+    color: #fff; font-size: clamp(30px, 5vw, 52px); margin: 0 0 14px; line-height: 1.25;
+}
+.yak-hero p { font-size: 18px; color: var(--yak-gold-light); margin: 0 0 26px; }
+.yak-btn {
+    display: inline-block; background: var(--yak-gold); color: var(--yak-dark);
+    padding: 13px 34px; border-radius: 999px; text-decoration: none;
+    font-weight: 800; font-size: 15px; transition: transform .2s, box-shadow .2s;
+}
+.yak-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(201,162,75,.4); color: var(--yak-dark); }
+.yak-btn-outline { background: transparent; border: 2px solid var(--yak-gold); color: var(--yak-gold); }
+.yak-btn-outline:hover { background: var(--yak-gold); color: var(--yak-dark); }
+
+/* ==========================================================================
+   Section headers
+   ========================================================================== */
+.yak-section { max-width: 1200px; margin: 48px auto; padding: 0 20px; }
+.yak-section-head { text-align: center; margin-bottom: 32px; }
+.yak-section-head .eyebrow {
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--yak-gold); font-weight: 800; margin-bottom: 8px;
+}
+.yak-section-head h2 { font-size: clamp(24px, 3.4vw, 36px); margin: 0; }
+.yak-section-head p { color: var(--yak-muted); margin-top: 8px; }
+
+/* ==========================================================================
+   Category cards
+   ========================================================================== */
+.yak-cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px; }
+.yak-cat-card {
+    position: relative; border-radius: var(--yak-radius); overflow: hidden;
+    box-shadow: var(--yak-shadow); text-decoration: none; display: block;
+    transition: transform .25s, box-shadow .25s; background: var(--yak-card);
+}
+.yak-cat-card:hover { transform: translateY(-4px); box-shadow: var(--yak-shadow-lg); }
+.yak-cat-card img { width: 100%; height: 300px; object-fit: cover; display: block; }
+.yak-cat-body { padding: 18px; text-align: center; }
+.yak-cat-body h3 { margin: 0 0 6px; font-size: 20px; }
+.yak-cat-body span { color: var(--yak-muted); font-size: 14px; }
+.yak-cat-body .more { color: var(--yak-primary); font-weight: 700; font-size: 14px; display: inline-block; margin-top: 8px; }
+
+/* Per-gender accent themes (same as hiyora theme-men / theme-kids) */
+.yak-cat-card.theme-women { --accent: #c2185b; }
+.yak-cat-card.theme-men   { --accent: #1565c0; }
+.yak-cat-card.theme-kids  { --accent: #f57c00; }
+.yak-cat-card h3 { color: var(--accent, var(--yak-primary)); }
+
+/* ==========================================================================
+   Product cards
+   ========================================================================== */
+.woocommerce ul.products li.product,
+.yak-products-grid .product {
+    background: var(--yak-card);
+    border: 1px solid var(--yak-border);
+    border-radius: var(--yak-radius);
+    overflow: hidden;
+    box-shadow: var(--yak-shadow);
+    transition: transform .25s, box-shadow .25s;
+    text-align: center;
+    padding-bottom: 16px;
+}
+.woocommerce ul.products li.product:hover,
+.yak-products-grid .product:hover { transform: translateY(-4px); box-shadow: var(--yak-shadow-lg); }
+.woocommerce ul.products li.product img,
+.yak-products-grid .product img { border-radius: 0; aspect-ratio: 1/1; object-fit: cover; width: 100%; }
+.woocommerce ul.products li.product .woocommerce-loop-product__title,
+.yak-products-grid .product .woocommerce-loop-product__title {
+    font-family: var(--yak-serif); font-size: 17px; color: var(--yak-text); margin: 12px 10px 6px;
+}
+.yak-price, .woocommerce ul.products li.product .price {
+    color: var(--yak-primary); font-weight: 800; font-size: 16px;
+}
+.yak-old-price { color: var(--yak-muted); text-decoration: line-through; font-weight: 400; font-size: 14px; margin-inline-start: 8px; }
+.yak-badge-sale, .woocommerce span.onsale {
+    background: var(--yak-primary); color: #fff; border-radius: 999px;
+    font-size: 12px; font-weight: 800; padding: 4px 12px; min-height: auto; min-width: auto;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.woocommerce a.button, .woocommerce button.button, .woocommerce input.button,
+.yak-btn-solid {
+    background: var(--yak-primary) !important; color: #fff !important;
+    border-radius: 999px; padding: 12px 28px; font-weight: 700;
+    border: none !important; transition: background .2s, transform .2s;
+}
+.woocommerce a.button:hover, .woocommerce button.button:hover {
+    background: var(--yak-primary-dark) !important; transform: translateY(-2px);
+}
+.woocommerce .button.alt { background: var(--yak-gold) !important; color: var(--yak-dark) !important; }
+
+/* ==========================================================================
+   Perks (3 Selling points)
+   ========================================================================== */
+.yak-perks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.yak-perk {
+    background: var(--yak-card); border: 1px solid var(--yak-border);
+    border-radius: var(--yak-radius); padding: 26px 20px; text-align: center;
+    box-shadow: var(--yak-shadow);
+}
+.yak-perk .icon { font-size: 30px; margin-bottom: 10px; }
+.yak-perk h3 { margin: 0 0 6px; font-size: 18px; }
+.yak-perk p { color: var(--yak-muted); margin: 0; font-size: 14px; }
+
+/* ==========================================================================
+   Promo banner
+   ========================================================================== */
+.yak-promo {
+    background: var(--yak-gold-light); border: 2px dashed var(--yak-gold);
+    border-radius: var(--yak-radius); text-align: center;
+    padding: 40px 24px; margin: 48px auto; max-width: 1200px;
+}
+.yak-promo h2 { color: var(--yak-primary); margin: 0 0 8px; }
+.yak-promo p { color: var(--yak-primary-dark); font-size: 17px; margin: 0 0 18px; }
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.yak-footer { background: var(--yak-dark); color: #d9cfc6; margin-top: 60px; }
+.yak-footer-inner { max-width: 1200px; margin: 0 auto; padding: 46px 20px 22px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 30px; }
+.yak-footer h4 { color: var(--yak-gold); font-family: var(--yak-serif); margin: 0 0 14px; }
+.yak-footer a { color: #d9cfc6; text-decoration: none; }
+.yak-footer a:hover { color: var(--yak-gold); }
+.yak-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+.yak-footer-logo { max-height: 56px; margin-bottom: 12px; }
+.yak-footer-bottom { border-top: 1px solid rgba(255,255,255,.12); text-align: center; padding: 16px; font-size: 13px; color: #9c918a; }
+
+/* ==========================================================================
+   WooCommerce tweaks
+   ========================================================================== */
+.woocommerce-breadcrumb { color: var(--yak-muted); }
+.woocommerce .quantity input.qty { border-radius: 8px; border-color: var(--yak-border); }
+.yak-order-meta { color: var(--yak-muted); font-size: 14px; }
+select, input[type="text"], input[type="email"], input[type="tel"],
+input[type="password"], input[type="search"], textarea {
+    border-radius: 8px !important; border-color: var(--yak-border) !important;
+    padding: 10px 12px !important;
+}
+label { font-weight: 600; color: var(--yak-text); }
+
+/* WooCommerce notices */
+.woocommerce-message, .woocommerce-info, .woocommerce-error {
+    border-radius: var(--yak-radius); border-top-color: var(--yak-primary);
+}
+
+/* ==========================================================================
+   RTL tweaks
+   ========================================================================== */
+.rtl .yak-navbar { direction: rtl; }
+.rtl .woocommerce ul.products.directions-false { direction: rtl; }
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+@media (max-width: 900px) {
+    .yak-navbar { flex-wrap: wrap; }
+    .yak-menu { order: 3; width: 100%; overflow-x: auto; gap: 18px; }
+    .yak-footer-inner { grid-template-columns: 1fr; }
+    .yak-hero { min-height: 300px; }
+}

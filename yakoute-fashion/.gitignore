@@ -1,0 +1,74 @@
+# YAKOUTE FASHION - local WordPress build
+#
+# The portable stack (WordPress core, PHP, MariaDB, WP-CLI) and the generated
+# local database are reproducible, so they stay out of version control. What is
+# tracked is the part that is actually customised: the child theme, the
+# mu-plugins, the setup scripts and the product data.
+
+# ---------------------------------------------------------------- portable stack
+/tools/
+/wordpress/wp-admin/
+/wordpress/wp-content/uploads/
+/wordpress/wp-content/upgrade/
+/wordpress/wp-content/cache/
+/wordpress/wp-content/languages/
+/wordpress/wp-content/wflogs/
+/wordpress/wp-content/w3tc-config/
+/wordpress/wp-content/advanced-cache.php
+/wordpress/wp-content/object-cache.php
+/wordpress/wp-content/db.php
+/wordpress/wp-content/db-error.php
+/wordpress/wp-content/maintenance.php
+/wordpress/wp-content/sunrise.php
+/wordpress/wp-content/blog-deleted.php
+/wordpress/wp-content/blog-inactive.php
+/wordpress/wp-content/blog-suspended.php
+/wordpress/wp-content/index.php.bak
+
+# Core files that ship with the WordPress zip, not our changes.
+/wordpress/wp-includes/
+/wordpress/wp-*.php
+/wordpress/index.php
+/wordpress/xmlrpc.php
+/wordpress/readme.html
+/wordpress/license.txt
+/wordpress/wp-activate.php
+/wordpress/wp-blog-header.php
+/wordpress/wp-comments-post.php
+/wordpress/wp-config-sample.php
+/wordpress/wp-cron.php
+/wordpress/wp-links-opml.php
+/wordpress/wp-load.php
+/wordpress/wp-login.php
+/wordpress/wp-mail.php
+/wordpress/wp-settings.php
+/wordpress/wp-signup.php
+/wordpress/wp-trackback.php
+
+# Downloaded plugins and themes, restored by the setup scripts.
+/wordpress/wp-content/plugins/
+# ...but WooCommerce language packs are downloaded by hand, see the README.
+/wordpress/wp-content/themes/storefront/
+/wordpress/wp-content/themes/twentytwenty*/
+/wordpress/wp-content/themes/akismet/
+
+# ---------------------------------------------------------------- local secrets
+/.env
+/.env.local
+/wordpress/wp-config.php
+*.sql
+*.sql.gz
+*.sql.bak
+
+# ---------------------------------------------------------------- local runtime
+/data/
+/logs/
+*.log
+/yarn-error.log
+npm-debug.log
+Thumbs.db
+.DS_Store
+desktop.ini
+.idea/
+.vscode/
+*.swp

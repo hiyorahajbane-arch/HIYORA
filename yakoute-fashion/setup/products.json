@@ -1,0 +1,237 @@
+{
+  "categories": [
+    { "slug": "women", "ar": "نساء", "fr": "Femmes", "en": "Women", "image": "cat-women.jpg", "theme": "women" },
+    { "slug": "men", "ar": "رجال", "fr": "Hommes", "en": "Men", "image": "cat-men.jpg", "theme": "men" },
+    { "slug": "kids", "ar": "أطفال", "fr": "Enfants", "en": "Kids", "image": "cat-kids.jpg", "theme": "kids" },
+
+    { "slug": "women-clothes", "parent": "women", "ar": "ملابس نسائية", "fr": "Vêtements femme", "en": "Women's Clothing" },
+    { "slug": "women-shoes-bags", "parent": "women", "ar": "أحذية وحقائب نسائية", "fr": "Chaussures & sacs femme", "en": "Women's Shoes & Bags" },
+    { "slug": "women-accessories", "parent": "women", "ar": "إكسسوارات نسائية", "fr": "Accessoires femme", "en": "Women's Accessories" },
+
+    { "slug": "men-clothes", "parent": "men", "ar": "ملابس رجالية", "fr": "Vêtements homme", "en": "Men's Clothing" },
+    { "slug": "men-shoes-bags", "parent": "men", "ar": "أحذية وحقائب رجالية", "fr": "Chaussures & sacs homme", "en": "Men's Shoes & Bags" },
+    { "slug": "men-accessories", "parent": "men", "ar": "إكسسوارات رجالية", "fr": "Accessoires homme", "en": "Men's Accessories" },
+
+    { "slug": "kids-clothes", "parent": "kids", "ar": "ملابس أطفال", "fr": "Vêtements enfants", "en": "Kids' Clothing" },
+    { "slug": "kids-shoes-bags", "parent": "kids", "ar": "أحذية وحقائب الأطفال", "fr": "Chaussures & sacs enfants", "en": "Kids' Shoes & Bags" },
+    { "slug": "kids-accessories", "parent": "kids", "ar": "إكسسوارات الأطفال", "fr": "Accessoires enfants", "en": "Kids' Accessories" }
+  ],
+
+  "sizes": {
+    "clothes": [ "S", "M", "L", "XL" ],
+    "shoes": [ "36", "37", "38", "39", "40", "41" ],
+    "one": [ "مقاس واحد" ]
+  },
+
+  "products": [
+    {
+      "slug": "robe-ete-fleurie",
+      "cat": "women-clothes",
+      "gender": "women",
+      "sizes": "clothes",
+      "price": 249, "sale": 329, "stock": 20,
+      "image": "dress-femme.jpg",
+      "ar": { "name": "فستان صيفي مزهر", "desc": "فستان صيفي خفيف بنقشة مزهرة، مثالي للإطلالات النهارية." },
+      "fr": { "name": "Robe d'été fleurie", "desc": "Robe d'été légère à motif floral, idéale pour les tenues de jour." },
+      "en": { "name": "Floral Summer Dress", "desc": "Light floral summer dress, perfect for daytime looks." }
+    },
+    {
+      "slug": "caftan-marocain",
+      "cat": "women-clothes",
+      "gender": "women",
+      "sizes": "clothes",
+      "price": 599, "stock": 10,
+      "image": "caftan.jpg",
+      "ar": { "name": "قفطان مغربي أنيق", "desc": "قفطان تقليدي بتطريز راقٍ، للمناسبات والأفراح." },
+      "fr": { "name": "Caftan marocain élégant", "desc": "Caftan traditionnel à broderie raffinée, pour les occasions et les fêtes." },
+      "en": { "name": "Elegant Moroccan Caftan", "desc": "Traditional caftan with refined embroidery, for occasions and weddings." }
+    },
+    {
+      "slug": "chemisier-coton",
+      "cat": "women-clothes",
+      "gender": "women",
+      "sizes": "clothes",
+      "price": 129, "stock": 30,
+      "image": "blouse-femme.jpg",
+      "ar": { "name": "قميص نسائي قطني", "desc": "قميص قطني مريح بقصّة عصرية، متوفر بعدة ألوان." },
+      "fr": { "name": "Chemisier en coton", "desc": "Chemisier en coton confortable, coupe moderne, disponible en plusieurs couleurs." },
+      "en": { "name": "Cotton Blouse", "desc": "Comfortable cotton blouse with a modern cut, available in several colours." }
+    },
+    {
+      "slug": "escarpins",
+      "cat": "women-shoes-bags",
+      "gender": "women",
+      "sizes": "shoes",
+      "price": 299, "sale": 399, "stock": 15,
+      "image": "escargotins.jpg",
+      "ar": { "name": "حذاء كعب عالٍ", "desc": "حذاء كعب أنيق ومريح للسهرات والمناسبات." },
+      "fr": { "name": "Escarpins", "desc": "Escarpins élégants et confortables pour les soirées et les occasions." },
+      "en": { "name": "High Heels", "desc": "Elegant and comfortable heels for evenings and special occasions." }
+    },
+    {
+      "slug": "sandales-ete",
+      "cat": "women-shoes-bags",
+      "gender": "women",
+      "sizes": "shoes",
+      "price": 149, "stock": 25,
+      "image": "sandales.jpg",
+      "ar": { "name": "صندل صيفي مريح", "desc": "صندل خفيف ومريح للمشاوير اليومية." },
+      "fr": { "name": "Sandales d'été", "desc": "Sandales légères et confortables pour les sorties de tous les jours." },
+      "en": { "name": "Summer Sandals", "desc": "Light and comfortable sandals for everyday walks." }
+    },
+    {
+      "slug": "sac-main-cuir",
+      "cat": "women-shoes-bags",
+      "gender": "women",
+      "sizes": "one",
+      "price": 349, "stock": 12,
+      "image": "sac-main.jpg",
+      "ar": { "name": "حقيبة يد جلدية", "desc": "حقيبة يد من الجلد الفاخر بتصميم عملي وأنيق." },
+      "fr": { "name": "Sac à main en cuir", "desc": "Sac à main en cuir haut de gamme, design pratique et élégant." },
+      "en": { "name": "Leather Handbag", "desc": "Premium leather handbag with a practical and elegant design." }
+    },
+    {
+      "slug": "lunettes-soleil-femme",
+      "cat": "women-accessories",
+      "gender": "women",
+      "sizes": "one",
+      "price": 119, "stock": 40,
+      "image": "lunettes.jpg",
+      "ar": { "name": "نظارة شمسية نسائية", "desc": "نظارة شمسية بحماية UV وإطار عصري." },
+      "fr": { "name": "Lunettes de soleil femme", "desc": "Lunettes de soleil avec protection UV et monture moderne." },
+      "en": { "name": "Women's Sunglasses", "desc": "Sunglasses with UV protection and a modern frame." }
+    },
+    {
+      "slug": "montre-femme",
+      "cat": "women-accessories",
+      "gender": "women",
+      "sizes": "one",
+      "price": 259, "sale": 329, "stock": 18,
+      "image": "montre-femme.jpg",
+      "ar": { "name": "ساعة يد نسائية", "desc": "ساعة يد أنيقة بسوار معدني ذهبي." },
+      "fr": { "name": "Montre femme", "desc": "Montre élégante avec bracelet métallique doré." },
+      "en": { "name": "Women's Watch", "desc": "Elegant watch with a golden metal strap." }
+    },
+    {
+      "slug": "foulard-soie",
+      "cat": "women-accessories",
+      "gender": "women",
+      "sizes": "one",
+      "price": 89, "stock": 35,
+      "image": "foulard.jpg",
+      "ar": { "name": "وشاح حريري", "desc": "وشاح من الحرير الناعم بألوان راقية." },
+      "fr": { "name": "Foulard en soie", "desc": "Foulard en soie douce aux couleurs raffinées." },
+      "en": { "name": "Silk Scarf", "desc": "Soft silk scarf in refined colours." }
+    },
+    {
+      "slug": "chemise-homme",
+      "cat": "men-clothes",
+      "gender": "men",
+      "sizes": "clothes",
+      "price": 159, "stock": 25,
+      "image": "chemise-homme.jpg",
+      "ar": { "name": "قميص رجالي كلاسيك", "desc": "قميص رجالي بقصّة كلاسيكية وخامة ممتازة." },
+      "fr": { "name": "Chemise classique homme", "desc": "Chemise homme à coupe classique, matière de qualité." },
+      "en": { "name": "Men's Classic Shirt", "desc": "Men's shirt with a classic cut and premium fabric." }
+    },
+    {
+      "slug": "baskets-homme",
+      "cat": "men-shoes-bags",
+      "gender": "men",
+      "sizes": "shoes",
+      "price": 279, "stock": 20,
+      "image": "baskets.jpg",
+      "ar": { "name": "حذاء رياضي رجالي", "desc": "حذاء رياضي مريح وخفيف للاستعمال اليومي." },
+      "fr": { "name": "Baskets homme", "desc": "Baskets homme confortables et légères au quotidien." },
+      "en": { "name": "Men's Sneakers", "desc": "Comfortable and lightweight men's sneakers for daily wear." }
+    },
+    {
+      "slug": "jean-homme",
+      "cat": "men-clothes",
+      "gender": "men",
+      "sizes": "clothes",
+      "price": 189, "stock": 22,
+      "image": "jean-homme.jpg",
+      "ar": { "name": "بنطلون جينز رجالي", "desc": "بنطلون جينز بقصّة عصرية وخامة متينة." },
+      "fr": { "name": "Jean homme", "desc": "Jean homme à coupe moderne, tissu résistant." },
+      "en": { "name": "Men's Jeans", "desc": "Men's jeans with a modern cut and durable fabric." }
+    },
+    {
+      "slug": "montre-homme",
+      "cat": "men-accessories",
+      "gender": "men",
+      "sizes": "one",
+      "price": 299, "sale": 379, "stock": 14,
+      "image": "montre-homme.jpg",
+      "ar": { "name": "ساعة يد رجالية", "desc": "ساعة يد كلاسيكية بسوار جلدي بني." },
+      "fr": { "name": "Montre homme", "desc": "Montre homme classique avec bracelet en cuir marron." },
+      "en": { "name": "Men's Watch", "desc": "Classic men's watch with a brown leather strap." }
+    },
+    {
+      "slug": "ceinture-cuir",
+      "cat": "men-accessories",
+      "gender": "men",
+      "sizes": "one",
+      "price": 99, "stock": 28,
+      "image": "ceinture.jpg",
+      "ar": { "name": "حزام جلدي رجالي", "desc": "حزام من الجلد الطبيعي بمشبك معدني." },
+      "fr": { "name": "Ceinture en cuir homme", "desc": "Ceinture en cuir véritable avec boucle métallique." },
+      "en": { "name": "Men's Leather Belt", "desc": "Genuine leather belt with a metal buckle." }
+    },
+    {
+      "slug": "sac-dos",
+      "cat": "men-shoes-bags",
+      "gender": "men",
+      "sizes": "one",
+      "price": 199, "stock": 16,
+      "image": "sac-dos.jpg",
+      "ar": { "name": "حقيبة ظهر عصرية", "desc": "حقيبة ظهر عملية بجيوب متعددة." },
+      "fr": { "name": "Sac à dos moderne", "desc": "Sac à dos pratique avec plusieurs poches." },
+      "en": { "name": "Modern Backpack", "desc": "Practical backpack with multiple pockets." }
+    },
+    {
+      "slug": "tenue-ete-enfant",
+      "cat": "kids-clothes",
+      "gender": "kids",
+      "sizes": "clothes",
+      "price": 99, "stock": 30,
+      "image": "tenue-enfant.jpg",
+      "ar": { "name": "طقم أطفال صيفي", "desc": "طقم صيفي مريح ومرح لأطفالك." },
+      "fr": { "name": "Tenue d'été enfants", "desc": "Tenue d'été confortable et amusante pour vos enfants." },
+      "en": { "name": "Kids' Summer Outfit", "desc": "Comfortable and playful summer outfit for your kids." }
+    },
+    {
+      "slug": "robe-fille",
+      "cat": "kids-clothes",
+      "gender": "kids",
+      "sizes": "clothes",
+      "price": 119, "stock": 20,
+      "image": "robe-fille.jpg",
+      "ar": { "name": "فستان بناتي ملوّن", "desc": "فستان بناتي مبهج بألوان مرحة." },
+      "fr": { "name": "Robe fille colorée", "desc": "Robe fille joyeuse aux couleurs vives." },
+      "en": { "name": "Girls' Colorful Dress", "desc": "Cheerful girls' dress in bright colours." }
+    },
+    {
+      "slug": "chaussures-enfant",
+      "cat": "kids-shoes-bags",
+      "gender": "kids",
+      "sizes": "shoes",
+      "price": 129, "stock": 24,
+      "image": "chaussures-enfant.jpg",
+      "ar": { "name": "حذاء أطفال ملوّن", "desc": "حذاء أطفال مريح بألوان زاهية." },
+      "fr": { "name": "Chaussures enfant", "desc": "Chaussures enfant confortables aux couleurs vives." },
+      "en": { "name": "Kids' Shoes", "desc": "Comfortable kids' shoes in bright colours." }
+    },
+    {
+      "slug": "casquette-enfant",
+      "cat": "kids-accessories",
+      "gender": "kids",
+      "sizes": "one",
+      "price": 49, "stock": 30,
+      "image": "casquette.jpg",
+      "ar": { "name": "قبعة أطفال", "desc": "قبعة قطنية لحماية صغارك من الشمس." },
+      "fr": { "name": "Casquette enfant", "desc": "Casquette en coton pour protéger vos enfants du soleil." },
+      "en": { "name": "Kids' Cap", "desc": "Cotton cap to protect your kids from the sun." }
+    }
+  ]
+}
