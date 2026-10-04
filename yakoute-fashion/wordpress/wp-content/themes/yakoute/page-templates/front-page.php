@@ -89,7 +89,8 @@ $shop_url = function_exists( 'yakoute_wc_url' ) ? yakoute_wc_url( 'shop' ) : hom
 <main class="yak-main">
 
 	<!-- ================= HERO ================= -->
-	<section class="yak-hero">
+	<?php $hero_bg = yakoute_img( 'hero_home', 'full' ); ?>
+	<section class="yak-hero"<?php echo $hero_bg ? ' style="background-image:url(\'' . esc_url( $hero_bg ) . '\')"' : ''; ?>>
 		<div class="yak-hero-inner">
 			<div class="eyebrow"><?php echo esc_html( $t['eyebrow'] ); ?></div>
 			<h1><?php echo esc_html( $t['title'] ); ?></h1>

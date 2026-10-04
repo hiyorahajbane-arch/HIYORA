@@ -45,8 +45,18 @@ foreach ( $json['categories'] as $cat ) {
 			$copy = get_term_by( 'name', $cat[ $lang ], 'product_cat' );
 		}
 		if ( ! $copy ) {
-			WP_CLI::warning( 'Missing ' . $lang . ' category: ' . $cat['slug'] );
-			continue;
+			// The copy was lost: rebuild it from products.json.
+			$created = wp_insert_term(
+				$cat[ $lang ],
+				'product_cat',
+				array( 'slug' => $cat['slug'] . '-' . $lang )
+			);
+			if ( is_wp_error( $created ) ) {
+				WP_CLI::warning( 'Cannot create ' . $lang . ' category: ' . $cat['slug'] . ' (' . $created->get_error_message() . ')' );
+				continue;
+			}
+			$copy = get_term_by( 'id', $created['term_id'], 'product_cat' );
+			WP_CLI::log( '  created ' . $lang . ' category: ' . $cat[ $lang ] );
 		}
 		pll_set_term_language( $copy->term_id, $lang );
 		$row[ $lang ] = $copy->term_id;

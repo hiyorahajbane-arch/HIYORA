@@ -30,6 +30,8 @@ const DICT = {
         ['🗂️', 'مسرد', 'كل الكلمات مجمّعة فـ بلاصة وحدة.'],
       ],
       pickLanguage: 'شوف أشمن لغة بغيتي',
+      welcomeBack: 'مرحبا برجوعك، {name}', nextLesson: 'الخطوة الجاية ديالك', resume: 'كمّل التعلم',
+      allDone: 'كملتي جميع الدروس!', allDoneText: 'برافو عليك. اختار لغة أخرى وزيد تعلم.', explore: 'اكتاشف اللغات',
     },
     auth: {
       loginTitle: 'سجل دخول', registerTitle: 'دير حساب جديد',
@@ -94,6 +96,8 @@ const DICT = {
         ['🗂️', 'مسرد', 'كل الكلمات مجمّعة في مكان واحد.'],
       ],
       pickLanguage: 'اختر اللغة التي تريد',
+      welcomeBack: 'مرحباً بعودتك، {name}', nextLesson: 'خطوتك التالية', resume: 'تابع التعلم',
+      allDone: 'أكملت جميع الدروس!', allDoneText: 'أحسنت. اختر لغة أخرى وتابع التعلم.', explore: 'اكتشف اللغات',
     },
     auth: {
       loginTitle: 'تسجيل الدخول', registerTitle: 'إنشاء حساب جديد',
@@ -158,6 +162,8 @@ const DICT = {
         ['🗂️', 'Lexique', 'Tous les mots réunis au même endroit.'],
       ],
       pickLanguage: 'Choisissez votre langue',
+      welcomeBack: 'Bon retour, {name}', nextLesson: 'Votre prochaine étape', resume: 'Continuer',
+      allDone: 'Vous avez terminé toutes les leçons !', allDoneText: 'Bravo. Choisissez une autre langue pour continuer.', explore: 'Découvrir les langues',
     },
     auth: {
       loginTitle: 'Connexion', registerTitle: 'Créer un compte',
@@ -249,7 +255,7 @@ export function I18nProvider({ children }) {
     /** t('quiz.type.mcq', { n: 3 }) */
     const fn = (key, vars) => {
       const value = key.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), dict)
-      if (typeof value !== 'string') return key
+      if (typeof value !== 'string') return value ?? key
       if (!vars) return value
       return value.replace(/\{(\w+)\}/g, (m, name) => (vars[name] === undefined ? m : String(vars[name])))
     }

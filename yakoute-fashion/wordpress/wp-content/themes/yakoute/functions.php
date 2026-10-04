@@ -65,19 +65,48 @@ add_filter(
  * @return string
  */
 function yakoute_wc_url( $page ) {
+	$lang = yakoute_lang();
+
+	// The shop is a product archive with clean URLs per language.
+	if ( 'shop' === $page ) {
+		$raw = untrailingslashit( (string) get_option( 'home', '' ) );
+		return 'ar' === $lang ? $raw . '/shop/' : $raw . '/' . $lang . '/shop/';
+	}
+
 	if ( function_exists( 'wc_get_page_permalink' ) ) {
-		return wc_get_page_permalink( $page );
+		$url = wc_get_page_permalink( $page );
+	} elseif ( 'cart' === $page ) {
+		$url = home_url( '/cart/' );
+	} elseif ( 'checkout' === $page ) {
+		$url = home_url( '/checkout/' );
+	} elseif ( 'myaccount' === $page ) {
+		$url = home_url( '/my-account/' );
+	} else {
+		$url = home_url( '/shop/' );
 	}
-	if ( 'cart' === $page ) {
-		return home_url( '/cart/' );
+
+	// Arabic is the default language and lives on the site root: Polylang
+	// still prefixes its page permalinks with /ar/.
+	if ( 'ar' === $lang ) {
+		$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+		if ( 0 === strpos( $path, '/ar/' ) ) {
+			$url = str_replace( $path, substr( $path, 3 ), $url );
+		}
 	}
-	if ( 'checkout' === $page ) {
-		return home_url( '/checkout/' );
-	}
-	if ( 'myaccount' === $page ) {
-		return home_url( '/my-account/' );
-	}
-	return home_url( '/shop/' );
+
+	return $url;
+}
+
+/**
+ * Home URL of the current language: the site root for Arabic.
+ *
+ * @return string
+ */
+function yakoute_home_url() {
+	$raw  = untrailingslashit( (string) get_option( 'home', '' ) );
+	$lang = yakoute_lang();
+
+	return 'ar' === $lang ? $raw . '/' : $raw . '/' . $lang . '/';
 }
 
 /**
@@ -112,14 +141,20 @@ function yakoute_is_rtl() {
  * @return array List of [ 'locale', 'label', 'url', 'active' ].
  */
 function yakoute_languages() {
-	if ( function_exists( 'pll_languages_list' ) && function_exists( 'pll_home_url' ) ) {
-		$out = array();
-		foreach ( pll_languages_list() as $lang ) {
+	$slugs = array( 'ar', 'fr', 'en' );
+
+	if ( function_exists( 'pll_home_url' ) && function_exists( 'pll_current_language' ) ) {
+		$current = pll_current_language( 'slug' );
+		// Raw home without Polylang's URL filter: /fr/ is /fr/home/ otherwise.
+		$raw  = untrailingslashit( (string) get_option( 'home', '' ) );
+		$out  = array();
+		foreach ( $slugs as $slug ) {
+			$url = 'ar' === $slug ? $raw . '/' : $raw . '/' . $slug . '/';
 			$out[] = array(
-				'locale' => $lang->slug,
-				'label'  => strtoupper( $lang->slug ),
-				'url'    => pll_home_url( $lang->slug ),
-				'active' => pll_current_language( 'slug' ) === $lang->slug,
+				'locale' => $slug,
+				'label'  => strtoupper( $slug ),
+				'url'    => $url,
+				'active' => $current === $slug,
 			);
 		}
 		return $out;
@@ -128,57 +163,208 @@ function yakoute_languages() {
 }
 
 /**
- * Announcement bar + sticky header.
+ * Current store language slug.
+ *
+ * @return string
+ */
+function yakoute_lang() {
+	if ( function_exists( 'pll_current_language' ) ) {
+		$lang = pll_current_language( 'slug' );
+		if ( $lang ) {
+			return $lang;
+		}
+	}
+	return 'ar';
+}
+
+/**
+ * Link of a top-level product category in the current language.
+ *
+ * @param string $base Base slug: women, men or kids.
+ * @return array{url: string, name: string}
+ */
+function yakoute_cat_link( $base ) {
+	$lang = yakoute_lang();
+	$slug = 'ar' === $lang ? $base : $base . '-' . $lang;
+	$term = get_term_by( 'slug', $slug, 'product_cat' );
+
+	if ( ! $term && function_exists( 'pll_get_term_translations' ) ) {
+		$ar = get_term_by( 'slug', $base, 'product_cat' );
+		if ( $ar ) {
+			$trans = pll_get_term_translations( $ar->term_id );
+			if ( ! empty( $trans[ $lang ] ) ) {
+				$term = get_term( (int) $trans[ $lang ], 'product_cat' );
+			}
+		}
+	}
+
+	if ( ! $term || is_wp_error( $term ) ) {
+		return array( 'url' => '', 'name' => '' );
+	}
+
+	$link = get_term_link( $term );
+	if ( is_wp_error( $link ) ) {
+		return array( 'url' => '', 'name' => '' );
+	}
+
+	// Arabic lives on the site root: drop Polylang's /ar/ prefix.
+	if ( 'ar' === $lang ) {
+		$path = (string) wp_parse_url( $link, PHP_URL_PATH );
+		if ( 0 === strpos( $path, '/ar/' ) ) {
+			$link = str_replace( $path, substr( $path, 3 ), $link );
+		}
+	}
+
+	return array(
+		'url'  => $link,
+		'name' => $term->name,
+	);
+}
+
+/**
+ * Is the current page inside the $base category (any language)?
+ *
+ * @param string $base Base slug.
+ * @return bool
+ */
+function yakoute_is_in_cat( $base ) {
+	if ( ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
+		return false;
+	}
+	$term = get_queried_object();
+	if ( ! $term instanceof WP_Term ) {
+		return false;
+	}
+	if ( 0 === strpos( $term->slug, $base ) ) {
+		return true;
+	}
+	$ancestors = get_ancestors( $term->term_id, 'product_cat', 'taxonomy' );
+	foreach ( $ancestors as $ancestor_id ) {
+		$ancestor = get_term( $ancestor_id, 'product_cat' );
+		if ( $ancestor && 0 === strpos( $ancestor->slug, $base ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Inline SVG flag for the language switcher.
+ *
+ * @param string $lang Language slug.
+ * @return string
+ */
+function yakoute_flag( $lang ) {
+	if ( 'fr' === $lang ) {
+		return '<svg viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#ffffff"/><rect x="2" width="1" height="2" fill="#EF4135"/></svg>';
+	}
+	if ( 'en' === $lang ) {
+		return '<svg viewBox="0 0 6 4" aria-hidden="true"><rect width="6" height="4" fill="#012169"/>'
+			. '<path d="M0,0 L6,4 M6,0 L0,4" stroke="#ffffff" stroke-width="0.8"/>'
+			. '<path d="M0,0 L6,4 M6,0 L0,4" stroke="#C8102E" stroke-width="0.35"/>'
+			. '<path d="M3,0 V4 M0,2 H6" stroke="#ffffff" stroke-width="1.2"/>'
+			. '<path d="M3,0 V4 M0,2 H6" stroke="#C8102E" stroke-width="0.7"/></svg>';
+	}
+	// Morocco: red field, green pentagram outline.
+	return '<svg viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#C1272D"/>'
+		. '<polygon points="1.5,0.45 1.629,0.822 2.023,0.83 1.709,1.068 1.823,1.445 1.5,1.22 1.177,1.445 1.291,1.068 0.977,0.83 1.371,0.822"'
+		. ' fill="none" stroke="#006233" stroke-width="0.11"/></svg>';
+}
+
+/**
+ * Announcement bar + header in the boutique style: dark bar, circular gold
+ * logo, burgundy serif brand, pill navigation, cart and flag switcher.
  */
 function yakoute_header() {
-	$announcement = apply_filters(
-		'yakoute_announcement',
-		__( 'توصيل مجاني لجميع المدن — الدفع عند الاستلام', 'yakoute' )
+	$lang = yakoute_lang();
+
+	$texts = array(
+		'ar' => array(
+			'announcement' => 'توصيل مجاني لجميع المدن — الدفع عند الاستلام',
+			'brand'        => 'YAKOUTE FASHION',
+			'tagline'      => 'كل الأنماط، في مكان واحد',
+			'home'         => 'الرئيسية',
+			'cart'         => 'السلة',
+		),
+		'fr' => array(
+			'announcement' => 'Livraison gratuite — Paiement à la livraison',
+			'brand'        => 'YAKOUTE FASHION',
+			'tagline'      => 'Tous les styles, au même endroit',
+			'home'         => 'Accueil',
+			'cart'         => 'Panier',
+		),
+		'en' => array(
+			'announcement' => 'Free shipping — Cash on delivery',
+			'brand'        => 'YAKOUTE FASHION',
+			'tagline'      => 'Every style, in one place',
+			'home'         => 'Home',
+			'cart'         => 'Cart',
+		),
 	);
-	$logo_id  = get_theme_mod( 'custom_logo' );
-	$logo_url = $logo_id ? wp_get_attachment_image_url( $logo_id, 'full' ) : '';
-	$home     = function_exists( 'pll_home_url' ) ? pll_home_url() : home_url( '/' );
+	$t = $texts[ $lang ] ?? $texts['ar'];
+
+	$announcement = apply_filters( 'yakoute_announcement', $t['announcement'] );
+	$logo_id      = get_theme_mod( 'custom_logo' );
+	$logo_url     = $logo_id ? wp_get_attachment_image_url( $logo_id, 'medium' ) : '';
+	$home         = yakoute_home_url();
+
+	$nav   = array();
+	$nav[] = array(
+		'label'  => $t['home'],
+		'url'    => $home,
+		'active' => is_front_page(),
+	);
+	foreach ( array( 'women', 'men', 'kids' ) as $base ) {
+		$cat = yakoute_cat_link( $base );
+		if ( ! $cat['url'] ) {
+			continue;
+		}
+		$nav[] = array(
+			'label'  => $cat['name'],
+			'url'    => $cat['url'],
+			'active' => yakoute_is_in_cat( $base ),
+		);
+	}
+
+	$langs = yakoute_languages();
 	?>
 	<div class="yak-announcement"><?php echo esc_html( $announcement ); ?></div>
 
 	<div class="yak-sticky-header">
-		<nav class="yak-navbar">
+		<nav class="yak-navbar" aria-label="Primary">
 			<div class="yak-brand">
 				<a href="<?php echo esc_url( $home ); ?>">
 					<?php if ( $logo_url ) : ?>
-						<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
-					<?php else : ?>
-						<strong style="font-family:var(--yak-serif);font-size:22px;color:var(--yak-primary)"><?php bloginfo( 'name' ); ?></strong>
+						<img class="yak-logo" src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $t['brand'] ); ?>">
 					<?php endif; ?>
+					<span class="yak-brand-text">
+						<strong><?php echo esc_html( $t['brand'] ); ?></strong>
+						<em><?php echo esc_html( $t['tagline'] ); ?></em>
+					</span>
 				</a>
 			</div>
 
-			<?php
-			wp_nav_menu(
-				array(
-					'theme_location' => 'primary',
-					'container'      => false,
-					'menu_class'     => 'yak-menu',
-					'depth'          => 2,
-					'fallback_cb'    => false,
-				)
-			);
-			?>
+			<ul class="yak-pills">
+				<?php foreach ( $nav as $item ) : ?>
+					<li class="<?php echo $item['active'] ? 'active' : ''; ?>">
+						<a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+					</li>
+				<?php endforeach; ?>
+			</ul>
 
 			<div class="yak-actions">
-				<?php $langs = yakoute_languages(); ?>
+				<a href="<?php echo esc_url( yakoute_wc_url( 'cart' ) ); ?>" class="yak-cart-link" aria-label="<?php echo esc_attr( $t['cart'] ); ?>">
+					<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/></svg>
+					<span class="yak-cart-count"><?php echo function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0; ?></span>
+				</a>
+
 				<?php if ( $langs ) : ?>
-					<div class="yak-lang-switch">
+					<div class="yak-lang-switch" role="group" aria-label="Language">
 						<?php foreach ( $langs as $l ) : ?>
-							<a href="<?php echo esc_url( $l['url'] ); ?>" class="<?php echo $l['active'] ? 'active' : ''; ?>" hreflang="<?php echo esc_attr( $l['locale'] ); ?>"><?php echo esc_html( $l['label'] ); ?></a>
+							<a href="<?php echo esc_url( $l['url'] ); ?>" class="<?php echo $l['active'] ? 'active' : ''; ?>" hreflang="<?php echo esc_attr( $l['locale'] ); ?>" title="<?php echo esc_attr( $l['locale'] ); ?>"><?php echo yakoute_flag( $l['locale'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>
 						<?php endforeach; ?>
 					</div>
 				<?php endif; ?>
-
-				<a href="<?php echo esc_url( yakoute_wc_url( 'cart' ) ); ?>" class="yak-cart-link" aria-label="<?php esc_attr_e( 'السلة', 'yakoute' ); ?>">
-					🛒
-					<span class="yak-cart-count"><?php echo function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0; ?></span>
-				</a>
 			</div>
 		</nav>
 	</div>

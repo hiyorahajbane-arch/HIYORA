@@ -35,7 +35,26 @@ $titles = array(
 
 foreach ( $titles as $slug => $names ) {
 	$ar_id = wc_get_page_id( $slug );
+
+	// The option can point at a post that no longer exists: drop it so
+	// WooCommerce recreates the page instead of skipping it.
+	if ( $ar_id > 0 && ! get_post( $ar_id ) ) {
+		delete_option( 'woocommerce_' . $slug . '_page_id' );
+		$ar_id = 0;
+	}
+
+	// The page itself was lost: let WooCommerce recreate it first.
 	if ( $ar_id <= 0 ) {
+		if ( class_exists( 'WC_Install' ) && method_exists( 'WC_Install', 'create_pages' ) ) {
+			WC_Install::create_pages();
+			$ar_id = wc_get_page_id( $slug );
+		} elseif ( function_exists( 'wc_create_pages' ) ) {
+			wc_create_pages();
+			$ar_id = wc_get_page_id( $slug );
+		}
+	}
+
+	if ( $ar_id <= 0 || ! get_post( $ar_id ) ) {
 		WP_CLI::warning( 'No page for ' . $slug );
 		continue;
 	}

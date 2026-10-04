@@ -61,25 +61,24 @@ a:hover { color: var(--yak-gold); }
    Announcement bar (توصيل مجاني - الدفع عند الاستلام)
    ========================================================================== */
 .yak-announcement {
-    background: var(--yak-dark);
+    background: #171110;
     color: #f3e8cf;
     text-align: center;
     padding: 10px 16px;
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
 }
 .yak-announcement strong { color: var(--yak-gold); }
 
 /* ==========================================================================
-   Sticky navbar
+   Sticky navbar (boutique style)
    ========================================================================== */
 .yak-sticky-header {
     position: sticky;
     top: 0;
     z-index: 999;
-    background: var(--yak-card);
-    box-shadow: var(--yak-shadow);
+    background: #ffffff;
+    box-shadow: 0 2px 14px rgba(23, 17, 16, 0.08);
     border-bottom: 1px solid var(--yak-border);
 }
 .yak-navbar {
@@ -87,33 +86,57 @@ a:hover { color: var(--yak-gold); }
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 14px 20px;
+    padding: 12px 20px;
+    flex-wrap: wrap;
 }
-.yak-brand img { max-height: 48px; display: block; }
-.yak-menu { display: flex; gap: 26px; list-style: none; margin: 0; padding: 0; }
-.yak-menu a {
+.yak-brand a { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.yak-logo {
+    width: 58px; height: 58px; object-fit: cover; border-radius: 50%;
+    border: 2px solid var(--yak-gold);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--yak-gold);
+    display: block; background: #fff;
+}
+.yak-brand-text { display: flex; flex-direction: column; line-height: 1.25; }
+.yak-brand-text strong {
+    font-family: var(--yak-serif);
+    font-size: 24px; letter-spacing: 3px;
+    color: var(--yak-primary);
+    white-space: nowrap;
+}
+.yak-brand-text em {
+    font-family: var(--yak-serif); font-style: italic;
+    font-size: 12px; letter-spacing: 2.5px;
+    color: var(--yak-gold);
+    white-space: nowrap;
+}
+.yak-pills { display: flex; align-items: center; gap: 6px; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+.yak-pills a {
+    display: inline-block;
     text-decoration: none;
-    font-weight: 700;
-    font-size: 15px;
+    font-weight: 700; font-size: 15px;
     color: var(--yak-text);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 6px 0;
-    border-bottom: 2px solid transparent;
-    transition: color .2s, border-color .2s;
+    padding: 9px 22px; border-radius: 999px;
+    transition: background .2s, color .2s;
 }
-.yak-menu a:hover,
-.yak-menu .current-menu-item > a { color: var(--yak-primary); border-bottom-color: var(--yak-gold); }
-.yak-actions { display: flex; align-items: center; gap: 16px; }
+.yak-pills a:hover { background: var(--yak-gold-light); color: var(--yak-primary-dark); }
+.yak-pills li.active a { background: var(--yak-primary); color: #fff; }
+.yak-actions { display: flex; align-items: center; gap: 14px; }
 .yak-lang-switch { display: flex; gap: 6px; }
 .yak-lang-switch a {
-    font-size: 12px; font-weight: 700; text-decoration: none;
-    padding: 4px 8px; border-radius: 6px; background: var(--yak-gold-light); color: var(--yak-primary-dark);
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 5px 7px; border-radius: 999px;
+    border: 1px solid var(--yak-border); background: #fff;
+    transition: background .2s, border-color .2s;
+    line-height: 0;
 }
-.yak-lang-switch a.active { background: var(--yak-primary); color: #fff; }
-.yak-cart-link { position: relative; font-size: 22px; text-decoration: none; color: var(--yak-primary); }
+.yak-lang-switch a:hover { border-color: var(--yak-gold); }
+.yak-lang-switch a.active { background: var(--yak-primary); border-color: var(--yak-primary); }
+.yak-lang-switch svg { width: 22px; height: 15px; border-radius: 3px; display: block; }
+.yak-cart-link { position: relative; font-size: 22px; text-decoration: none; color: #6b7280; display: inline-flex; }
+.yak-cart-link:hover { color: var(--yak-primary); }
+.yak-cart-link svg { display: block; }
 .yak-cart-count {
     position: absolute; top: -6px; inset-inline-end: -10px;
     background: var(--yak-primary); color: #fff;
@@ -121,30 +144,35 @@ a:hover { color: var(--yak-gold); }
     min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
     padding: 0 4px;
 }
+@media (max-width: 900px) {
+    .yak-navbar { gap: 12px; }
+    .yak-brand-text strong { font-size: 19px; letter-spacing: 2px; }
+    .yak-brand-text em { font-size: 10px; letter-spacing: 1.5px; }
+    .yak-logo { width: 46px; height: 46px; }
+    .yak-pills a { padding: 7px 14px; font-size: 14px; }
+}
 
 /* ==========================================================================
    Hero
    ========================================================================== */
 .yak-hero {
     position: relative;
-    background: linear-gradient(135deg, var(--yak-primary-dark), var(--yak-primary) 55%, #a02a3f);
+    background-size: cover; background-position: center;
     color: #fff;
-    border-radius: var(--yak-radius);
     overflow: hidden;
-    margin: 28px auto;
-    max-width: 1200px;
-    min-height: 380px;
+    margin: 0;
+    max-width: none;
+    min-height: 480px;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 60px 24px;
-    box-shadow: var(--yak-shadow-lg);
+    padding: 80px 24px;
 }
 .yak-hero::after {
     content: "";
     position: absolute; inset: 0;
-    background: radial-gradient(circle at 80% 20%, rgba(201,162,75,.28), transparent 55%);
+    background: linear-gradient(180deg, rgba(23,17,16,.25) 0%, rgba(23,17,16,.55) 100%);
 }
 .yak-hero-inner { position: relative; z-index: 1; max-width: 720px; }
 .yak-hero .eyebrow {

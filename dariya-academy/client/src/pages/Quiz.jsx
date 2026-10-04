@@ -241,7 +241,7 @@ export default function Quiz() {
                 onClick={() => {
                   setMicError(null)
                   setListening(true)
-                  dictate(lang)
+                  dictate(lang).promise
                     .then(({ transcript: text }) => {
                       setTranscript(text)
                       if (text) return submit(text)

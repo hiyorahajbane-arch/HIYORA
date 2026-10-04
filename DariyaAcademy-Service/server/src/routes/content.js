@@ -196,7 +196,9 @@ router.get('/progress', requireAuth, (req, res) => {
     .filter(([k]) => k.startsWith(`${req.user.id}:`))
     .map(([, v]) => v)
   const lessons = allLessons()
-  const doneIds = new Set(Object.keys(db.progress).filter((k) => k.startsWith(`${req.user.id}:`)).map((k) => k.split(':')[1]))
+  const userProgress = Object.entries(db.progress).filter(([k]) => k.startsWith(`${req.user.id}:`))
+  const doneIds = new Set(userProgress.filter(([, p]) => p.done).map(([k]) => k.split(':')[1]))
+  const next = lessons.find((lesson) => !doneIds.has(lesson.id))
   const byCourse = {}
   let totalXp = 0
   for (const l of lessons) {
@@ -216,6 +218,7 @@ router.get('/progress', requireAuth, (req, res) => {
     dailyGoal: req.user.dailyGoal,
     lessonsDone: doneIds.size,
     lessonsTotal: lessons.length,
+    nextLesson: next ? { id: next.id, courseId: next.courseId, title: next.title, subtitle: next.subtitle, duration: next.duration, icon: next.icon } : null,
     exercisesAnswered: answered,
     accuracy: correctCount,
     accuracyPct: answered ? Math.round((correctCount / answered) * 100) : 0,

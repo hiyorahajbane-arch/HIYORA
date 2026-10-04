@@ -274,7 +274,7 @@ add_action(
 
 		// Only persist a map that resolved every language: a partial map would
 		// replace a good one and silently break /fr/ and /en/ forever.
-		if ( ! $map['fr'] || ! $map['en'] ) {
+		if ( empty( $map['fr'] ) || empty( $map['en'] ) ) {
 			return;
 		}
 

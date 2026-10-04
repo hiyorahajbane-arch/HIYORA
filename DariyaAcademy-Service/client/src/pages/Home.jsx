@@ -9,13 +9,19 @@ export default function Home() {
   const { t, ui } = useI18n()
   const { user } = useAuth()
   const [courses, setCourses] = useState(null)
+  const [progress, setProgress] = useState(null)
   const [error, setError] = useState(null)
 
   const load = () => {
     setError(null)
-    api.courses().then((r) => setCourses(r.courses)).catch(setError)
+    Promise.all([api.courses(), user ? api.progress() : Promise.resolve(null)])
+      .then(([c, p]) => {
+        setCourses(c.courses)
+        setProgress(p)
+      })
+      .catch(setError)
   }
-  useEffect(load, [])
+  useEffect(load, [user?.id])
 
   if (error) return <ErrorState error={error} onRetry={load} />
   if (!courses) return <Loading />
@@ -43,6 +49,27 @@ export default function Home() {
         </div>
       </section>
 
+      {user && progress && (
+        <section className="learning-resume card">
+          <div className="resume-copy">
+            <span className="eyebrow">{t('home.welcomeBack', { name: user.name })}</span>
+            <h2>{progress.nextLesson ? t('home.nextLesson') : t('home.allDone')}</h2>
+            <p className="muted">
+              {progress.nextLesson
+                ? `${target(progress.nextLesson.title, progress.nextLesson.courseId)} · ${target(courses.find((c) => c.id === progress.nextLesson.courseId)?.name, progress.nextLesson.courseId)}`
+                : t('home.allDoneText')}
+            </p>
+          </div>
+          {progress.nextLesson ? (
+            <Link className="btn primary" to={`/lessons/${progress.nextLesson.id}`}>
+              {t('home.resume')} <span aria-hidden="true">→</span>
+            </Link>
+          ) : (
+            <Link className="btn primary" to="/courses">{t('home.explore')}</Link>
+          )}
+        </section>
+      )}
+
       <section className="why">
         <h2>{t('home.whyTitle')}</h2>
         <div className="why-grid">
@@ -69,8 +96,11 @@ export default function Home() {
                 </div>
                 <h3>{target(c.name, c.id)}</h3>
                 <p className="muted">
-                  {total} {t('common.lessons')}
+                  {progress?.byCourse?.[c.id]?.done || 0} / {total} {t('common.lessons')}
                 </p>
+                {progress && <div className="progress-track" aria-label={`${progress.byCourse?.[c.id]?.done || 0} / ${total}`}>
+                  <div className="progress-fill" style={{ width: `${total ? Math.round(((progress.byCourse?.[c.id]?.done || 0) / total) * 100) : 0}%` }} />
+                </div>}
               </Link>
             )
           })}
