@@ -1,0 +1,77 @@
+import { Router } from 'express';
+import { randomUUID } from 'node:crypto';
+import { updateDb, getDb } from '../lib/db.js';
+import { requireAdmin } from './auth.js';
+
+const router = Router();
+
+router.get('/', async (req, res) => {
+  const q = (req.query.q || '').toString().trim().toLowerCase();
+  const category = (req.query.category || '').toString().trim();
+  const db = await getDb();
+  let products = db.products;
+  if (category) products = products.filter((p) => p.category === category);
+  if (q) products = products.filter((p) => p.name.toLowerCase().includes(q) || p.description.includes(q));
+  res.json(products);
+});
+
+router.get('/categories', async (req, res) => {
+  const db = await getDb();
+  const categories = [...new Set(db.products.map((p) => p.category).filter(Boolean))];
+  res.json(categories);
+});
+
+router.post('/', requireAdmin, async (req, res) => {
+  const { name, price, category, description, image, stock, oldPrice, gender, sizes, name_fr, name_en, category_fr, category_en } = req.body || {};
+  if (!name || typeof price !== 'number' || price < 0) {
+    return res.status(400).json({ error: 'الاسم والسعر مطلوبان' });
+  }
+  const normSizes = Array.isArray(sizes) ? sizes.map((s) => String(s).trim()).filter(Boolean).slice(0, 20) : [];
+  const product = {
+    id: randomUUID(),
+    name: String(name),
+    price,
+    category: category || '',
+    description: description || '',
+    image: image || '',
+    stock: Number.isFinite(stock) ? stock : 0,
+    oldPrice: Number.isFinite(oldPrice) ? oldPrice : (oldPrice ? Number(oldPrice) : null),
+    gender: gender || '',
+    sizes: normSizes,
+    name_fr: name_fr || '',
+    name_en: name_en || '',
+    category_fr: category_fr || '',
+    category_en: category_en || '',
+    createdAt: new Date().toISOString()
+  };
+  const saved = await updateDb((db) => {
+    db.products.unshift(product);
+    return product;
+  });
+  res.status(201).json(saved);
+});
+
+router.put('/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const result = await updateDb((db) => {
+    const idx = db.products.findIndex((p) => p.id === id);
+    if (idx === -1) return null;
+    db.products[idx] = { ...db.products[idx], ...req.body, id };
+    return db.products[idx];
+  });
+  if (!result) return res.status(404).json({ error: 'المنتج غير موجود' });
+  res.json(result);
+});
+
+router.delete('/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const result = await updateDb((db) => {
+    const before = db.products.length;
+    db.products = db.products.filter((p) => p.id !== id);
+    return db.products.length !== before;
+  });
+  if (!result) return res.status(404).json({ error: 'المنتج غير موجود' });
+  res.json({ ok: true });
+});
+
+export default router;
