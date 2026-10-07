@@ -353,9 +353,12 @@ function yakoute_header() {
 			</ul>
 
 			<div class="yak-actions">
+				<?php $yak_cart_count = function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0; ?>
 				<a href="<?php echo esc_url( yakoute_wc_url( 'cart' ) ); ?>" class="yak-cart-link" aria-label="<?php echo esc_attr( $t['cart'] ); ?>">
 					<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45C4.52 15.37 5.48 17 7 17h12v-2H7l1.1-2h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" fill="currentColor"/></svg>
-					<span class="yak-cart-count"><?php echo function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0; ?></span>
+					<?php if ( $yak_cart_count > 0 ) : ?>
+						<span class="yak-cart-count"><?php echo (int) $yak_cart_count; ?></span>
+					<?php endif; ?>
 				</a>
 
 				<?php if ( $langs ) : ?>
@@ -461,5 +464,17 @@ add_filter( 'loop_shop_columns', 'yakoute_loop_columns' );
  * WooCommerce: make sizes dropdown required-ish and helpful.
  */
 function yakoute_required_size_note() {
-	echo '<p class="yak-order-meta">' . esc_html__( 'اختر المقاس قبل الإضافة إلى السلة', 'yakoute' ) . '</p>';
+	$notes = array(
+		'ar' => 'اختر المقاس قبل الإضافة إلى السلة',
+		'fr' => 'Choisissez la taille avant d’ajouter au panier',
+		'en' => 'Choose a size before adding to cart',
+	);
+	$lang = function_exists( 'yakoute_lang' ) ? yakoute_lang() : 'ar';
+	echo '<p class="yak-order-meta">' . esc_html( $notes[ $lang ] ?? $notes['ar'] ) . '</p>';
 }
+add_action( 'woocommerce_before_add_to_cart_button', 'yakoute_required_size_note', 5 );
+
+/**
+ * Multilingual SEO layer (titles, descriptions, Open Graph, JSON-LD).
+ */
+require_once get_stylesheet_directory() . '/inc/seo.php';

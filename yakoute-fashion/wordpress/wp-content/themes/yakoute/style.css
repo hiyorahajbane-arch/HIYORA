@@ -123,17 +123,17 @@ a:hover { color: var(--yak-gold); }
 .yak-pills a:hover { background: var(--yak-gold-light); color: var(--yak-primary-dark); }
 .yak-pills li.active a { background: var(--yak-primary); color: #fff; }
 .yak-actions { display: flex; align-items: center; gap: 14px; }
-.yak-lang-switch { display: flex; gap: 6px; }
+.yak-lang-switch { display: flex; gap: 8px; align-items: center; }
 .yak-lang-switch a {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 5px 7px; border-radius: 999px;
-    border: 1px solid var(--yak-border); background: #fff;
+    padding: 6px 9px; border-radius: 999px;
+    border: 1px solid #e5ddd2; background: #fff;
     transition: background .2s, border-color .2s;
     line-height: 0;
 }
 .yak-lang-switch a:hover { border-color: var(--yak-gold); }
 .yak-lang-switch a.active { background: var(--yak-primary); border-color: var(--yak-primary); }
-.yak-lang-switch svg { width: 22px; height: 15px; border-radius: 3px; display: block; }
+.yak-lang-switch svg { width: 26px; height: 18px; border-radius: 4px; display: block; }
 .yak-cart-link { position: relative; font-size: 22px; text-decoration: none; color: #6b7280; display: inline-flex; }
 .yak-cart-link:hover { color: var(--yak-primary); }
 .yak-cart-link svg { display: block; }
@@ -162,19 +162,21 @@ a:hover { color: var(--yak-gold); }
     overflow: hidden;
     margin: 0;
     max-width: none;
-    min-height: 480px;
+    min-height: 72vh;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     text-align: center;
-    padding: 80px 24px;
+    padding: 60px 24px 72px;
 }
 .yak-hero::after {
     content: "";
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(23,17,16,.25) 0%, rgba(23,17,16,.55) 100%);
+    background: linear-gradient(180deg, rgba(23,17,16,.05) 40%, rgba(23,17,16,.62) 100%);
 }
-.yak-hero-inner { position: relative; z-index: 1; max-width: 720px; }
+.yak-hero-inner { position: relative; z-index: 1; max-width: 760px; }
+.yak-hero h1 { text-shadow: 0 2px 18px rgba(0,0,0,.45); }
+.yak-hero p { text-shadow: 0 1px 10px rgba(0,0,0,.5); }
 .yak-hero .eyebrow {
     font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
     color: var(--yak-gold); margin-bottom: 14px; font-weight: 700;
