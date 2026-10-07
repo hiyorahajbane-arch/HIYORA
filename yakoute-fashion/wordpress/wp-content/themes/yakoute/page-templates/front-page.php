@@ -155,10 +155,12 @@ $shop_url = function_exists( 'yakoute_wc_url' ) ? yakoute_wc_url( 'shop' ) : hom
 				<ul class="products columns-4">
 					<?php
 					foreach ( $yak_products as $yak_product ) {
-						$GLOBALS['post'] = $yak_product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
+						$GLOBALS['post']    = get_post( $yak_product->get_id() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 						$GLOBALS['product'] = $yak_product; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
+						setup_postdata( $GLOBALS['post'] );
 						wc_get_template_part( 'content', 'product' );
 					}
+					wp_reset_postdata();
 					?>
 				</ul>
 			<?php else : ?>

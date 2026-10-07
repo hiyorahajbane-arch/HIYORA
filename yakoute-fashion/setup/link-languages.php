@@ -95,6 +95,11 @@ foreach ( $json['categories'] as $cat ) {
 
 WP_CLI::log( 'Categories linked: ' . count( $cat_links ) );
 
+// The translation groups were just rewritten: drop the in-memory object cache
+// so the product phase below reads the fresh links instead of the AR-only
+// rows (otherwise FR/EN products end up in the Arabic categories).
+wp_cache_flush();
+
 /* ================================================================== products */
 WP_CLI::log( '--- products ---' );
 

@@ -222,11 +222,51 @@ function yakoute_cat_link( $base ) {
 }
 
 /**
- * Is the current page inside the $base category (any language)?
+ * Child categories of a top-level product category, in the current language.
  *
- * @param string $base Base slug.
- * @return bool
+ * @param string $base Base slug: women, men or kids.
+ * @return array List of [ 'url', 'name' ].
  */
+function yakoute_cat_children( $base ) {
+	$lang = yakoute_lang();
+	$slug = 'ar' === $lang ? $base : $base . '-' . $lang;
+	$parent = get_term_by( 'slug', $slug, 'product_cat' );
+
+	if ( ! $parent ) {
+		return array();
+	}
+
+	$children = get_terms(
+		array(
+			'taxonomy'   => 'product_cat',
+			'parent'     => (int) $parent->term_id,
+			'hide_empty' => false,
+			'orderby'    => 'term_id',
+			'order'      => 'ASC',
+		)
+	);
+
+	if ( is_wp_error( $children ) || ! $children ) {
+		return array();
+	}
+
+	$out = array();
+	foreach ( $children as $child ) {
+		$link = get_term_link( $child );
+		if ( is_wp_error( $link ) ) {
+			continue;
+		}
+		if ( 'ar' === $lang ) {
+			$path = (string) wp_parse_url( $link, PHP_URL_PATH );
+			if ( 0 === strpos( $path, '/ar/' ) ) {
+				$link = str_replace( $path, substr( $path, 3 ), $link );
+			}
+		}
+		$out[] = array( 'url' => $link, 'name' => $child->name );
+	}
+
+	return $out;
+}
 function yakoute_is_in_cat( $base ) {
 	if ( ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
 		return false;
@@ -247,6 +287,123 @@ function yakoute_is_in_cat( $base ) {
 	}
 	return false;
 }
+
+/**
+ * Boutique category archive header: eyebrow + serif title + gold rule +
+ * subcategory filter pills (Tout + branches), like the reference boutique.
+ */
+function yakoute_cat_header() {
+	if ( ! function_exists( 'is_product_category' ) || ! is_product_category() ) {
+		return;
+	}
+
+	$term = get_queried_object();
+	if ( ! $term instanceof WP_Term ) {
+		return;
+	}
+
+	$lang = function_exists( 'yakoute_lang' ) ? yakoute_lang() : 'ar';
+	$texts = array(
+		'ar' => array( 'all' => 'الكل', 'collection' => 'مجموعة' ),
+		'fr' => array( 'all' => 'Tout', 'collection' => 'Collection' ),
+		'en' => array( 'all' => 'All', 'collection' => 'Collection' ),
+	);
+	$t = $texts[ $lang ] ?? $texts['ar'];
+
+	$parent_id = (int) $term->parent;
+	if ( $parent_id ) {
+		$parent   = get_term( $parent_id, 'product_cat' );
+		$eyebrow  = $parent && ! is_wp_error( $parent ) ? $parent->name : $t['collection'];
+		$siblings = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'parent'     => $parent_id,
+				'hide_empty' => false,
+				'orderby'    => 'term_id',
+				'order'      => 'ASC',
+			)
+		);
+		$all_url = $parent && ! is_wp_error( $parent ) ? get_term_link( $parent ) : '';
+	} else {
+		$eyebrow  = $t['collection'];
+		$siblings = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'parent'     => (int) $term->term_id,
+				'hide_empty' => false,
+				'orderby'    => 'term_id',
+				'order'      => 'ASC',
+			)
+		);
+		$all_url = get_term_link( $term );
+	}
+
+	if ( is_wp_error( $siblings ) ) {
+		$siblings = array();
+	}
+	if ( is_wp_error( $all_url ) ) {
+		$all_url = '';
+	}
+
+	// Clean /ar/ prefix for the default language.
+	$clean = function ( $url ) use ( $lang ) {
+		if ( 'ar' === $lang && $url ) {
+			$path = (string) wp_parse_url( $url, PHP_URL_PATH );
+			if ( 0 === strpos( $path, '/ar/' ) ) {
+				$url = str_replace( $path, substr( $path, 3 ), $url );
+			}
+		}
+		return $url;
+	};
+	?>
+	<div class="yak-cat-head">
+		<div class="eyebrow"><?php echo esc_html( $eyebrow ); ?></div>
+		<h1><?php echo esc_html( $term->name ); ?></h1>
+		<?php if ( $siblings ) : ?>
+			<ul class="yak-filter-pills">
+				<li class="<?php echo $parent_id ? '' : 'active'; ?>">
+					<a href="<?php echo esc_url( $clean( $all_url ) ); ?>"><?php echo esc_html( $t['all'] ); ?></a>
+				</li>
+				<?php foreach ( $siblings as $sib ) : ?>
+					<?php $sib_link = $clean( get_term_link( $sib ) ); ?>
+					<li class="<?php echo (int) $sib->term_id === (int) $term->term_id ? 'active' : ''; ?>">
+						<a href="<?php echo esc_url( is_wp_error( $sib_link ) ? '' : $sib_link ); ?>"><?php echo esc_html( $sib->name ); ?></a>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		<?php endif; ?>
+	</div>
+	<?php
+}
+add_action( 'woocommerce_before_shop_loop', 'yakoute_cat_header', 5 );
+
+/**
+ * Hide WooCommerce's default archive title on category pages: the boutique
+ * header above replaces it (kept as the single h1).
+ *
+ * @param bool $show Show the title.
+ * @return bool
+ */
+function yakoute_hide_cat_title( $show ) {
+	if ( function_exists( 'is_product_category' ) && is_product_category() ) {
+		return false;
+	}
+	return $show;
+}
+add_filter( 'woocommerce_show_page_title', 'yakoute_hide_cat_title' );
+
+/**
+ * Sale badge wording per language (Promo ! / تخفيض! / Sale!).
+ *
+ * @param string $html Badge HTML.
+ * @return string
+ */
+function yakoute_sale_flash( $html ) {
+	$lang = function_exists( 'yakoute_lang' ) ? yakoute_lang() : 'ar';
+	$words = array( 'ar' => 'تخفيض!', 'fr' => 'Promo !', 'en' => 'Sale!' );
+	return '<span class="onsale">' . esc_html( $words[ $lang ] ?? $words['ar'] ) . '</span>';
+}
+add_filter( 'woocommerce_sale_flash', 'yakoute_sale_flash' );
 
 /**
  * Inline SVG flag for the language switcher.
@@ -313,6 +470,7 @@ function yakoute_header() {
 		'label'  => $t['home'],
 		'url'    => $home,
 		'active' => is_front_page(),
+		'children' => array(),
 	);
 	foreach ( array( 'women', 'men', 'kids' ) as $base ) {
 		$cat = yakoute_cat_link( $base );
@@ -320,9 +478,10 @@ function yakoute_header() {
 			continue;
 		}
 		$nav[] = array(
-			'label'  => $cat['name'],
-			'url'    => $cat['url'],
-			'active' => yakoute_is_in_cat( $base ),
+			'label'    => $cat['name'],
+			'url'      => $cat['url'],
+			'active'   => yakoute_is_in_cat( $base ),
+			'children' => yakoute_cat_children( $base ),
 		);
 	}
 
@@ -346,8 +505,15 @@ function yakoute_header() {
 
 			<ul class="yak-pills">
 				<?php foreach ( $nav as $item ) : ?>
-					<li class="<?php echo $item['active'] ? 'active' : ''; ?>">
+					<li class="<?php echo $item['active'] ? 'active' : ''; ?><?php echo ! empty( $item['children'] ) ? ' has-children' : ''; ?>">
 						<a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+						<?php if ( ! empty( $item['children'] ) ) : ?>
+							<ul class="yak-dropdown">
+								<?php foreach ( $item['children'] as $child ) : ?>
+									<li><a href="<?php echo esc_url( $child['url'] ); ?>"><?php echo esc_html( $child['name'] ); ?></a></li>
+								<?php endforeach; ?>
+							</ul>
+						<?php endif; ?>
 					</li>
 				<?php endforeach; ?>
 			</ul>

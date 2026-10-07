@@ -18,6 +18,8 @@ update_option( 'woocommerce_show_marketplace_suggestions', 'no' );
 update_option( 'woocommerce_merchant_email_notifications', 'no' );
 update_option( 'woocommerce_task_list_hidden', 'yes' );
 update_option( 'woocommerce_onboarding_profile', array( 'skipped' => true ) );
+// New installs enable "Coming soon" which hides the whole catalog.
+update_option( 'woocommerce_coming_soon', 'no' );
 
 // ---------------------------------------------------------------- currency
 update_option( 'woocommerce_currency', 'MAD' );

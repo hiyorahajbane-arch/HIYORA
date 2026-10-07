@@ -122,6 +122,22 @@ a:hover { color: var(--yak-gold); }
 }
 .yak-pills a:hover { background: var(--yak-gold-light); color: var(--yak-primary-dark); }
 .yak-pills li.active a { background: var(--yak-primary); color: #fff; }
+.yak-pills li { position: relative; }
+.yak-dropdown {
+    display: none;
+    position: absolute; top: 100%; inset-inline-start: 0;
+    min-width: 220px; margin: 6px 0 0; padding: 8px;
+    list-style: none; background: #fff;
+    border: 1px solid var(--yak-border); border-radius: 12px;
+    box-shadow: var(--yak-shadow-lg); z-index: 1000;
+}
+.yak-pills li.has-children:hover .yak-dropdown,
+.yak-pills li.has-children:focus-within .yak-dropdown { display: block; }
+.yak-dropdown a {
+    display: block; padding: 10px 16px !important; border-radius: 8px;
+    font-size: 14px; font-weight: 600; white-space: nowrap;
+}
+.yak-dropdown a:hover { background: var(--yak-gold-light); color: var(--yak-primary-dark); }
 .yak-actions { display: flex; align-items: center; gap: 14px; }
 .yak-lang-switch { display: flex; gap: 8px; align-items: center; }
 .yak-lang-switch a {
@@ -222,10 +238,10 @@ a:hover { color: var(--yak-gold); }
 .yak-cat-body span { color: var(--yak-muted); font-size: 14px; }
 .yak-cat-body .more { color: var(--yak-primary); font-weight: 700; font-size: 14px; display: inline-block; margin-top: 8px; }
 
-/* Per-gender accent themes (same as hiyora theme-men / theme-kids) */
-.yak-cat-card.theme-women { --accent: #c2185b; }
-.yak-cat-card.theme-men   { --accent: #1565c0; }
-.yak-cat-card.theme-kids  { --accent: #f57c00; }
+/* Boutique accents: burgundy family, one per universe */
+.yak-cat-card.theme-women { --accent: #8a1c2e; }
+.yak-cat-card.theme-men   { --accent: #671221; }
+.yak-cat-card.theme-kids  { --accent: #a06a1c; }
 .yak-cat-card h3 { color: var(--accent, var(--yak-primary)); }
 
 /* ==========================================================================
@@ -274,6 +290,50 @@ a:hover { color: var(--yak-gold); }
 .woocommerce .button.alt { background: var(--yak-gold) !important; color: var(--yak-dark) !important; }
 
 /* ==========================================================================
+   Boutique category header (eyebrow + title + filter pills)
+   ========================================================================== */
+.yak-cat-head { text-align: center; margin: 34px auto 8px; padding: 0 20px; }
+.yak-cat-head .eyebrow {
+    font-size: 13px; letter-spacing: 4px;
+    color: var(--yak-primary); font-weight: 600; margin-bottom: 10px;
+}
+.yak-cat-head h1 {
+    font-family: var(--yak-serif);
+    font-size: clamp(30px, 4.6vw, 46px);
+    color: var(--yak-text); margin: 0;
+}
+.yak-cat-head h1::after {
+    content: ""; display: block; width: 72px; height: 3px;
+    background: var(--yak-gold); border-radius: 2px;
+    margin: 16px auto 0;
+}
+.yak-filter-pills {
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 12px;
+    list-style: none; margin: 26px 0 6px; padding: 0;
+}
+.yak-filter-pills a {
+    display: inline-block; text-decoration: none;
+    font-weight: 700; font-size: 15px; color: var(--yak-text);
+    background: #fff; border: 1px solid var(--yak-border);
+    padding: 11px 30px; border-radius: 999px;
+    box-shadow: var(--yak-shadow);
+    transition: background .2s, color .2s, border-color .2s;
+}
+.yak-filter-pills a:hover { border-color: var(--yak-gold); color: var(--yak-primary); }
+.yak-filter-pills li.active a {
+    background: var(--yak-primary); border-color: var(--yak-primary); color: #fff;
+    box-shadow: 0 8px 22px rgba(138, 28, 46, 0.28);
+}
+
+/* Portrait cards with rounded corners on category archives */
+.tax-product_cat ul.products li.product { border-radius: 18px; }
+.tax-product_cat ul.products li.product img { aspect-ratio: 3/4; border-radius: 18px 18px 0 0; }
+.tax-product_cat ul.products li.product .onsale {
+    position: absolute; top: 14px; inset-inline-start: 14px;
+    margin: 0; z-index: 2;
+}
+
+/* ==========================================================================
    Perks (3 Selling points)
    ========================================================================== */
 .yak-perks { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
@@ -306,7 +366,10 @@ a:hover { color: var(--yak-gold); }
 .yak-footer a { color: #d9cfc6; text-decoration: none; }
 .yak-footer a:hover { color: var(--yak-gold); }
 .yak-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
-.yak-footer-logo { max-height: 56px; margin-bottom: 12px; }
+.yak-footer-logo {
+    width: 56px; height: 56px; object-fit: cover; border-radius: 50%;
+    border: 2px solid var(--yak-gold); margin-bottom: 12px; background: #fff;
+}
 .yak-footer-bottom { border-top: 1px solid rgba(255,255,255,.12); text-align: center; padding: 16px; font-size: 13px; color: #9c918a; }
 
 /* ==========================================================================
@@ -338,7 +401,8 @@ label { font-weight: 600; color: var(--yak-text); }
    ========================================================================== */
 @media (max-width: 900px) {
     .yak-navbar { flex-wrap: wrap; }
-    .yak-menu { order: 3; width: 100%; overflow-x: auto; gap: 18px; }
+    .yak-pills { order: 3; width: 100%; overflow-x: auto; gap: 8px; flex-wrap: nowrap; }
+    .yak-pills a { white-space: nowrap; }
     .yak-footer-inner { grid-template-columns: 1fr; }
     .yak-hero { min-height: 300px; }
 }
