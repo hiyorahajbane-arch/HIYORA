@@ -28,7 +28,14 @@ export function PromoBanner() {
   );
 }
 
-const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+const CAT_KEYS = {
+  'ملابس': 'catClothes', 'vêtements': 'catClothes', 'vetements': 'catClothes', 'clothing': 'catClothes',
+  'أحذية': 'catShoes', 'chaussures': 'catShoes', 'shoes': 'catShoes',
+  'حقائب': 'catBags', 'sacs': 'catBags', 'bags': 'catBags',
+  'إكسسوارات': 'catAccessories', 'accessoires': 'catAccessories', 'accessories': 'catAccessories',
+  'إلكترونيات': 'catElectronics', 'électronique': 'catElectronics', 'electronique': 'catElectronics', 'électroniques': 'catElectronics', 'electronics': 'catElectronics'
+};
+const catKey = (cat) => CAT_KEYS[String(cat || '').trim().toLowerCase()] || '';
 
 export function CategoryShowcase({ categories, products }) {
   const { t } = useTranslation();

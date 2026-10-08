@@ -5,7 +5,23 @@ import { useTranslation } from '../context/TranslationContext.jsx';
 import ProductCard from '../components/ProductCard.jsx';
 import { Hero, PromoBanner, GenderShowcase, Perks, Newsletter } from '../components/HomeSections.jsx';
 
-const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+const CAT_KEYS = {
+  'ملابس': 'catClothes', 'vêtements': 'catClothes', 'vetements': 'catClothes', 'clothing': 'catClothes',
+  'أحذية': 'catShoes', 'chaussures': 'catShoes', 'shoes': 'catShoes',
+  'حقائب': 'catBags', 'sacs': 'catBags', 'bags': 'catBags',
+  'إكسسوارات': 'catAccessories', 'accessoires': 'catAccessories', 'accessories': 'catAccessories',
+  'إلكترونيات': 'catElectronics', 'électronique': 'catElectronics', 'electronique': 'catElectronics', 'électroniques': 'catElectronics', 'electronics': 'catElectronics'
+};
+const catKey = (cat) => CAT_KEYS[String(cat || '').trim().toLowerCase()] || '';
+const isElectronics = (cat) => catKey(cat) === 'catElectronics';
+
+// Fashion pill groups (like the women page tabs): shoes + bags share one pill
+const PILL_GROUPS = [
+  { id: 'clothes', keys: ['catClothes'], label: 'catClothes' },
+  { id: 'shoesbags', keys: ['catShoes', 'catBags'], label: 'catShoesBags' },
+  { id: 'accessories', keys: ['catAccessories'], label: 'catAccessories' }
+];
+const groupOf = (cat) => PILL_GROUPS.find((g) => g.keys.includes(catKey(cat))) || null;
 
 export default function Store() {
   const { t } = useTranslation();
@@ -18,7 +34,7 @@ export default function Store() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    api.products.categories().then(setCategories).catch(() => {});
+    api.products.categories().then((cats) => setCategories((cats || []).filter((c) => !isElectronics(c)))).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -27,8 +43,12 @@ export default function Store() {
     setError('');
     const timeout = setTimeout(async () => {
       try {
-        const list = await api.products.list({ q, category });
-        if (!cancelled) setProducts(list);
+        const sel = PILL_GROUPS.find((g) => g.id === category) || (category ? groupOf(category) : null);
+        const list = await api.products.list({ q, category: sel ? '' : category });
+        if (cancelled) return;
+        let visible = (list || []).filter((p) => !isElectronics(p.category));
+        if (sel) visible = visible.filter((p) => sel.keys.includes(catKey(p.category)));
+        setProducts(visible);
       } catch (e) {
         if (!cancelled) setError(e.message);
       } finally {
@@ -66,15 +86,18 @@ export default function Store() {
               >
                 {t('all')}
               </button>
-              {categories.map((c) => (
-                <button
-                  key={c}
-                  className={`chip-btn ${category === c ? 'active' : ''}`}
-                  onClick={() => set('category', c)}
-                >
-                  {catKey(c) ? t(catKey(c)) : c}
-                </button>
-              ))}
+              {PILL_GROUPS.filter((g) => categories.some((c) => g.keys.includes(catKey(c)))).map((g) => {
+                const active = category === g.id || (category !== '' && groupOf(category)?.id === g.id);
+                return (
+                  <button
+                    key={g.id}
+                    className={`chip-btn ${active ? 'active' : ''}`}
+                    onClick={() => set('category', g.id)}
+                  >
+                    {t(g.label)}
+                  </button>
+                );
+              })}
             </div>
             {q && (
               <p className="muted">

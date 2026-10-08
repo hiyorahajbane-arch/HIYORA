@@ -93,6 +93,8 @@ const translations = {
     'catShoes': 'أحذية',
     'catBags': 'حقائب',
     'catAccessories': 'إكسسوارات',
+    'catShoesBags': 'أحذية وحقائب',
+    'catElectronics': 'إلكترونيات',
     // Order success
     'orderSuccess': 'تم استلام طلبك بنجاح!',
     'orderId': 'رقم طلبك هو',
@@ -307,6 +309,8 @@ const translations = {
     'catShoes': 'Chaussures',
     'catBags': 'Sacs',
     'catAccessories': 'Accessoires',
+    'catShoesBags': 'Chaussures et sacs',
+    'catElectronics': 'Électronique',
     // Order success
     'orderSuccess': 'Commande reçue avec succès !',
     'orderId': 'Votre numéro de commande est',
@@ -512,6 +516,8 @@ const translations = {
     'catShoes': 'Shoes',
     'catBags': 'Bags',
     'catAccessories': 'Accessories',
+    'catShoesBags': 'Shoes & Bags',
+    'catElectronics': 'Electronics',
     // Order success
     'orderSuccess': 'Order received successfully!',
     'orderId': 'Your order number is',
