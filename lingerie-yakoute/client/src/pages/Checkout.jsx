@@ -7,7 +7,7 @@ import { useTranslation } from '../context/TranslationContext.jsx';
 export default function Checkout() {
   const { items, total, dispatch } = useCart();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const [form, setForm] = useState({ name: '', phone: '', city: '', address: '', notes: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -65,7 +65,7 @@ export default function Checkout() {
           <h3>{t('orderSummary')}</h3>
           {items.map((i) => (
             <div key={i.key || `${i.id}__${i.size || ''}`} className="summary-row">
-              <span>{i.name}{i.size ? ` (${t('size')}: ${i.size})` : ''} × {i.qty}</span>
+              <span>{i[`name_${lang}`] || i.name}{i.size ? ` (${t('size')}: ${i.size})` : ''} × {i.qty}</span>
               <span>{formatPrice(i.price * i.qty)}</span>
             </div>
           ))}

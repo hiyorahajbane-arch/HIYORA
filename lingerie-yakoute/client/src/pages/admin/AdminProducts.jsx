@@ -2,12 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, formatPrice } from '../../api.js';
 import { useTranslation } from '../../context/TranslationContext.jsx';
 
-const empty = { name: '', price: '', oldPrice: '', category: '', gender: '', description: '', image: '', stock: '', sizes: '' };
+const empty = { name: '', name_fr: '', name_en: '', price: '', oldPrice: '', category: '', gender: '', description: '', description_fr: '', description_en: '', image: '', stock: '', sizes: '' };
 
 const parseSizes = (v) => String(v || '').split(/[,،;|/]/).map((s) => s.trim()).filter(Boolean).slice(0, 20);
 const sizesToString = (s) => (Array.isArray(s) ? s.join(', ') : String(s || ''));
 
-const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+const catKey = (cat) => ({ 'ملابس': 'catClothes', 'vêtements': 'catClothes', 'vetements': 'catClothes', 'clothing': 'catClothes', 'أحذية': 'catShoes', 'chaussures': 'catShoes', 'shoes': 'catShoes', 'حقائب': 'catBags', 'sacs': 'catBags', 'bags': 'catBags', 'إكسسوارات': 'catAccessories', 'accessoires': 'catAccessories', 'accessories': 'catAccessories', 'إلكترونيات': 'catElectronics', 'électronique': 'catElectronics', 'electronique': 'catElectronics', 'électroniques': 'catElectronics', 'electronics': 'catElectronics' })[String(cat || '').trim().toLowerCase()] || '';
 
 const genderKey = (g) => ({ '': 'allGenders', 'women': 'womenGender', 'men': 'menGender', 'kids': 'kidsGender' })[g] || 'allGenders';
 
@@ -85,11 +85,15 @@ export default function AdminProducts() {
     }
     setForm({
       name: product.name,
+      name_fr: product.name_fr || '',
+      name_en: product.name_en || '',
       price: product.price,
       oldPrice: product.oldPrice || '',
       category: product.category || '',
       gender: product.gender || '',
       description: product.description || '',
+      description_fr: product.description_fr || '',
+      description_en: product.description_en || '',
       image: product.image || '',
       stock: product.stock,
       sizes: sizesToString(product.sizes)
@@ -153,6 +157,14 @@ export default function AdminProducts() {
             <input value={form.name} onChange={set('name')} required />
           </div>
           <div>
+            <label>{t('productNameFr')}</label>
+            <input value={form.name_fr} onChange={set('name_fr')} placeholder="Ex : Collier élégant" />
+          </div>
+          <div>
+            <label>{t('productNameEn')}</label>
+            <input value={form.name_en} onChange={set('name_en')} placeholder="Ex : Elegant necklace" />
+          </div>
+          <div>
             <label>{t('price')}</label>
             <input type="number" min="0" value={form.price} onChange={set('price')} required />
           </div>
@@ -184,6 +196,10 @@ export default function AdminProducts() {
         </div>
         <label>{t('description')}</label>
         <textarea value={form.description} onChange={set('description')} rows={2} />
+        <label>{t('descriptionFr')}</label>
+        <textarea value={form.description_fr} onChange={set('description_fr')} rows={2} />
+        <label>{t('descriptionEn')}</label>
+        <textarea value={form.description_en} onChange={set('description_en')} rows={2} />
         <label>{t('image')}</label>
         <div className="upload-box">
           {form.image ? (

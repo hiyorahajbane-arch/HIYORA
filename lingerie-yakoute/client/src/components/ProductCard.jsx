@@ -3,7 +3,7 @@ import { formatPrice } from '../api.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useTranslation } from '../context/TranslationContext.jsx';
 
-const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+const catKey = (cat) => ({ 'ملابس': 'catClothes', 'vêtements': 'catClothes', 'vetements': 'catClothes', 'clothing': 'catClothes', 'أحذية': 'catShoes', 'chaussures': 'catShoes', 'shoes': 'catShoes', 'حقائب': 'catBags', 'sacs': 'catBags', 'bags': 'catBags', 'إكسسوارات': 'catAccessories', 'accessoires': 'catAccessories', 'accessories': 'catAccessories', 'إلكترونيات': 'catElectronics', 'électronique': 'catElectronics', 'electronique': 'catElectronics', 'électroniques': 'catElectronics', 'electronics': 'catElectronics' })[String(cat || '').trim().toLowerCase()] || '';
 
 const getSizes = (p) => {
   if (Array.isArray(p?.sizes)) return p.sizes.map((s) => String(s).trim()).filter(Boolean);

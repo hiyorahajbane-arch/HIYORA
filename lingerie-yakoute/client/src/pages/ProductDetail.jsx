@@ -35,10 +35,11 @@ export default function ProductDetail() {
   }
   if (!product) return <div className="container muted">{t('loading')}</div>;
 
-  const catKey = (cat) => ({ 'ملابس': 'catClothes', 'أحذية': 'catShoes', 'حقائب': 'catBags', 'إكسسوارات': 'catAccessories' })[cat] || '';
+  const catKey = (cat) => ({ 'ملابس': 'catClothes', 'vêtements': 'catClothes', 'vetements': 'catClothes', 'clothing': 'catClothes', 'أحذية': 'catShoes', 'chaussures': 'catShoes', 'shoes': 'catShoes', 'حقائب': 'catBags', 'sacs': 'catBags', 'bags': 'catBags', 'إكسسوارات': 'catAccessories', 'accessoires': 'catAccessories', 'accessories': 'catAccessories', 'إلكترونيات': 'catElectronics', 'électronique': 'catElectronics', 'electronique': 'catElectronics', 'électroniques': 'catElectronics', 'electronics': 'catElectronics' })[String(cat || '').trim().toLowerCase()] || '';
   const catLabel = catKey(product.category) ? t(catKey(product.category)) : (product[`category_${lang}`] || product.category);
 
   const name = product[`name_${lang}`] || product.name;
+  const description = product[`description_${lang}`] || product.description;
   const sizes = getSizes(product);
 
   const addToCart = () => {
@@ -62,7 +63,7 @@ export default function ProductDetail() {
       <div className="detail-info">
         {product.category && <span className="chip">{catLabel}</span>}
         <h1>{name}</h1>
-        <p className="detail-description">{product.description}</p>
+        <p className="detail-description">{description}</p>
         <p className="product-price big">{formatPrice(product.price)}</p>
         {sizes.length > 0 && (
           <div>
@@ -83,7 +84,7 @@ export default function ProductDetail() {
           </div>
         )}
         <p className={product.stock > 0 ? 'in-stock' : 'out-of-stock'}>
-          {product.stock > 0 ? `${t('inStock')} (${product.stock} ${t('all')})` : t('outOfStock')}
+          {product.stock > 0 ? `${t('inStock')} (${product.stock} ${t('pieces')})` : t('outOfStock')}
         </p>
         <button
           className="btn btn-primary"

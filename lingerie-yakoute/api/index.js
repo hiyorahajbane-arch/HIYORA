@@ -172,7 +172,7 @@ app.get('/api/products', async (req, res) => {
   const category = (req.query.category || '').toString().trim();
   let products = (await getDb()).products;
   if (category) products = products.filter(p => p.category === category);
-  if (q) products = products.filter(p => p.name.toLowerCase().includes(q) || p.description.includes(q));
+  if (q) products = products.filter(p => p.name.toLowerCase().includes(q) || (p.description || '').includes(q) || (p.name_fr || '').toLowerCase().includes(q) || (p.name_en || '').toLowerCase().includes(q) || (p.description_fr || '').toLowerCase().includes(q) || (p.description_en || '').toLowerCase().includes(q));
   res.json(products);
 });
 app.get('/api/products/categories', async (req, res) => {
@@ -180,10 +180,10 @@ app.get('/api/products/categories', async (req, res) => {
   res.json(cats);
 });
 app.post('/api/products', requireAdmin, async (req, res) => {
-  const { name, price, category, description, image, stock, oldPrice, gender, sizes, name_fr, name_en, category_fr, category_en } = req.body || {};
+  const { name, price, category, description, image, stock, oldPrice, gender, sizes, name_fr, name_en, category_fr, category_en, description_fr, description_en } = req.body || {};
   if (!name || typeof price !== 'number' || price < 0) return res.status(400).json({ error: 'الاسم والسعر مطلوبان' });
   const normSizes = Array.isArray(sizes) ? sizes.map((s) => String(s).trim()).filter(Boolean).slice(0, 20) : [];
-  const product = { id: randomUUID(), name: String(name), price, category: category || '', description: description || '', image: image || '', stock: Number.isFinite(stock) ? stock : 0, oldPrice: Number.isFinite(oldPrice) ? oldPrice : (oldPrice ? Number(oldPrice) : null), gender: gender || '', sizes: normSizes, name_fr: name_fr || '', name_en: name_en || '', category_fr: category_fr || '', category_en: category_en || '', createdAt: new Date().toISOString() };
+  const product = { id: randomUUID(), name: String(name), price, category: category || '', description: description || '', image: image || '', stock: Number.isFinite(stock) ? stock : 0, oldPrice: Number.isFinite(oldPrice) ? oldPrice : (oldPrice ? Number(oldPrice) : null), gender: gender || '', sizes: normSizes, name_fr: name_fr || '', name_en: name_en || '', category_fr: category_fr || '', category_en: category_en || '', description_fr: description_fr || '', description_en: description_en || '', createdAt: new Date().toISOString() };
   await updateDb(d => { d.products.unshift(product); return product; });
   res.status(201).json(product);
 });

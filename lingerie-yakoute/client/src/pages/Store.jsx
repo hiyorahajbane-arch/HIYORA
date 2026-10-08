@@ -29,13 +29,8 @@ export default function Store() {
   const q = params.get('q') || '';
   const category = params.get('category') || '';
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    api.products.categories().then((cats) => setCategories((cats || []).filter((c) => !isElectronics(c)))).catch(() => {});
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,7 +81,7 @@ export default function Store() {
               >
                 {t('all')}
               </button>
-              {PILL_GROUPS.filter((g) => categories.some((c) => g.keys.includes(catKey(c)))).map((g) => {
+              {PILL_GROUPS.map((g) => {
                 const active = category === g.id || (category !== '' && groupOf(category)?.id === g.id);
                 return (
                   <button
@@ -121,7 +116,7 @@ export default function Store() {
         </section>
 
         <PromoBanner />
-        <GenderShowcase categories={categories} products={products} />
+        <GenderShowcase />
         <Perks />
         <Newsletter />
       </main>

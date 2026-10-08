@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
   const db = await getDb();
   let products = db.products;
   if (category) products = products.filter((p) => p.category === category);
-  if (q) products = products.filter((p) => p.name.toLowerCase().includes(q) || p.description.includes(q));
+  if (q) products = products.filter((p) => p.name.toLowerCase().includes(q) || (p.description || '').includes(q) || (p.name_fr || '').toLowerCase().includes(q) || (p.name_en || '').toLowerCase().includes(q) || (p.description_fr || '').toLowerCase().includes(q) || (p.description_en || '').toLowerCase().includes(q));
   res.json(products);
 });
 
@@ -22,7 +22,7 @@ router.get('/categories', async (req, res) => {
 });
 
 router.post('/', requireAdmin, async (req, res) => {
-  const { name, price, category, description, image, stock, oldPrice, gender, sizes, name_fr, name_en, category_fr, category_en } = req.body || {};
+  const { name, price, category, description, image, stock, oldPrice, gender, sizes, name_fr, name_en, category_fr, category_en, description_fr, description_en } = req.body || {};
   if (!name || typeof price !== 'number' || price < 0) {
     return res.status(400).json({ error: 'الاسم والسعر مطلوبان' });
   }
@@ -42,6 +42,8 @@ router.post('/', requireAdmin, async (req, res) => {
     name_en: name_en || '',
     category_fr: category_fr || '',
     category_en: category_en || '',
+    description_fr: description_fr || '',
+    description_en: description_en || '',
     createdAt: new Date().toISOString()
   };
   const saved = await updateDb((db) => {
