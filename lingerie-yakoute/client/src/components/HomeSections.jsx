@@ -134,12 +134,20 @@ export function GenderShowcase() {
         <h2 className="section-title">{t('categoriesTitle')}</h2>
       </div>
       <div className="cat-grid">
-        {GENDERS.map((g) => (
-          <Link key={g.to} to={g.to} className="cat-card">
-            <img src={g.img} alt={g.label} loading="lazy" />
-            <span>{g.label}</span>
-          </Link>
-        ))}
+        {GENDERS.map((g) =>
+          g.to === '/kids' ? (
+            <Link key={g.to} to={g.to} className="cat-card cat-card-full">
+              <img src={g.img} alt="" aria-hidden="true" className="cat-card-bg" loading="lazy" />
+              <img src={g.img} alt={g.label} className="cat-card-fg" loading="lazy" />
+              <span>{g.label}</span>
+            </Link>
+          ) : (
+            <Link key={g.to} to={g.to} className="cat-card">
+              <img src={g.img} alt={g.label} loading="lazy" />
+              <span>{g.label}</span>
+            </Link>
+          )
+        )}
       </div>
     </section>
   );

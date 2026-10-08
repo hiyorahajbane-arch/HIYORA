@@ -652,6 +652,34 @@ a {
   transform: scale(1.07);
 }
 
+/* Kids card: original photo fully visible, sides melt into a blurred backdrop */
+.cat-card-full img.cat-card-bg {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  filter: blur(22px) brightness(0.98);
+  transform: scale(1.12);
+}
+
+.cat-card-full img.cat-card-fg {
+  position: absolute;
+  inset: 0;
+  object-fit: contain;
+}
+
+.cat-card-full::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20, 12, 12, 0.85), rgba(20, 12, 12, 0.4) 40%, transparent 65%);
+  z-index: 1;
+}
+
+.cat-card-full span {
+  z-index: 2;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+}
+
 .cat-card::after {
   content: "";
   position: absolute;
@@ -664,7 +692,7 @@ a {
   bottom: 18px;
   right: 18px;
   left: 18px;
-  color: #fff;
+  color: #FFF;
   font-family: var(--serif);
   font-size: 1.3rem;
   z-index: 1;
